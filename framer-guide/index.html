@@ -1,0 +1,660 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TechEd Academy - Framer Style</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        :root {
+            --framer-black: #000000;
+            --framer-white: #ffffff;
+            --framer-gray: #888888;
+            --framer-accent: #0066ff;
+        }
+        html {
+            scroll-behavior: smooth;
+        }
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--framer-black);
+            color: var(--framer-white);
+            overflow-x: hidden;
+        }
+        .framer-nav {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            padding: 20px 40px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            z-index: 1000;
+            background: rgba(0,0,0,0.8);
+            backdrop-filter: blur(20px);
+        }
+        .framer-logo {
+            font-weight: 800;
+            font-size: 1.5em;
+            letter-spacing: -0.02em;
+        }
+        .framer-nav-links {
+            display: flex;
+            gap: 40px;
+        }
+        .framer-nav-links a {
+            color: var(--framer-gray);
+            text-decoration: none;
+            font-size: 0.9em;
+            transition: color 0.3s;
+        }
+        .framer-nav-links a:hover {
+            color: var(--framer-white);
+        }
+        .framer-section {
+            min-height: 100vh;
+            padding: 150px 80px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            position: relative;
+            overflow: hidden;
+        }
+        .framer-hero {
+            text-align: center;
+            align-items: center;
+        }
+        .framer-hero h1 {
+            font-size: clamp(4em, 12vw, 10em);
+            font-weight: 800;
+            letter-spacing: -0.04em;
+            line-height: 0.9;
+            margin-bottom: 40px;
+            opacity: 0;
+            transform: translateY(50px);
+            animation: fadeInUp 1s ease forwards;
+        }
+        .framer-hero p {
+            font-size: 1.4em;
+            color: var(--framer-gray);
+            max-width: 600px;
+            margin: 0 auto 50px;
+            opacity: 0;
+            transform: translateY(30px);
+            animation: fadeInUp 1s ease 0.3s forwards;
+        }
+        @keyframes fadeInUp {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        .framer-btn {
+            display: inline-block;
+            padding: 18px 40px;
+            background: var(--framer-white);
+            color: var(--framer-black);
+            text-decoration: none;
+            border-radius: 100px;
+            font-weight: 600;
+            font-size: 1em;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            opacity: 0;
+            animation: fadeInUp 1s ease 0.5s forwards;
+        }
+        .framer-btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 20px 40px rgba(255,255,255,0.2);
+        }
+        .framer-scroll-indicator {
+            position: absolute;
+            bottom: 40px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 10px;
+            opacity: 0.5;
+        }
+        .framer-scroll-indicator span {
+            font-size: 0.8em;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+        }
+        .framer-scroll-indicator .arrow {
+            width: 20px;
+            height: 20px;
+            border-right: 2px solid white;
+            border-bottom: 2px solid white;
+            transform: rotate(45deg);
+            animation: bounce 2s infinite;
+        }
+        @keyframes bounce {
+            0%, 100% { transform: rotate(45deg) translateY(0); }
+            50% { transform: rotate(45deg) translateY(10px); }
+        }
+        .framer-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 2px;
+            background: rgba(255,255,255,0.1);
+            margin-top: 80px;
+        }
+        .framer-grid-item {
+            background: var(--framer-black);
+            padding: 60px;
+            transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+            cursor: pointer;
+        }
+        .framer-grid-item:hover {
+            background: #111;
+            transform: scale(0.98);
+        }
+        .framer-grid-item .icon {
+            font-size: 3em;
+            margin-bottom: 30px;
+            display: block;
+        }
+        .framer-grid-item h3 {
+            font-size: 2em;
+            font-weight: 700;
+            margin-bottom: 15px;
+            letter-spacing: -0.02em;
+        }
+        .framer-grid-item p {
+            color: var(--framer-gray);
+            font-size: 1.1em;
+            line-height: 1.6;
+        }
+        .framer-stats-section {
+            background: var(--framer-white);
+            color: var(--framer-black);
+        }
+        .framer-stats {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 80px;
+        }
+        .framer-stat {
+            text-align: center;
+            flex: 1;
+        }
+        .framer-stat-number {
+            font-size: 8em;
+            font-weight: 800;
+            letter-spacing: -0.04em;
+            line-height: 1;
+        }
+        .framer-stat-label {
+            font-size: 1.2em;
+            color: var(--framer-gray);
+            margin-top: 20px;
+        }
+        h2 {
+            font-size: 4em;
+            font-weight: 800;
+            letter-spacing: -0.03em;
+            line-height: 1.1;
+        }
+        .framer-timeline {
+            margin-top: 80px;
+        }
+        .framer-timeline-item {
+            display: grid;
+            grid-template-columns: 200px 1fr;
+            gap: 60px;
+            padding: 60px 0;
+            border-top: 1px solid rgba(255,255,255,0.1);
+            transition: all 0.3s;
+        }
+        .framer-timeline-item:hover {
+            padding-left: 30px;
+        }
+        .framer-timeline-label {
+            font-size: 0.9em;
+            color: var(--framer-accent);
+            font-weight: 600;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+        }
+        .framer-timeline-content h3 {
+            font-size: 2.5em;
+            font-weight: 700;
+            margin-bottom: 20px;
+            letter-spacing: -0.02em;
+        }
+        .framer-timeline-content p {
+            color: var(--framer-gray);
+            font-size: 1.2em;
+            line-height: 1.6;
+        }
+        .framer-pricing {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 30px;
+            margin-top: 80px;
+        }
+        .framer-price-card {
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 24px;
+            padding: 50px;
+            transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .framer-price-card:hover {
+            border-color: var(--framer-white);
+            transform: translateY(-10px);
+        }
+        .framer-price-card.featured {
+            background: var(--framer-white);
+            color: var(--framer-black);
+            transform: scale(1.05);
+        }
+        .framer-price-card.featured:hover {
+            transform: scale(1.05) translateY(-10px);
+        }
+        .framer-price-card h3 {
+            font-size: 1.2em;
+            font-weight: 600;
+            margin-bottom: 30px;
+            letter-spacing: 0.05em;
+            text-transform: uppercase;
+        }
+        .framer-price {
+            font-size: 4em;
+            font-weight: 800;
+            letter-spacing: -0.03em;
+            margin-bottom: 30px;
+        }
+        .framer-price-card ul {
+            list-style: none;
+        }
+        .framer-price-card li {
+            padding: 15px 0;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+            font-size: 1em;
+        }
+        .framer-price-card.featured li {
+            border-color: rgba(0,0,0,0.1);
+        }
+        .framer-tech-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 20px;
+            margin-top: 80px;
+        }
+        .framer-tech-item {
+            aspect-ratio: 1;
+            background: rgba(255,255,255,0.05);
+            border-radius: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s;
+            cursor: pointer;
+        }
+        .framer-tech-item:hover {
+            background: rgba(255,255,255,0.1);
+            transform: scale(1.05);
+        }
+        .framer-tech-item .icon {
+            font-size: 3em;
+            margin-bottom: 15px;
+        }
+        .framer-tech-item span {
+            font-size: 0.9em;
+            color: var(--framer-gray);
+        }
+        .framer-cta {
+            text-align: center;
+            align-items: center;
+        }
+        .framer-cta h2 {
+            font-size: 6em;
+            max-width: 900px;
+        }
+        .framer-marquee {
+            overflow: hidden;
+            white-space: nowrap;
+            padding: 40px 0;
+            border-top: 1px solid rgba(255,255,255,0.1);
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+        .framer-marquee-content {
+            display: inline-block;
+            animation: marquee 20s linear infinite;
+        }
+        .framer-marquee-content span {
+            font-size: 1.5em;
+            font-weight: 600;
+            margin-right: 80px;
+            color: var(--framer-gray);
+        }
+        @keyframes marquee {
+            0% { transform: translateX(0); }
+            100% { transform: translateX(-50%); }
+        }
+        .parallax-bg {
+            position: absolute;
+            width: 600px;
+            height: 600px;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(0,102,255,0.2) 0%, transparent 70%);
+            pointer-events: none;
+            transition: transform 0.1s ease-out;
+        }
+        .framer-footer {
+            padding: 60px 80px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-top: 1px solid rgba(255,255,255,0.1);
+        }
+        .framer-footer p {
+            color: var(--framer-gray);
+        }
+        .framer-social {
+            display: flex;
+            gap: 30px;
+        }
+        .framer-social a {
+            color: var(--framer-gray);
+            text-decoration: none;
+            transition: color 0.3s;
+        }
+        .framer-social a:hover {
+            color: var(--framer-white);
+        }
+        @media (max-width: 768px) {
+            .framer-section {
+                padding: 100px 30px;
+            }
+            .framer-grid,
+            .framer-pricing,
+            .framer-tech-grid {
+                grid-template-columns: 1fr;
+            }
+            .framer-timeline-item {
+                grid-template-columns: 1fr;
+                gap: 20px;
+            }
+            .framer-stats {
+                flex-direction: column;
+                gap: 60px;
+            }
+            h2 {
+                font-size: 2.5em;
+            }
+        }
+    </style>
+</head>
+<body>
+    <nav class="framer-nav">
+        <div class="framer-logo">TechEd</div>
+        <div class="framer-nav-links">
+            <a href="#programs">Programs</a>
+            <a href="#technology">Technology</a>
+            <a href="#timeline">Timeline</a>
+            <a href="#pricing">Pricing</a>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="framer-section framer-hero">
+        <div class="parallax-bg" id="parallaxBg" style="top: -200px; right: -200px;"></div>
+        <h1>Future of<br>Education</h1>
+        <p>Transforming how the next generation learns technology through immersive, hands-on programs</p>
+        <a href="#programs" class="framer-btn">Explore Programs</a>
+        <div class="framer-scroll-indicator">
+            <span>Scroll</span>
+            <div class="arrow"></div>
+        </div>
+    </section>
+
+    <!-- Marquee -->
+    <div class="framer-marquee">
+        <div class="framer-marquee-content">
+            <span>Web Development</span>
+            <span>AI & Machine Learning</span>
+            <span>Cloud Computing</span>
+            <span>Cybersecurity</span>
+            <span>Mobile Apps</span>
+            <span>Game Development</span>
+            <span>Web Development</span>
+            <span>AI & Machine Learning</span>
+            <span>Cloud Computing</span>
+            <span>Cybersecurity</span>
+            <span>Mobile Apps</span>
+            <span>Game Development</span>
+        </div>
+    </div>
+
+    <!-- Programs Section -->
+    <section class="framer-section" id="programs">
+        <h2>Learning tracks designed<br>for the real world</h2>
+        <div class="framer-grid">
+            <div class="framer-grid-item">
+                <span class="icon">🌐</span>
+                <h3>Web Development</h3>
+                <p>Master React, Node.js, and full-stack deployment. Build 12+ production-ready projects.</p>
+            </div>
+            <div class="framer-grid-item">
+                <span class="icon">🤖</span>
+                <h3>AI & Machine Learning</h3>
+                <p>From Python to transformers. Deploy production ML models and work with LLMs.</p>
+            </div>
+            <div class="framer-grid-item">
+                <span class="icon">☁️</span>
+                <h3>Cloud & DevOps</h3>
+                <p>AWS, Kubernetes, CI/CD pipelines. Infrastructure as code mastery.</p>
+            </div>
+            <div class="framer-grid-item">
+                <span class="icon">🔐</span>
+                <h3>Cybersecurity</h3>
+                <p>Ethical hacking, penetration testing, SOC operations. Certification prep included.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Stats Section -->
+    <section class="framer-section framer-stats-section">
+        <h2 style="color: var(--framer-black);">Numbers that matter</h2>
+        <div class="framer-stats">
+            <div class="framer-stat">
+                <div class="framer-stat-number">94%</div>
+                <div class="framer-stat-label">Employment Rate</div>
+            </div>
+            <div class="framer-stat">
+                <div class="framer-stat-number">12</div>
+                <div class="framer-stat-label">Learning Tracks</div>
+            </div>
+            <div class="framer-stat">
+                <div class="framer-stat-number">50+</div>
+                <div class="framer-stat-label">Industry Partners</div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Technology Access -->
+    <section class="framer-section" id="technology">
+        <h2>Professional tools.<br>Day one.</h2>
+        <p style="color: var(--framer-gray); font-size: 1.3em; margin-top: 20px; max-width: 600px;">Every student gets access to the same tools used by top tech companies worldwide.</p>
+        <div class="framer-tech-grid">
+            <div class="framer-tech-item">
+                <span class="icon">☁️</span>
+                <span>$500 Cloud Credits</span>
+            </div>
+            <div class="framer-tech-item">
+                <span class="icon">💻</span>
+                <span>GitHub Codespaces</span>
+            </div>
+            <div class="framer-tech-item">
+                <span class="icon">🤖</span>
+                <span>AI Assistants</span>
+            </div>
+            <div class="framer-tech-item">
+                <span class="icon">🎨</span>
+                <span>Figma Pro</span>
+            </div>
+            <div class="framer-tech-item">
+                <span class="icon">⚡</span>
+                <span>JetBrains IDEs</span>
+            </div>
+            <div class="framer-tech-item">
+                <span class="icon">🚀</span>
+                <span>Vercel Deploy</span>
+            </div>
+            <div class="framer-tech-item">
+                <span class="icon">📊</span>
+                <span>Analytics Tools</span>
+            </div>
+            <div class="framer-tech-item">
+                <span class="icon">🔧</span>
+                <span>Dev Tools Suite</span>
+            </div>
+        </div>
+    </section>
+
+    <!-- Timeline Section -->
+    <section class="framer-section" id="timeline">
+        <h2>A year of<br>transformation</h2>
+        <div class="framer-timeline">
+            <div class="framer-timeline-item">
+                <div class="framer-timeline-label">Q1 / Jan-Mar</div>
+                <div class="framer-timeline-content">
+                    <h3>Foundation Sprint</h3>
+                    <p>Master the fundamentals, form your team, and ship your first collaborative project to production.</p>
+                </div>
+            </div>
+            <div class="framer-timeline-item">
+                <div class="framer-timeline-label">Q2 / Apr-Jun</div>
+                <div class="framer-timeline-content">
+                    <h3>Project Season</h3>
+                    <p>Work with real clients, compete in hackathons, and build a portfolio that stands out.</p>
+                </div>
+            </div>
+            <div class="framer-timeline-item">
+                <div class="framer-timeline-label">Q3 / Jul-Aug</div>
+                <div class="framer-timeline-content">
+                    <h3>Summer Labs</h3>
+                    <p>Internships at partner companies, research projects, and intensive specialist workshops.</p>
+                </div>
+            </div>
+            <div class="framer-timeline-item">
+                <div class="framer-timeline-label">Q4 / Sep-Dec</div>
+                <div class="framer-timeline-content">
+                    <h3>Launch Ready</h3>
+                    <p>Polish your portfolio, prepare for interviews, and land your dream role in tech.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Pricing Section -->
+    <section class="framer-section" id="pricing">
+        <h2>Invest in<br>your future</h2>
+        <div class="framer-pricing">
+            <div class="framer-price-card">
+                <h3>Workshop</h3>
+                <div class="framer-price">€299</div>
+                <ul>
+                    <li>2-day intensive</li>
+                    <li>Single topic deep-dive</li>
+                    <li>Certificate included</li>
+                    <li>30-day community</li>
+                </ul>
+            </div>
+            <div class="framer-price-card featured">
+                <h3>Semester</h3>
+                <div class="framer-price">€2,499</div>
+                <ul>
+                    <li>Full curriculum access</li>
+                    <li>All technology included</li>
+                    <li>1-on-1 mentorship</li>
+                    <li>Job placement support</li>
+                    <li>Industry certification</li>
+                </ul>
+            </div>
+            <div class="framer-price-card">
+                <h3>Annual</h3>
+                <div class="framer-price">€3,999</div>
+                <ul>
+                    <li>Unlimited workshops</li>
+                    <li>All program tracks</li>
+                    <li>Priority enrollment</li>
+                    <li>Alumni network</li>
+                </ul>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA Section -->
+    <section class="framer-section framer-cta">
+        <div class="parallax-bg" id="parallaxBg2" style="bottom: -200px; left: -200px;"></div>
+        <h2>Start building<br>tomorrow,<br>today.</h2>
+        <a href="#" class="framer-btn" style="margin-top: 60px; animation: none; opacity: 1;">Schedule a Meeting</a>
+    </section>
+
+    <!-- Footer -->
+    <footer class="framer-footer">
+        <p>© 2025 TechEd Academy</p>
+        <div class="framer-social">
+            <a href="#">Twitter</a>
+            <a href="#">LinkedIn</a>
+            <a href="#">GitHub</a>
+        </div>
+    </footer>
+
+    <script>
+        // Parallax effect
+        document.addEventListener('mousemove', (e) => {
+            const parallaxElements = document.querySelectorAll('.parallax-bg');
+            const x = (window.innerWidth / 2 - e.clientX) / 25;
+            const y = (window.innerHeight / 2 - e.clientY) / 25;
+
+            parallaxElements.forEach(el => {
+                el.style.transform = `translate(${x}px, ${y}px)`;
+            });
+        });
+
+        // Smooth scroll for nav links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                document.querySelector(this.getAttribute('href')).scrollIntoView({
+                    behavior: 'smooth'
+                });
+            });
+        });
+
+        // Intersection Observer for fade-in animations
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -100px 0px'
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.style.opacity = '1';
+                    entry.target.style.transform = 'translateY(0)';
+                }
+            });
+        }, observerOptions);
+
+        document.querySelectorAll('.framer-grid-item, .framer-timeline-item, .framer-price-card, .framer-tech-item').forEach(el => {
+            el.style.opacity = '0';
+            el.style.transform = 'translateY(30px)';
+            el.style.transition = 'all 0.6s cubic-bezier(0.4, 0, 0.2, 1)';
+            observer.observe(el);
+        });
+    </script>
+</body>
+</html>

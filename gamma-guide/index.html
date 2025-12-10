@@ -1,0 +1,519 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TechEd Academy - Gamma.app Style</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        :root {
+            --gamma-primary: #6366f1;
+            --gamma-secondary: #8b5cf6;
+            --gamma-bg: #fafafa;
+            --gamma-card: #ffffff;
+            --gamma-text: #1f2937;
+            --gamma-muted: #6b7280;
+        }
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--gamma-bg);
+            color: var(--gamma-text);
+            line-height: 1.6;
+        }
+        .gamma-container {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 40px 20px;
+        }
+        .gamma-card {
+            background: var(--gamma-card);
+            border-radius: 24px;
+            padding: 60px;
+            margin-bottom: 30px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.05);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        .gamma-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 12px 40px rgba(0,0,0,0.1);
+        }
+        .gamma-hero {
+            text-align: center;
+            padding: 100px 60px;
+            background: linear-gradient(135deg, var(--gamma-primary), var(--gamma-secondary));
+            color: white;
+        }
+        .gamma-hero h1 {
+            font-size: 4em;
+            font-weight: 700;
+            margin-bottom: 20px;
+        }
+        .gamma-hero p {
+            font-size: 1.4em;
+            opacity: 0.9;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+        .gamma-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: rgba(255,255,255,0.2);
+            padding: 10px 20px;
+            border-radius: 100px;
+            font-size: 0.9em;
+            margin-top: 30px;
+        }
+        h2 {
+            font-size: 2.5em;
+            font-weight: 700;
+            margin-bottom: 30px;
+            color: var(--gamma-text);
+        }
+        h3 {
+            font-size: 1.5em;
+            font-weight: 600;
+            margin-bottom: 15px;
+            color: var(--gamma-primary);
+        }
+        p {
+            color: var(--gamma-muted);
+            font-size: 1.1em;
+        }
+        .gamma-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 30px;
+            margin-top: 40px;
+        }
+        .gamma-grid-item {
+            background: var(--gamma-bg);
+            border-radius: 16px;
+            padding: 30px;
+            border: 1px solid #e5e7eb;
+            transition: all 0.3s ease;
+        }
+        .gamma-grid-item:hover {
+            border-color: var(--gamma-primary);
+            background: white;
+        }
+        .gamma-icon {
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(135deg, var(--gamma-primary), var(--gamma-secondary));
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.8em;
+            margin-bottom: 20px;
+        }
+        .gamma-stats {
+            display: flex;
+            justify-content: space-around;
+            margin-top: 50px;
+            padding-top: 50px;
+            border-top: 1px solid #e5e7eb;
+        }
+        .gamma-stat {
+            text-align: center;
+        }
+        .gamma-stat-value {
+            font-size: 3em;
+            font-weight: 700;
+            background: linear-gradient(135deg, var(--gamma-primary), var(--gamma-secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .gamma-stat-label {
+            color: var(--gamma-muted);
+            font-size: 0.9em;
+            margin-top: 5px;
+        }
+        .gamma-timeline {
+            position: relative;
+            padding-left: 40px;
+        }
+        .gamma-timeline::before {
+            content: '';
+            position: absolute;
+            left: 12px;
+            top: 0;
+            bottom: 0;
+            width: 3px;
+            background: linear-gradient(180deg, var(--gamma-primary), var(--gamma-secondary));
+            border-radius: 3px;
+        }
+        .gamma-timeline-item {
+            position: relative;
+            padding-bottom: 40px;
+        }
+        .gamma-timeline-item::before {
+            content: '';
+            position: absolute;
+            left: -34px;
+            top: 5px;
+            width: 16px;
+            height: 16px;
+            background: var(--gamma-primary);
+            border-radius: 50%;
+            border: 4px solid var(--gamma-bg);
+        }
+        .gamma-timeline-item h4 {
+            font-size: 1.2em;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+        .gamma-pricing {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 30px;
+            margin-top: 40px;
+        }
+        .gamma-price-card {
+            background: var(--gamma-bg);
+            border-radius: 20px;
+            padding: 40px 30px;
+            text-align: center;
+            border: 2px solid transparent;
+            transition: all 0.3s ease;
+        }
+        .gamma-price-card:hover {
+            border-color: var(--gamma-primary);
+        }
+        .gamma-price-card.featured {
+            background: linear-gradient(135deg, var(--gamma-primary), var(--gamma-secondary));
+            color: white;
+            transform: scale(1.05);
+        }
+        .gamma-price-card.featured h3,
+        .gamma-price-card.featured p {
+            color: white;
+        }
+        .gamma-price {
+            font-size: 3em;
+            font-weight: 700;
+            margin: 20px 0;
+        }
+        .gamma-price-card.featured .gamma-price {
+            color: white;
+        }
+        .gamma-features {
+            list-style: none;
+            margin-top: 30px;
+            text-align: left;
+        }
+        .gamma-features li {
+            padding: 12px 0;
+            border-bottom: 1px solid rgba(0,0,0,0.1);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .gamma-features li::before {
+            content: '✓';
+            color: var(--gamma-primary);
+            font-weight: bold;
+        }
+        .gamma-price-card.featured .gamma-features li::before {
+            color: white;
+        }
+        .gamma-cta {
+            text-align: center;
+            padding: 80px;
+            background: linear-gradient(135deg, #1f2937, #374151);
+            color: white;
+        }
+        .gamma-cta h2 {
+            color: white;
+            margin-bottom: 20px;
+        }
+        .gamma-cta p {
+            color: rgba(255,255,255,0.8);
+            margin-bottom: 40px;
+        }
+        .gamma-button {
+            display: inline-block;
+            padding: 18px 40px;
+            background: white;
+            color: var(--gamma-primary);
+            text-decoration: none;
+            border-radius: 100px;
+            font-weight: 600;
+            font-size: 1.1em;
+            transition: transform 0.3s ease;
+        }
+        .gamma-button:hover {
+            transform: scale(1.05);
+        }
+        .gamma-image-placeholder {
+            background: linear-gradient(135deg, #e0e7ff, #c7d2fe);
+            border-radius: 16px;
+            height: 300px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 4em;
+            margin: 30px 0;
+        }
+        .gamma-two-col {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 60px;
+            align-items: center;
+        }
+        .gamma-tag {
+            display: inline-block;
+            padding: 6px 14px;
+            background: rgba(99, 102, 241, 0.1);
+            color: var(--gamma-primary);
+            border-radius: 100px;
+            font-size: 0.85em;
+            font-weight: 500;
+            margin-bottom: 15px;
+        }
+        .gamma-note {
+            background: linear-gradient(135deg, rgba(99, 102, 241, 0.1), rgba(139, 92, 246, 0.1));
+            border-left: 4px solid var(--gamma-primary);
+            padding: 20px 25px;
+            border-radius: 0 12px 12px 0;
+            margin: 30px 0;
+        }
+        .gamma-note p {
+            color: var(--gamma-text);
+            margin: 0;
+        }
+        @media (max-width: 768px) {
+            .gamma-grid, .gamma-pricing, .gamma-two-col {
+                grid-template-columns: 1fr;
+            }
+            .gamma-hero h1 {
+                font-size: 2.5em;
+            }
+            .gamma-card {
+                padding: 30px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Hero Section -->
+    <div class="gamma-card gamma-hero">
+        <h1>TechEd Academy</h1>
+        <p>Future-ready education programs designed for the next generation of tech leaders</p>
+        <div class="gamma-badge">
+            <span>✨</span>
+            <span>Launching January 2025</span>
+        </div>
+    </div>
+
+    <div class="gamma-container">
+        <!-- Problem/Solution -->
+        <div class="gamma-card">
+            <span class="gamma-tag">The Challenge</span>
+            <h2>Bridging the Education Gap</h2>
+            <p>Traditional education isn't keeping pace with technology. We're changing that.</p>
+
+            <div class="gamma-grid">
+                <div class="gamma-grid-item">
+                    <div class="gamma-icon">📚</div>
+                    <h3>Outdated Curriculum</h3>
+                    <p>Most textbooks are 5+ years behind current industry practices and tools.</p>
+                </div>
+                <div class="gamma-grid-item">
+                    <div class="gamma-icon">🎯</div>
+                    <h3>Skills Gap</h3>
+                    <p>87% of companies report difficulty finding qualified tech talent.</p>
+                </div>
+                <div class="gamma-grid-item">
+                    <div class="gamma-icon">💰</div>
+                    <h3>Access Barriers</h3>
+                    <p>High costs and limited resources prevent many from quality education.</p>
+                </div>
+                <div class="gamma-grid-item">
+                    <div class="gamma-icon">🔧</div>
+                    <h3>Theory vs Practice</h3>
+                    <p>Students learn concepts but lack hands-on experience with real tools.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Programs Section -->
+        <div class="gamma-card">
+            <span class="gamma-tag">Learning Paths</span>
+            <h2>Choose Your Track</h2>
+            <p>Comprehensive programs designed with industry experts</p>
+
+            <div class="gamma-two-col" style="margin-top: 40px;">
+                <div>
+                    <div class="gamma-image-placeholder">🌐</div>
+                </div>
+                <div>
+                    <h3>Web Development</h3>
+                    <p>Master modern web technologies from fundamentals to full-stack deployment. Build real projects with React, Node.js, and cloud platforms.</p>
+                    <div class="gamma-note">
+                        <p><strong>Duration:</strong> 40 weeks | <strong>Projects:</strong> 12+ | <strong>Certificate:</strong> Included</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="gamma-two-col" style="margin-top: 60px;">
+                <div>
+                    <h3>AI & Machine Learning</h3>
+                    <p>From Python fundamentals to deploying production ML models. Work with transformers, LLMs, and cutting-edge AI tools.</p>
+                    <div class="gamma-note">
+                        <p><strong>Duration:</strong> 34 weeks | <strong>Projects:</strong> 8+ | <strong>Industry Partner:</strong> Yes</p>
+                    </div>
+                </div>
+                <div>
+                    <div class="gamma-image-placeholder">🤖</div>
+                </div>
+            </div>
+
+            <div class="gamma-two-col" style="margin-top: 60px;">
+                <div>
+                    <div class="gamma-image-placeholder">🔐</div>
+                </div>
+                <div>
+                    <h3>Cybersecurity</h3>
+                    <p>Learn ethical hacking, penetration testing, and security operations. Prepare for industry certifications while gaining practical skills.</p>
+                    <div class="gamma-note">
+                        <p><strong>Duration:</strong> 28 weeks | <strong>Labs:</strong> 50+ | <strong>Cert Prep:</strong> CompTIA, CEH</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Technology Access -->
+        <div class="gamma-card">
+            <span class="gamma-tag">Included Tools</span>
+            <h2>Professional-Grade Technology</h2>
+            <p>Every student gets access to industry-standard tools and platforms</p>
+
+            <div class="gamma-grid">
+                <div class="gamma-grid-item">
+                    <div class="gamma-icon">☁️</div>
+                    <h3>Cloud Credits</h3>
+                    <p>$500 per semester for AWS, Azure, or Google Cloud Platform</p>
+                </div>
+                <div class="gamma-grid-item">
+                    <div class="gamma-icon">💻</div>
+                    <h3>Dev Environments</h3>
+                    <p>Pre-configured GitHub Codespaces and VSCode setups</p>
+                </div>
+                <div class="gamma-grid-item">
+                    <div class="gamma-icon">🤖</div>
+                    <h3>AI Assistants</h3>
+                    <p>Access to Claude, GPT-4, and GitHub Copilot for learning</p>
+                </div>
+                <div class="gamma-grid-item">
+                    <div class="gamma-icon">🎨</div>
+                    <h3>Software Suite</h3>
+                    <p>JetBrains IDEs, Figma Pro, and Adobe Creative Cloud</p>
+                </div>
+            </div>
+
+            <div class="gamma-stats">
+                <div class="gamma-stat">
+                    <div class="gamma-stat-value">$2,000+</div>
+                    <div class="gamma-stat-label">Value in tools per student</div>
+                </div>
+                <div class="gamma-stat">
+                    <div class="gamma-stat-value">50+</div>
+                    <div class="gamma-stat-label">Software partnerships</div>
+                </div>
+                <div class="gamma-stat">
+                    <div class="gamma-stat-value">24/7</div>
+                    <div class="gamma-stat-label">Access to all platforms</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Semester Timeline -->
+        <div class="gamma-card">
+            <span class="gamma-tag">Structure</span>
+            <h2>Semester Roadmap</h2>
+            <p>A year-round approach to continuous learning and growth</p>
+
+            <div class="gamma-timeline" style="margin-top: 40px;">
+                <div class="gamma-timeline-item">
+                    <h4>January - March: Foundation Sprint</h4>
+                    <p>Core fundamentals, team formation, first collaborative projects</p>
+                </div>
+                <div class="gamma-timeline-item">
+                    <h4>April - June: Project Season</h4>
+                    <p>Real client projects, hackathon competitions, portfolio building</p>
+                </div>
+                <div class="gamma-timeline-item">
+                    <h4>July - August: Summer Labs</h4>
+                    <p>Internship placements, research projects, intensive workshops</p>
+                </div>
+                <div class="gamma-timeline-item">
+                    <h4>September - December: Launch Ready</h4>
+                    <p>Advanced specializations, portfolio polish, interview preparation</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Pricing -->
+        <div class="gamma-card">
+            <span class="gamma-tag">Investment</span>
+            <h2>Flexible Options</h2>
+            <p>Choose the format that fits your schedule and goals</p>
+
+            <div class="gamma-pricing">
+                <div class="gamma-price-card">
+                    <h3>Workshop Pass</h3>
+                    <div class="gamma-price">€299</div>
+                    <p>Single workshop access</p>
+                    <ul class="gamma-features">
+                        <li>2-day intensive format</li>
+                        <li>All materials included</li>
+                        <li>Certificate of completion</li>
+                        <li>1-month community access</li>
+                    </ul>
+                </div>
+                <div class="gamma-price-card featured">
+                    <h3>Semester Program</h3>
+                    <div class="gamma-price">€2,499</div>
+                    <p>Full semester curriculum</p>
+                    <ul class="gamma-features">
+                        <li>Complete learning track</li>
+                        <li>All technology access</li>
+                        <li>1-on-1 mentorship</li>
+                        <li>Job placement support</li>
+                        <li>Industry certification prep</li>
+                    </ul>
+                </div>
+                <div class="gamma-price-card">
+                    <h3>Annual Pass</h3>
+                    <div class="gamma-price">€3,999</div>
+                    <p>Unlimited access</p>
+                    <ul class="gamma-features">
+                        <li>All workshops included</li>
+                        <li>Every program track</li>
+                        <li>Priority enrollment</li>
+                        <li>Alumni network access</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- CTA Section -->
+    <div class="gamma-card gamma-cta">
+        <h2>Ready to Transform Education?</h2>
+        <p>Let's discuss how TechEd Academy can serve your community</p>
+        <a href="#" class="gamma-button">Schedule a Meeting</a>
+    </div>
+
+    <div class="gamma-container" style="text-align: center; padding: 40px; color: var(--gamma-muted);">
+        <p>hello@techedacademy.com | +49 123 456 7890 | techedacademy.com</p>
+    </div>
+</body>
+</html>

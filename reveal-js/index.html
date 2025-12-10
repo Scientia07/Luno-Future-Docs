@@ -1,0 +1,502 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TechEd Academy - Program Concept 2025</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@4.5.0/dist/reveal.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@4.5.0/dist/theme/black.css">
+    <style>
+        :root {
+            --r-background-color: #0a0a1a;
+            --r-main-font: 'Segoe UI', system-ui, sans-serif;
+            --r-heading-font: 'Segoe UI', system-ui, sans-serif;
+            --r-main-color: #e0e0e0;
+            --r-heading-color: #fff;
+            --r-link-color: #42affa;
+        }
+        .reveal {
+            font-size: 32px;
+        }
+        .reveal h1, .reveal h2, .reveal h3 {
+            text-transform: none;
+            font-weight: 600;
+        }
+        .gradient-text {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        .card-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 20px;
+            margin-top: 30px;
+        }
+        .card {
+            background: linear-gradient(135deg, rgba(102, 126, 234, 0.2), rgba(118, 75, 162, 0.2));
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 16px;
+            padding: 25px;
+            text-align: left;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 40px rgba(102, 126, 234, 0.3);
+        }
+        .card h4 {
+            margin: 0 0 10px 0;
+            color: #42affa;
+            font-size: 1.2em;
+        }
+        .card p {
+            margin: 0;
+            font-size: 0.8em;
+            opacity: 0.8;
+        }
+        .timeline {
+            position: relative;
+            padding-left: 30px;
+            text-align: left;
+        }
+        .timeline::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            width: 3px;
+            background: linear-gradient(180deg, #667eea, #764ba2);
+            border-radius: 3px;
+        }
+        .timeline-item {
+            position: relative;
+            margin-bottom: 25px;
+            padding-left: 20px;
+        }
+        .timeline-item::before {
+            content: '';
+            position: absolute;
+            left: -36px;
+            top: 5px;
+            width: 12px;
+            height: 12px;
+            background: #667eea;
+            border-radius: 50%;
+            border: 3px solid #0a0a1a;
+        }
+        .timeline-item h4 {
+            margin: 0;
+            color: #42affa;
+        }
+        .timeline-item p {
+            margin: 5px 0 0 0;
+            font-size: 0.8em;
+            opacity: 0.8;
+        }
+        .stats-row {
+            display: flex;
+            justify-content: space-around;
+            margin-top: 40px;
+        }
+        .stat {
+            text-align: center;
+        }
+        .stat-number {
+            font-size: 3em;
+            font-weight: bold;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .stat-label {
+            font-size: 0.8em;
+            opacity: 0.7;
+        }
+        .tech-icons {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            margin-top: 30px;
+            flex-wrap: wrap;
+        }
+        .tech-icon {
+            width: 80px;
+            height: 80px;
+            background: rgba(255,255,255,0.1);
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2em;
+            transition: all 0.3s ease;
+        }
+        .tech-icon:hover {
+            background: rgba(102, 126, 234, 0.3);
+            transform: scale(1.1);
+        }
+        .pricing-table {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+            margin-top: 20px;
+        }
+        .pricing-card {
+            background: rgba(255,255,255,0.05);
+            border-radius: 12px;
+            padding: 20px;
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+        .pricing-card.featured {
+            background: linear-gradient(135deg, rgba(102, 126, 234, 0.3), rgba(118, 75, 162, 0.3));
+            border-color: #667eea;
+            transform: scale(1.05);
+        }
+        .pricing-card h4 {
+            margin: 0 0 5px 0;
+            color: #42affa;
+        }
+        .pricing-card .price {
+            font-size: 1.8em;
+            font-weight: bold;
+            margin: 10px 0;
+        }
+        .pricing-card ul {
+            list-style: none;
+            padding: 0;
+            margin: 15px 0 0 0;
+            font-size: 0.7em;
+            text-align: left;
+        }
+        .pricing-card li {
+            padding: 5px 0;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+        .cta-button {
+            display: inline-block;
+            padding: 15px 40px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            text-decoration: none;
+            border-radius: 30px;
+            font-weight: 600;
+            margin-top: 30px;
+            transition: all 0.3s ease;
+        }
+        .cta-button:hover {
+            transform: scale(1.05);
+            box-shadow: 0 10px 30px rgba(102, 126, 234, 0.4);
+        }
+        .fragment.grow-in {
+            opacity: 0;
+            transform: scale(0.8);
+        }
+        .fragment.grow-in.visible {
+            opacity: 1;
+            transform: scale(1);
+        }
+    </style>
+</head>
+<body>
+    <div class="reveal">
+        <div class="slides">
+            <!-- Title Slide -->
+            <section data-background-gradient="linear-gradient(135deg, #0a0a1a 0%, #1a1a3a 100%)">
+                <h1 class="gradient-text">TechEd Academy</h1>
+                <h3>Future-Ready Education Programs</h3>
+                <p style="opacity: 0.6;">Concept Presentation 2025</p>
+                <div class="stats-row">
+                    <div class="stat fragment" data-fragment-index="1">
+                        <div class="stat-number">12</div>
+                        <div class="stat-label">Programs</div>
+                    </div>
+                    <div class="stat fragment" data-fragment-index="2">
+                        <div class="stat-number">48</div>
+                        <div class="stat-label">Workshops</div>
+                    </div>
+                    <div class="stat fragment" data-fragment-index="3">
+                        <div class="stat-number">500+</div>
+                        <div class="stat-label">Students</div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Problem Statement -->
+            <section data-auto-animate>
+                <h2>The Challenge</h2>
+                <p class="fragment">Traditional education isn't keeping pace with technology</p>
+                <div class="card-grid">
+                    <div class="card fragment">
+                        <h4>Skills Gap</h4>
+                        <p>87% of companies report difficulty finding tech talent</p>
+                    </div>
+                    <div class="card fragment">
+                        <h4>Outdated Curriculum</h4>
+                        <p>Average textbook is 5+ years behind current tech</p>
+                    </div>
+                    <div class="card fragment">
+                        <h4>Access Barriers</h4>
+                        <p>High costs prevent many from quality tech education</p>
+                    </div>
+                    <div class="card fragment">
+                        <h4>Theory vs Practice</h4>
+                        <p>Students learn concepts but lack hands-on experience</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Solution Overview -->
+            <section data-auto-animate data-background-gradient="linear-gradient(135deg, #1a1a3a 0%, #2a1a4a 100%)">
+                <h2 class="gradient-text">Our Solution</h2>
+                <p>A comprehensive, technology-first learning ecosystem</p>
+            </section>
+
+            <section data-auto-animate data-background-gradient="linear-gradient(135deg, #1a1a3a 0%, #2a1a4a 100%)">
+                <h2 class="gradient-text">Our Solution</h2>
+                <div class="tech-icons">
+                    <div class="tech-icon fragment">🎓</div>
+                    <div class="tech-icon fragment">💻</div>
+                    <div class="tech-icon fragment">🤖</div>
+                    <div class="tech-icon fragment">☁️</div>
+                    <div class="tech-icon fragment">🔐</div>
+                </div>
+            </section>
+
+            <!-- Programs Section -->
+            <section>
+                <section>
+                    <h2>Program Tracks</h2>
+                    <p>Choose your learning path</p>
+                    <p style="opacity: 0.5; font-size: 0.7em;">↓ Scroll down to explore each track</p>
+                </section>
+
+                <section data-auto-animate>
+                    <h3>🌐 Web Development</h3>
+                    <div class="timeline">
+                        <div class="timeline-item fragment">
+                            <h4>Foundation (8 weeks)</h4>
+                            <p>HTML, CSS, JavaScript fundamentals</p>
+                        </div>
+                        <div class="timeline-item fragment">
+                            <h4>Framework Mastery (12 weeks)</h4>
+                            <p>React, Vue, or Angular deep dive</p>
+                        </div>
+                        <div class="timeline-item fragment">
+                            <h4>Full Stack (16 weeks)</h4>
+                            <p>Backend, databases, deployment</p>
+                        </div>
+                        <div class="timeline-item fragment">
+                            <h4>Capstone Project (4 weeks)</h4>
+                            <p>Real-world client project</p>
+                        </div>
+                    </div>
+                </section>
+
+                <section data-auto-animate>
+                    <h3>🤖 AI & Machine Learning</h3>
+                    <div class="timeline">
+                        <div class="timeline-item fragment">
+                            <h4>Python & Math Foundations (6 weeks)</h4>
+                            <p>Programming basics, linear algebra, statistics</p>
+                        </div>
+                        <div class="timeline-item fragment">
+                            <h4>ML Fundamentals (10 weeks)</h4>
+                            <p>Supervised, unsupervised learning, neural networks</p>
+                        </div>
+                        <div class="timeline-item fragment">
+                            <h4>Deep Learning & LLMs (12 weeks)</h4>
+                            <p>Transformers, fine-tuning, prompt engineering</p>
+                        </div>
+                        <div class="timeline-item fragment">
+                            <h4>Industry Project (6 weeks)</h4>
+                            <p>Partner company collaboration</p>
+                        </div>
+                    </div>
+                </section>
+
+                <section data-auto-animate>
+                    <h3>🔐 Cybersecurity</h3>
+                    <div class="timeline">
+                        <div class="timeline-item fragment">
+                            <h4>Security Fundamentals (6 weeks)</h4>
+                            <p>Networks, protocols, threat landscape</p>
+                        </div>
+                        <div class="timeline-item fragment">
+                            <h4>Ethical Hacking (10 weeks)</h4>
+                            <p>Penetration testing, vulnerability assessment</p>
+                        </div>
+                        <div class="timeline-item fragment">
+                            <h4>Defense & Response (8 weeks)</h4>
+                            <p>SOC operations, incident response</p>
+                        </div>
+                        <div class="timeline-item fragment">
+                            <h4>Certification Prep (4 weeks)</h4>
+                            <p>CompTIA, CEH exam preparation</p>
+                        </div>
+                    </div>
+                </section>
+            </section>
+
+            <!-- Technology Access -->
+            <section data-background-gradient="linear-gradient(135deg, #2a1a4a 0%, #1a2a4a 100%)">
+                <h2>Technology Access</h2>
+                <p>Every student gets professional-grade tools</p>
+                <div class="card-grid">
+                    <div class="card fragment">
+                        <h4>☁️ Cloud Credits</h4>
+                        <p>$500 AWS/Azure/GCP credits per semester</p>
+                    </div>
+                    <div class="card fragment">
+                        <h4>💻 Dev Environments</h4>
+                        <p>Pre-configured GitHub Codespaces & VSCode</p>
+                    </div>
+                    <div class="card fragment">
+                        <h4>🤖 AI Tools</h4>
+                        <p>Access to Claude, GPT-4, Copilot for learning</p>
+                    </div>
+                    <div class="card fragment">
+                        <h4>🔧 Software Licenses</h4>
+                        <p>JetBrains, Figma, Adobe Creative Suite</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Workshop Formats -->
+            <section>
+                <h2>Workshop Formats</h2>
+                <div class="pricing-table">
+                    <div class="pricing-card fragment">
+                        <h4>Intensive</h4>
+                        <div class="price">2 Days</div>
+                        <ul>
+                            <li>Weekend format</li>
+                            <li>Single topic deep-dive</li>
+                            <li>Hands-on projects</li>
+                            <li>Certificate included</li>
+                        </ul>
+                    </div>
+                    <div class="pricing-card featured fragment">
+                        <h4>Bootcamp</h4>
+                        <div class="price">4 Weeks</div>
+                        <ul>
+                            <li>Full-time immersion</li>
+                            <li>Complete skill track</li>
+                            <li>Mentorship included</li>
+                            <li>Job placement support</li>
+                        </ul>
+                    </div>
+                    <div class="pricing-card fragment">
+                        <h4>Evening</h4>
+                        <div class="price">8 Weeks</div>
+                        <ul>
+                            <li>2 evenings per week</li>
+                            <li>Work-life balance</li>
+                            <li>Flexible pacing</li>
+                            <li>Recorded sessions</li>
+                        </ul>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Semester Overview -->
+            <section data-auto-animate>
+                <h2>Semester Structure</h2>
+                <div class="timeline">
+                    <div class="timeline-item fragment">
+                        <h4>January - March: Spring Intensive</h4>
+                        <p>Core fundamentals, team formation</p>
+                    </div>
+                    <div class="timeline-item fragment">
+                        <h4>April - June: Project Season</h4>
+                        <p>Client projects, hackathons, competitions</p>
+                    </div>
+                    <div class="timeline-item fragment">
+                        <h4>July - August: Summer Labs</h4>
+                        <p>Internships, research projects, workshops</p>
+                    </div>
+                    <div class="timeline-item fragment">
+                        <h4>September - December: Fall Launch</h4>
+                        <p>Advanced tracks, portfolio development, job prep</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Investment -->
+            <section data-background-gradient="linear-gradient(135deg, #1a2a4a 0%, #2a3a5a 100%)">
+                <h2>Investment Options</h2>
+                <div class="pricing-table">
+                    <div class="pricing-card fragment">
+                        <h4>Workshop Pass</h4>
+                        <div class="price">€299</div>
+                        <ul>
+                            <li>Single workshop access</li>
+                            <li>Materials included</li>
+                            <li>Certificate</li>
+                            <li>1-month community access</li>
+                        </ul>
+                    </div>
+                    <div class="pricing-card featured fragment">
+                        <h4>Semester Program</h4>
+                        <div class="price">€2,499</div>
+                        <ul>
+                            <li>Full semester curriculum</li>
+                            <li>All technology access</li>
+                            <li>1-on-1 mentorship</li>
+                            <li>Job placement support</li>
+                        </ul>
+                    </div>
+                    <div class="pricing-card fragment">
+                        <h4>Annual Membership</h4>
+                        <div class="price">€3,999</div>
+                        <ul>
+                            <li>Unlimited workshops</li>
+                            <li>All programs included</li>
+                            <li>Priority enrollment</li>
+                            <li>Alumni network access</li>
+                        </ul>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Call to Action -->
+            <section data-background-gradient="linear-gradient(135deg, #667eea 0%, #764ba2 100%)">
+                <h2>Ready to Transform Education?</h2>
+                <p>Let's discuss how TechEd Academy can serve your community</p>
+                <a href="#" class="cta-button">Schedule a Meeting</a>
+                <div class="stats-row" style="margin-top: 50px;">
+                    <div class="stat">
+                        <div style="font-size: 1.5em;">📧</div>
+                        <div class="stat-label">hello@techedacademy.com</div>
+                    </div>
+                    <div class="stat">
+                        <div style="font-size: 1.5em;">📱</div>
+                        <div class="stat-label">+49 123 456 7890</div>
+                    </div>
+                    <div class="stat">
+                        <div style="font-size: 1.5em;">🌐</div>
+                        <div class="stat-label">techedacademy.com</div>
+                    </div>
+                </div>
+            </section>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/reveal.js@4.5.0/dist/reveal.js"></script>
+    <script>
+        Reveal.initialize({
+            hash: true,
+            slideNumber: true,
+            transition: 'slide',
+            backgroundTransition: 'fade',
+            center: true,
+            controls: true,
+            progress: true,
+            autoAnimateEasing: 'ease-out',
+            autoAnimateDuration: 0.8,
+            mouseWheel: true
+        });
+    </script>
+</body>
+</html>

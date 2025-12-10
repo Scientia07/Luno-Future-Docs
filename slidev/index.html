@@ -1,0 +1,610 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TechEd Academy - Slidev Style Presentation</title>
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        :root {
+            --slidev-theme-primary: #3b82f6;
+            --slidev-theme-secondary: #10b981;
+            --slidev-code-bg: #1e1e1e;
+            --slidev-bg: #121212;
+            --slidev-fg: #f5f5f5;
+        }
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--slidev-bg);
+            color: var(--slidev-fg);
+            overflow: hidden;
+        }
+        .slide-container {
+            width: 100vw;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+        .slides {
+            flex: 1;
+            position: relative;
+            overflow: hidden;
+        }
+        .slide {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            padding: 60px 80px;
+            display: none;
+            flex-direction: column;
+            justify-content: center;
+            opacity: 0;
+            transform: translateX(50px);
+            transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .slide.active {
+            display: flex;
+            opacity: 1;
+            transform: translateX(0);
+        }
+        .slide.leaving {
+            display: flex;
+            opacity: 0;
+            transform: translateX(-50px);
+        }
+        h1 {
+            font-size: 4em;
+            font-weight: 700;
+            margin-bottom: 0.5em;
+            background: linear-gradient(135deg, var(--slidev-theme-primary), var(--slidev-theme-secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        h2 {
+            font-size: 2.5em;
+            font-weight: 600;
+            margin-bottom: 0.8em;
+            color: var(--slidev-fg);
+        }
+        h3 {
+            font-size: 1.5em;
+            font-weight: 500;
+            color: var(--slidev-theme-primary);
+            margin-bottom: 0.5em;
+        }
+        p {
+            font-size: 1.4em;
+            line-height: 1.6;
+            opacity: 0.8;
+        }
+        .code-block {
+            background: var(--slidev-code-bg);
+            border-radius: 12px;
+            padding: 24px;
+            margin: 20px 0;
+            font-family: 'Fira Code', monospace;
+            font-size: 1em;
+            overflow-x: auto;
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+        .code-block .comment { color: #6a9955; }
+        .code-block .keyword { color: #569cd6; }
+        .code-block .string { color: #ce9178; }
+        .code-block .function { color: #dcdcaa; }
+        .code-block .number { color: #b5cea8; }
+        .two-cols {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 60px;
+            align-items: center;
+        }
+        .icon-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 30px;
+            margin-top: 40px;
+        }
+        .icon-item {
+            background: rgba(255,255,255,0.05);
+            border-radius: 16px;
+            padding: 30px;
+            text-align: center;
+            transition: all 0.3s ease;
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+        .icon-item:hover {
+            background: rgba(59, 130, 246, 0.1);
+            transform: translateY(-5px);
+            border-color: var(--slidev-theme-primary);
+        }
+        .icon-item .icon {
+            font-size: 3em;
+            margin-bottom: 15px;
+        }
+        .icon-item h4 {
+            font-size: 1.2em;
+            margin-bottom: 8px;
+        }
+        .icon-item p {
+            font-size: 0.9em;
+            opacity: 0.6;
+        }
+        .list-animated li {
+            opacity: 0;
+            transform: translateX(-20px);
+            transition: all 0.4s ease;
+            padding: 15px 0;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+            font-size: 1.2em;
+        }
+        .list-animated li.visible {
+            opacity: 1;
+            transform: translateX(0);
+        }
+        .list-animated li::before {
+            content: '→';
+            color: var(--slidev-theme-primary);
+            margin-right: 15px;
+        }
+        .progress-bar {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            height: 4px;
+            background: linear-gradient(90deg, var(--slidev-theme-primary), var(--slidev-theme-secondary));
+            transition: width 0.3s ease;
+            z-index: 1000;
+        }
+        .slide-number {
+            position: fixed;
+            bottom: 20px;
+            right: 30px;
+            font-family: 'Fira Code', monospace;
+            font-size: 1em;
+            opacity: 0.5;
+        }
+        .nav-buttons {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 10px;
+            z-index: 1000;
+        }
+        .nav-btn {
+            width: 50px;
+            height: 50px;
+            border: none;
+            background: rgba(255,255,255,0.1);
+            color: white;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 1.2em;
+            transition: all 0.3s ease;
+        }
+        .nav-btn:hover {
+            background: var(--slidev-theme-primary);
+            transform: scale(1.1);
+        }
+        .tag {
+            display: inline-block;
+            padding: 5px 15px;
+            background: rgba(59, 130, 246, 0.2);
+            border: 1px solid var(--slidev-theme-primary);
+            border-radius: 20px;
+            font-size: 0.8em;
+            margin-right: 10px;
+            margin-bottom: 10px;
+        }
+        .highlight-box {
+            background: linear-gradient(135deg, rgba(59, 130, 246, 0.1), rgba(16, 185, 129, 0.1));
+            border-left: 4px solid var(--slidev-theme-primary);
+            padding: 30px;
+            border-radius: 0 12px 12px 0;
+            margin: 30px 0;
+        }
+        .timeline-dev {
+            position: relative;
+            padding-left: 40px;
+        }
+        .timeline-dev::before {
+            content: '';
+            position: absolute;
+            left: 10px;
+            top: 0;
+            bottom: 0;
+            width: 2px;
+            background: linear-gradient(180deg, var(--slidev-theme-primary), var(--slidev-theme-secondary));
+        }
+        .timeline-dev-item {
+            position: relative;
+            margin-bottom: 30px;
+            opacity: 0;
+            transform: translateX(-20px);
+            transition: all 0.4s ease;
+        }
+        .timeline-dev-item.visible {
+            opacity: 1;
+            transform: translateX(0);
+        }
+        .timeline-dev-item::before {
+            content: '';
+            position: absolute;
+            left: -34px;
+            top: 8px;
+            width: 10px;
+            height: 10px;
+            background: var(--slidev-theme-primary);
+            border-radius: 50%;
+        }
+        .terminal {
+            background: #0d1117;
+            border-radius: 12px;
+            overflow: hidden;
+            font-family: 'Fira Code', monospace;
+            margin: 20px 0;
+        }
+        .terminal-header {
+            background: #161b22;
+            padding: 12px 15px;
+            display: flex;
+            gap: 8px;
+        }
+        .terminal-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+        }
+        .terminal-dot.red { background: #ff5f56; }
+        .terminal-dot.yellow { background: #ffbd2e; }
+        .terminal-dot.green { background: #27ca40; }
+        .terminal-body {
+            padding: 20px;
+            font-size: 0.95em;
+            line-height: 1.8;
+        }
+        .terminal-body .prompt { color: #7ee787; }
+        .terminal-body .command { color: #f0f6fc; }
+        .terminal-body .output { color: #8b949e; }
+        .center-content {
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+        .large-emoji {
+            font-size: 6em;
+            margin-bottom: 30px;
+        }
+    </style>
+</head>
+<body>
+    <div class="slide-container">
+        <div class="slides">
+            <!-- Slide 1: Title -->
+            <div class="slide active center-content">
+                <h1>TechEd Academy</h1>
+                <p>Developer-First Education Platform</p>
+                <div style="margin-top: 40px;">
+                    <span class="tag">React</span>
+                    <span class="tag">Python</span>
+                    <span class="tag">AI/ML</span>
+                    <span class="tag">Cloud</span>
+                    <span class="tag">DevOps</span>
+                </div>
+                <div class="terminal" style="width: 500px; margin-top: 40px;">
+                    <div class="terminal-header">
+                        <div class="terminal-dot red"></div>
+                        <div class="terminal-dot yellow"></div>
+                        <div class="terminal-dot green"></div>
+                    </div>
+                    <div class="terminal-body">
+                        <span class="prompt">$</span> <span class="command">npx create-future --education</span><br>
+                        <span class="output">✓ Installing dependencies...</span><br>
+                        <span class="output">✓ Setting up curriculum...</span><br>
+                        <span class="prompt">$</span> <span class="command">npm run learn</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Slide 2: The Problem -->
+            <div class="slide">
+                <h2>The Tech Education Gap</h2>
+                <div class="two-cols">
+                    <div>
+                        <div class="code-block">
+                            <span class="comment">// Traditional Education</span><br>
+                            <span class="keyword">const</span> <span class="function">oldWay</span> = {<br>
+                            &nbsp;&nbsp;curriculum: <span class="string">"5 years outdated"</span>,<br>
+                            &nbsp;&nbsp;practice: <span class="string">"minimal"</span>,<br>
+                            &nbsp;&nbsp;tools: <span class="string">"theoretical"</span>,<br>
+                            &nbsp;&nbsp;outcome: <span class="string">"unprepared"</span><br>
+                            };
+                        </div>
+                    </div>
+                    <div>
+                        <div class="code-block">
+                            <span class="comment">// TechEd Academy</span><br>
+                            <span class="keyword">const</span> <span class="function">newWay</span> = {<br>
+                            &nbsp;&nbsp;curriculum: <span class="string">"industry-current"</span>,<br>
+                            &nbsp;&nbsp;practice: <span class="number">80</span> + <span class="string">"%"</span>,<br>
+                            &nbsp;&nbsp;tools: <span class="string">"production-grade"</span>,<br>
+                            &nbsp;&nbsp;outcome: <span class="string">"job-ready"</span><br>
+                            };
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Slide 3: Programs -->
+            <div class="slide">
+                <h2>Learning Tracks</h2>
+                <div class="icon-grid">
+                    <div class="icon-item">
+                        <div class="icon">🌐</div>
+                        <h4>Web Development</h4>
+                        <p>React, Vue, Node.js, Full Stack</p>
+                    </div>
+                    <div class="icon-item">
+                        <div class="icon">🤖</div>
+                        <h4>AI & Machine Learning</h4>
+                        <p>PyTorch, LLMs, Computer Vision</p>
+                    </div>
+                    <div class="icon-item">
+                        <div class="icon">☁️</div>
+                        <h4>Cloud & DevOps</h4>
+                        <p>AWS, Kubernetes, CI/CD</p>
+                    </div>
+                    <div class="icon-item">
+                        <div class="icon">🔐</div>
+                        <h4>Cybersecurity</h4>
+                        <p>Ethical Hacking, Defense</p>
+                    </div>
+                    <div class="icon-item">
+                        <div class="icon">📱</div>
+                        <h4>Mobile Development</h4>
+                        <p>React Native, Flutter, Swift</p>
+                    </div>
+                    <div class="icon-item">
+                        <div class="icon">🎮</div>
+                        <h4>Game Development</h4>
+                        <p>Unity, Unreal, Godot</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Slide 4: Tech Stack -->
+            <div class="slide">
+                <h2>Your Dev Environment</h2>
+                <div class="two-cols">
+                    <div>
+                        <div class="terminal">
+                            <div class="terminal-header">
+                                <div class="terminal-dot red"></div>
+                                <div class="terminal-dot yellow"></div>
+                                <div class="terminal-dot green"></div>
+                            </div>
+                            <div class="terminal-body">
+                                <span class="prompt">student@teched:~$</span> <span class="command">cat tools.yaml</span><br><br>
+                                <span class="output">ide: VSCode + Codespaces</span><br>
+                                <span class="output">cloud: AWS | Azure | GCP</span><br>
+                                <span class="output">ai: Claude | GPT-4 | Copilot</span><br>
+                                <span class="output">collab: GitHub | Figma</span><br>
+                                <span class="output">deploy: Vercel | Railway</span><br><br>
+                                <span class="prompt">student@teched:~$</span> <span class="command">echo $CREDITS</span><br>
+                                <span class="output">$500/semester</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div>
+                        <h3>Everything Included</h3>
+                        <ul class="list-animated" id="toolsList">
+                            <li>GitHub Pro subscription</li>
+                            <li>JetBrains IDE licenses</li>
+                            <li>Cloud platform credits</li>
+                            <li>AI assistant access</li>
+                            <li>Design tool subscriptions</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Slide 5: Semester Timeline -->
+            <div class="slide">
+                <h2>Semester Roadmap</h2>
+                <div class="two-cols">
+                    <div class="timeline-dev" id="semesterTimeline">
+                        <div class="timeline-dev-item">
+                            <h3>Q1: Foundation Sprint</h3>
+                            <p>Core concepts, team formation, first project</p>
+                        </div>
+                        <div class="timeline-dev-item">
+                            <h3>Q2: Build Phase</h3>
+                            <p>Real client projects, hackathons, competitions</p>
+                        </div>
+                        <div class="timeline-dev-item">
+                            <h3>Q3: Summer Labs</h3>
+                            <p>Internships, research, intensive workshops</p>
+                        </div>
+                        <div class="timeline-dev-item">
+                            <h3>Q4: Launch Ready</h3>
+                            <p>Portfolio polish, interviews, job placement</p>
+                        </div>
+                    </div>
+                    <div>
+                        <div class="highlight-box">
+                            <h3>Key Metrics</h3>
+                            <div class="code-block">
+<span class="keyword">const</span> <span class="function">outcomes</span> = {<br>
+&nbsp;&nbsp;employmentRate: <span class="string">"94%"</span>,<br>
+&nbsp;&nbsp;avgSalaryIncrease: <span class="string">"45%"</span>,<br>
+&nbsp;&nbsp;projectsCompleted: <span class="number">12</span>,<br>
+&nbsp;&nbsp;industryPartners: <span class="number">50</span>+<br>
+};
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Slide 6: Workshop Types -->
+            <div class="slide">
+                <h2>Workshop Formats</h2>
+                <div class="icon-grid" style="grid-template-columns: repeat(3, 1fr);">
+                    <div class="icon-item">
+                        <div class="icon">⚡</div>
+                        <h4>Intensive</h4>
+                        <p>2-day deep dives<br>Weekend format<br>Single topic mastery</p>
+                        <div class="tag" style="margin-top: 15px;">€299</div>
+                    </div>
+                    <div class="icon-item" style="border-color: var(--slidev-theme-secondary); background: rgba(16, 185, 129, 0.1);">
+                        <div class="icon">🚀</div>
+                        <h4>Bootcamp</h4>
+                        <p>4-week immersion<br>Full-time program<br>Career transformation</p>
+                        <div class="tag" style="margin-top: 15px; border-color: var(--slidev-theme-secondary);">€2,499</div>
+                    </div>
+                    <div class="icon-item">
+                        <div class="icon">🌙</div>
+                        <h4>Evening Track</h4>
+                        <p>8-week program<br>Work-life balance<br>Flexible pacing</p>
+                        <div class="tag" style="margin-top: 15px;">€1,499</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Slide 7: Code Example -->
+            <div class="slide">
+                <h2>Learn By Building</h2>
+                <p style="margin-bottom: 30px;">Every concept taught through real projects</p>
+                <div class="code-block" style="font-size: 0.9em;">
+<span class="comment">// Week 1: Build your first AI-powered app</span><br><br>
+<span class="keyword">import</span> { Claude } <span class="keyword">from</span> <span class="string">'@anthropic/sdk'</span>;<br><br>
+<span class="keyword">const</span> <span class="function">analyzeCode</span> = <span class="keyword">async</span> (code: <span class="keyword">string</span>) => {<br>
+&nbsp;&nbsp;<span class="keyword">const</span> response = <span class="keyword">await</span> claude.<span class="function">messages</span>.<span class="function">create</span>({<br>
+&nbsp;&nbsp;&nbsp;&nbsp;model: <span class="string">"claude-sonnet-4-20250514"</span>,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;messages: [{<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;role: <span class="string">"user"</span>,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;content: <span class="string">`Review this code: </span>${code}<span class="string">`</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;}]<br>
+&nbsp;&nbsp;});<br>
+&nbsp;&nbsp;<span class="keyword">return</span> response.content;<br>
+};
+                </div>
+            </div>
+
+            <!-- Slide 8: CTA -->
+            <div class="slide center-content">
+                <div class="large-emoji">🎓</div>
+                <h1>Start Your Journey</h1>
+                <p style="margin-bottom: 40px;">Transform your career with industry-relevant skills</p>
+                <div class="terminal" style="width: 600px;">
+                    <div class="terminal-header">
+                        <div class="terminal-dot red"></div>
+                        <div class="terminal-dot yellow"></div>
+                        <div class="terminal-dot green"></div>
+                    </div>
+                    <div class="terminal-body">
+                        <span class="prompt">$</span> <span class="command">curl -X POST teched.academy/enroll</span><br>
+                        <span class="output">{</span><br>
+                        <span class="output">&nbsp;&nbsp;"status": "Welcome aboard! 🚀",</span><br>
+                        <span class="output">&nbsp;&nbsp;"next_cohort": "January 2025",</span><br>
+                        <span class="output">&nbsp;&nbsp;"contact": "hello@teched.academy"</span><br>
+                        <span class="output">}</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="progress-bar" id="progress"></div>
+        <div class="slide-number"><span id="currentSlide">1</span> / <span id="totalSlides">8</span></div>
+
+        <div class="nav-buttons">
+            <button class="nav-btn" onclick="prevSlide()">←</button>
+            <button class="nav-btn" onclick="nextSlide()">→</button>
+        </div>
+    </div>
+
+    <script>
+        let currentSlide = 0;
+        const slides = document.querySelectorAll('.slide');
+        const totalSlides = slides.length;
+        document.getElementById('totalSlides').textContent = totalSlides;
+
+        function updateProgress() {
+            const progress = ((currentSlide + 1) / totalSlides) * 100;
+            document.getElementById('progress').style.width = progress + '%';
+            document.getElementById('currentSlide').textContent = currentSlide + 1;
+        }
+
+        function showSlide(index) {
+            slides.forEach((slide, i) => {
+                slide.classList.remove('active', 'leaving');
+                if (i === index) {
+                    slide.classList.add('active');
+                    animateSlideElements(slide);
+                } else if (i === currentSlide) {
+                    slide.classList.add('leaving');
+                }
+            });
+            currentSlide = index;
+            updateProgress();
+        }
+
+        function animateSlideElements(slide) {
+            // Animate list items
+            const listItems = slide.querySelectorAll('.list-animated li');
+            listItems.forEach((item, i) => {
+                setTimeout(() => item.classList.add('visible'), i * 200);
+            });
+
+            // Animate timeline items
+            const timelineItems = slide.querySelectorAll('.timeline-dev-item');
+            timelineItems.forEach((item, i) => {
+                setTimeout(() => item.classList.add('visible'), i * 300);
+            });
+        }
+
+        function nextSlide() {
+            if (currentSlide < totalSlides - 1) {
+                showSlide(currentSlide + 1);
+            }
+        }
+
+        function prevSlide() {
+            if (currentSlide > 0) {
+                showSlide(currentSlide - 1);
+            }
+        }
+
+        // Keyboard navigation
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowRight' || e.key === ' ') nextSlide();
+            if (e.key === 'ArrowLeft') prevSlide();
+        });
+
+        // Touch navigation
+        let touchStartX = 0;
+        document.addEventListener('touchstart', e => touchStartX = e.touches[0].clientX);
+        document.addEventListener('touchend', e => {
+            const diff = touchStartX - e.changedTouches[0].clientX;
+            if (Math.abs(diff) > 50) {
+                if (diff > 0) nextSlide();
+                else prevSlide();
+            }
+        });
+
+        // Initialize
+        updateProgress();
+        animateSlideElements(slides[0]);
+    </script>
+</body>
+</html>

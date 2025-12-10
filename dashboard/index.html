@@ -1,0 +1,739 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Interactive Documentation Showcase - Dashboard</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        :root {
+            --bg: #0a0a1a;
+            --card-bg: rgba(255,255,255,0.05);
+            --primary: #6366f1;
+            --secondary: #ec4899;
+            --accent: #10b981;
+            --warning: #f59e0b;
+            --text: #ffffff;
+            --text-muted: rgba(255,255,255,0.6);
+        }
+        body {
+            font-family: 'Segoe UI', system-ui, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            min-height: 100vh;
+            line-height: 1.6;
+        }
+        .header {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            padding: 60px 40px;
+            text-align: center;
+        }
+        .header h1 {
+            font-size: 3em;
+            font-weight: 700;
+            margin-bottom: 15px;
+        }
+        .header p {
+            font-size: 1.2em;
+            opacity: 0.9;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 60px 40px;
+        }
+        .section-title {
+            font-size: 2em;
+            font-weight: 600;
+            margin-bottom: 30px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        .section-title::before {
+            content: '';
+            width: 4px;
+            height: 30px;
+            background: linear-gradient(180deg, var(--primary), var(--secondary));
+            border-radius: 4px;
+        }
+        .formats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(380px, 1fr));
+            gap: 30px;
+            margin-bottom: 60px;
+        }
+        .format-card {
+            background: var(--card-bg);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 20px;
+            overflow: hidden;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .format-card:hover {
+            transform: translateY(-10px);
+            border-color: var(--primary);
+            box-shadow: 0 30px 60px rgba(99, 102, 241, 0.2);
+        }
+        .format-preview {
+            height: 200px;
+            background: linear-gradient(135deg, #1a1a3a, #2a1a4a);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 5em;
+            position: relative;
+            overflow: hidden;
+        }
+        .format-preview::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(180deg, transparent 50%, rgba(0,0,0,0.5) 100%);
+        }
+        .format-content {
+            padding: 30px;
+        }
+        .format-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 15px;
+        }
+        .format-name {
+            font-size: 1.5em;
+            font-weight: 600;
+        }
+        .format-badge {
+            display: flex;
+            gap: 8px;
+        }
+        .badge {
+            padding: 4px 12px;
+            border-radius: 100px;
+            font-size: 0.75em;
+            font-weight: 500;
+        }
+        .badge-offline {
+            background: rgba(16, 185, 129, 0.2);
+            color: #10b981;
+        }
+        .badge-online {
+            background: rgba(245, 158, 11, 0.2);
+            color: #f59e0b;
+        }
+        .format-desc {
+            color: var(--text-muted);
+            margin-bottom: 20px;
+            font-size: 0.95em;
+        }
+        .format-meta {
+            display: flex;
+            gap: 20px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+        .meta-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.85em;
+            color: var(--text-muted);
+        }
+        .meta-item .icon {
+            font-size: 1.2em;
+        }
+        .rating {
+            display: flex;
+            gap: 3px;
+        }
+        .rating-star {
+            color: var(--warning);
+            font-size: 1em;
+        }
+        .rating-star.empty {
+            opacity: 0.3;
+        }
+        .format-actions {
+            display: flex;
+            gap: 10px;
+        }
+        .btn {
+            flex: 1;
+            padding: 14px 20px;
+            border: none;
+            border-radius: 12px;
+            font-size: 0.95em;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-decoration: none;
+            text-align: center;
+        }
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+        }
+        .btn-primary:hover {
+            transform: scale(1.02);
+            box-shadow: 0 10px 30px rgba(99, 102, 241, 0.3);
+        }
+        .btn-secondary {
+            background: rgba(255,255,255,0.1);
+            color: white;
+            border: 1px solid rgba(255,255,255,0.2);
+        }
+        .btn-secondary:hover {
+            background: rgba(255,255,255,0.15);
+        }
+        .comparison-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        .comparison-table th,
+        .comparison-table td {
+            padding: 15px 20px;
+            text-align: left;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+        .comparison-table th {
+            background: rgba(255,255,255,0.05);
+            font-weight: 600;
+            font-size: 0.9em;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+        .comparison-table tr:hover {
+            background: rgba(255,255,255,0.02);
+        }
+        .comparison-table .format-col {
+            font-weight: 600;
+            color: var(--primary);
+        }
+        .check {
+            color: var(--accent);
+            font-size: 1.2em;
+        }
+        .cross {
+            color: #ef4444;
+            font-size: 1.2em;
+        }
+        .partial {
+            color: var(--warning);
+            font-size: 1.2em;
+        }
+        .skill-tag {
+            display: inline-block;
+            padding: 4px 10px;
+            background: rgba(99, 102, 241, 0.2);
+            border-radius: 6px;
+            font-size: 0.8em;
+        }
+        .quick-links {
+            background: var(--card-bg);
+            border-radius: 16px;
+            padding: 30px;
+            margin-bottom: 60px;
+        }
+        .quick-links h3 {
+            margin-bottom: 20px;
+        }
+        .links-grid {
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+        .quick-link {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 12px 20px;
+            background: rgba(255,255,255,0.05);
+            border-radius: 10px;
+            text-decoration: none;
+            color: var(--text);
+            transition: all 0.3s;
+        }
+        .quick-link:hover {
+            background: var(--primary);
+        }
+        .recommendations {
+            background: linear-gradient(135deg, rgba(99, 102, 241, 0.1), rgba(236, 72, 153, 0.1));
+            border-radius: 20px;
+            padding: 40px;
+            margin-top: 40px;
+        }
+        .recommendations h3 {
+            font-size: 1.5em;
+            margin-bottom: 20px;
+        }
+        .rec-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+        }
+        .rec-item {
+            background: rgba(0,0,0,0.3);
+            border-radius: 12px;
+            padding: 20px;
+        }
+        .rec-item h4 {
+            color: var(--primary);
+            margin-bottom: 10px;
+        }
+        .rec-item p {
+            color: var(--text-muted);
+            font-size: 0.9em;
+        }
+        .footer {
+            text-align: center;
+            padding: 40px;
+            color: var(--text-muted);
+            border-top: 1px solid rgba(255,255,255,0.1);
+        }
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 2em;
+            }
+            .formats-grid {
+                grid-template-columns: 1fr;
+            }
+            .container {
+                padding: 40px 20px;
+            }
+            .comparison-table {
+                display: block;
+                overflow-x: auto;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <h1>Interactive Documentation Showcase</h1>
+        <p>Explore 7 different approaches to creating engaging, interactive documents for your customers</p>
+    </header>
+
+    <div class="container">
+        <!-- Quick Links -->
+        <div class="quick-links">
+            <h3>Quick Access</h3>
+            <div class="links-grid">
+                <a href="../reveal-js/index.html" class="quick-link">
+                    <span>🎭</span> Reveal.js
+                </a>
+                <a href="../slidev/index.html" class="quick-link">
+                    <span>💻</span> Slidev
+                </a>
+                <a href="../motion-canvas/index.html" class="quick-link">
+                    <span>🎬</span> Motion Canvas
+                </a>
+                <a href="../gamma-guide/index.html" class="quick-link">
+                    <span>✨</span> Gamma Style
+                </a>
+                <a href="../framer-guide/index.html" class="quick-link">
+                    <span>🎨</span> Framer Style
+                </a>
+                <a href="../lottie-html/index.html" class="quick-link">
+                    <span>🎪</span> Lottie + HTML
+                </a>
+                <a href="../scrollytelling/index.html" class="quick-link">
+                    <span>📜</span> Scrollytelling
+                </a>
+                <a href="../docs/evaluation.html" class="quick-link" style="background: var(--primary);">
+                    <span>📊</span> Full Evaluation
+                </a>
+            </div>
+        </div>
+
+        <h2 class="section-title">All Formats</h2>
+
+        <div class="formats-grid">
+            <!-- Reveal.js -->
+            <div class="format-card">
+                <div class="format-preview">🎭</div>
+                <div class="format-content">
+                    <div class="format-header">
+                        <div class="format-name">Reveal.js</div>
+                        <div class="format-badge">
+                            <span class="badge badge-offline">Offline</span>
+                        </div>
+                    </div>
+                    <p class="format-desc">Classic presentation framework with smooth transitions, fragments, and nested slides. Great for traditional slide-based presentations.</p>
+                    <div class="format-meta">
+                        <div class="meta-item">
+                            <span class="icon">📊</span>
+                            <span>Medium Skill</span>
+                        </div>
+                        <div class="meta-item">
+                            <span class="icon">⚡</span>
+                            <span>Great Animations</span>
+                        </div>
+                        <div class="meta-item">
+                            <div class="rating">
+                                <span class="rating-star">★</span>
+                                <span class="rating-star">★</span>
+                                <span class="rating-star">★</span>
+                                <span class="rating-star">★</span>
+                                <span class="rating-star empty">★</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="format-actions">
+                        <a href="../reveal-js/index.html" class="btn btn-primary">View Demo</a>
+                        <a href="../docs/evaluation.html#reveal" class="btn btn-secondary">Details</a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Slidev -->
+            <div class="format-card">
+                <div class="format-preview">💻</div>
+                <div class="format-content">
+                    <div class="format-header">
+                        <div class="format-name">Slidev Style</div>
+                        <div class="format-badge">
+                            <span class="badge badge-offline">Offline</span>
+                        </div>
+                    </div>
+                    <p class="format-desc">Developer-friendly presentation style with code highlighting, terminal aesthetics, and Vue-powered interactivity.</p>
+                    <div class="format-meta">
+                        <div class="meta-item">
+                            <span class="icon">📊</span>
+                            <span>Dev-Friendly</span>
+                        </div>
+                        <div class="meta-item">
+                            <span class="icon">⚡</span>
+                            <span>Excellent Interactivity</span>
+                        </div>
+                        <div class="meta-item">
+                            <div class="rating">
+                                <span class="rating-star">★</span>
+                                <span class="rating-star">★</span>
+                                <span class="rating-star">★</span>
+                                <span class="rating-star">★</span>
+                                <span class="rating-star">★</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="format-actions">
+                        <a href="../slidev/index.html" class="btn btn-primary">View Demo</a>
+                        <a href="../docs/evaluation.html#slidev" class="btn btn-secondary">Details</a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Motion Canvas -->
+            <div class="format-card">
+                <div class="format-preview">🎬</div>
+                <div class="format-content">
+                    <div class="format-header">
+                        <div class="format-name">Motion Canvas</div>
+                        <div class="format-badge">
+                            <span class="badge badge-offline">Offline</span>
+                        </div>
+                    </div>
+                    <p class="format-desc">Programmatic animation engine for creating video-quality animated explanations. Pro-level animations through code.</p>
+                    <div class="format-meta">
+                        <div class="meta-item">
+                            <span class="icon">📊</span>
+                            <span>High Skill</span>
+                        </div>
+                        <div class="meta-item">
+                            <span class="icon">⚡</span>
+                            <span>Pro Animations</span>
+                        </div>
+                        <div class="meta-item">
+                            <div class="rating">
+                                <span class="rating-star">★</span>
+                                <span class="rating-star">★</span>
+                                <span class="rating-star">★</span>
+                                <span class="rating-star">★</span>
+                                <span class="rating-star">★</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="format-actions">
+                        <a href="../motion-canvas/index.html" class="btn btn-primary">View Demo</a>
+                        <a href="../docs/evaluation.html#motion" class="btn btn-secondary">Details</a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Gamma Style -->
+            <div class="format-card">
+                <div class="format-preview">✨</div>
+                <div class="format-content">
+                    <div class="format-header">
+                        <div class="format-name">Gamma Style</div>
+                        <div class="format-badge">
+                            <span class="badge badge-online">Online Tool</span>
+                        </div>
+                    </div>
+                    <p class="format-desc">Card-based document design with clean aesthetics. Easy to create, beautiful results. Original tool requires account.</p>
+                    <div class="format-meta">
+                        <div class="meta-item">
+                            <span class="icon">📊</span>
+                            <span>Easy</span>
+                        </div>
+                        <div class="meta-item">
+                            <span class="icon">⚡</span>
+                            <span>Good Animations</span>
+                        </div>
+                        <div class="meta-item">
+                            <div class="rating">
+                                <span class="rating-star">★</span>
+                                <span class="rating-star">★</span>
+                                <span class="rating-star">★</span>
+                                <span class="rating-star">★</span>
+                                <span class="rating-star empty">★</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="format-actions">
+                        <a href="../gamma-guide/index.html" class="btn btn-primary">View Demo</a>
+                        <a href="../docs/evaluation.html#gamma" class="btn btn-secondary">Details</a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Framer Style -->
+            <div class="format-card">
+                <div class="format-preview">🎨</div>
+                <div class="format-content">
+                    <div class="format-header">
+                        <div class="format-name">Framer Style</div>
+                        <div class="format-badge">
+                            <span class="badge badge-online">Online Tool</span>
+                        </div>
+                    </div>
+                    <p class="format-desc">High-end web design aesthetics with parallax, micro-interactions, and bold typography. Premium feel.</p>
+                    <div class="format-meta">
+                        <div class="meta-item">
+                            <span class="icon">📊</span>
+                            <span>Medium Skill</span>
+                        </div>
+                        <div class="meta-item">
+                            <span class="icon">⚡</span>
+                            <span>Pro Animations</span>
+                        </div>
+                        <div class="meta-item">
+                            <div class="rating">
+                                <span class="rating-star">★</span>
+                                <span class="rating-star">★</span>
+                                <span class="rating-star">★</span>
+                                <span class="rating-star">★</span>
+                                <span class="rating-star">★</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="format-actions">
+                        <a href="../framer-guide/index.html" class="btn btn-primary">View Demo</a>
+                        <a href="../docs/evaluation.html#framer" class="btn btn-secondary">Details</a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Lottie + HTML -->
+            <div class="format-card">
+                <div class="format-preview">🎪</div>
+                <div class="format-content">
+                    <div class="format-header">
+                        <div class="format-name">Lottie + HTML</div>
+                        <div class="format-badge">
+                            <span class="badge badge-offline">Offline</span>
+                        </div>
+                    </div>
+                    <p class="format-desc">Vector animations from After Effects in web pages. Lightweight, scalable, and beautifully smooth animations.</p>
+                    <div class="format-meta">
+                        <div class="meta-item">
+                            <span class="icon">📊</span>
+                            <span>Medium Skill</span>
+                        </div>
+                        <div class="meta-item">
+                            <span class="icon">⚡</span>
+                            <span>Pro Animations</span>
+                        </div>
+                        <div class="meta-item">
+                            <div class="rating">
+                                <span class="rating-star">★</span>
+                                <span class="rating-star">★</span>
+                                <span class="rating-star">★</span>
+                                <span class="rating-star">★</span>
+                                <span class="rating-star empty">★</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="format-actions">
+                        <a href="../lottie-html/index.html" class="btn btn-primary">View Demo</a>
+                        <a href="../docs/evaluation.html#lottie" class="btn btn-secondary">Details</a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Scrollytelling -->
+            <div class="format-card">
+                <div class="format-preview">📜</div>
+                <div class="format-content">
+                    <div class="format-header">
+                        <div class="format-name">Scrollytelling</div>
+                        <div class="format-badge">
+                            <span class="badge badge-offline">Offline</span>
+                        </div>
+                    </div>
+                    <p class="format-desc">Narrative-driven scroll experiences with parallax, sticky sections, and progressive reveals. Highly engaging storytelling.</p>
+                    <div class="format-meta">
+                        <div class="meta-item">
+                            <span class="icon">📊</span>
+                            <span>High Skill</span>
+                        </div>
+                        <div class="meta-item">
+                            <span class="icon">⚡</span>
+                            <span>Excellent</span>
+                        </div>
+                        <div class="meta-item">
+                            <div class="rating">
+                                <span class="rating-star">★</span>
+                                <span class="rating-star">★</span>
+                                <span class="rating-star">★</span>
+                                <span class="rating-star">★</span>
+                                <span class="rating-star">★</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="format-actions">
+                        <a href="../scrollytelling/index.html" class="btn btn-primary">View Demo</a>
+                        <a href="../docs/evaluation.html#scroll" class="btn btn-secondary">Details</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Comparison Table -->
+        <h2 class="section-title">Quick Comparison</h2>
+        <div style="overflow-x: auto;">
+            <table class="comparison-table">
+                <thead>
+                    <tr>
+                        <th>Format</th>
+                        <th>Offline?</th>
+                        <th>Skill Level</th>
+                        <th>Animations</th>
+                        <th>Interactivity</th>
+                        <th>Share Method</th>
+                        <th>Best For</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td class="format-col">Reveal.js</td>
+                        <td><span class="check">✓</span></td>
+                        <td><span class="skill-tag">Medium</span></td>
+                        <td>Great</td>
+                        <td>Good</td>
+                        <td>HTML file</td>
+                        <td>Classic presentations</td>
+                    </tr>
+                    <tr>
+                        <td class="format-col">Slidev</td>
+                        <td><span class="check">✓</span></td>
+                        <td><span class="skill-tag">Dev-friendly</span></td>
+                        <td>Great</td>
+                        <td>Excellent</td>
+                        <td>HTML/PDF</td>
+                        <td>Developer content</td>
+                    </tr>
+                    <tr>
+                        <td class="format-col">Motion Canvas</td>
+                        <td><span class="check">✓</span></td>
+                        <td><span class="skill-tag">High</span></td>
+                        <td>Pro</td>
+                        <td>Video output</td>
+                        <td>MP4/HTML</td>
+                        <td>Technical explainers</td>
+                    </tr>
+                    <tr>
+                        <td class="format-col">Gamma.app</td>
+                        <td><span class="cross">✗</span></td>
+                        <td><span class="skill-tag">Easy</span></td>
+                        <td>Good</td>
+                        <td>Good</td>
+                        <td>Link</td>
+                        <td>Quick beautiful docs</td>
+                    </tr>
+                    <tr>
+                        <td class="format-col">Framer</td>
+                        <td><span class="cross">✗</span></td>
+                        <td><span class="skill-tag">Medium</span></td>
+                        <td>Pro</td>
+                        <td>Excellent</td>
+                        <td>Link/Export</td>
+                        <td>Marketing pages</td>
+                    </tr>
+                    <tr>
+                        <td class="format-col">Lottie + HTML</td>
+                        <td><span class="check">✓</span></td>
+                        <td><span class="skill-tag">Medium</span></td>
+                        <td>Pro</td>
+                        <td>Good</td>
+                        <td>HTML file</td>
+                        <td>Animated websites</td>
+                    </tr>
+                    <tr>
+                        <td class="format-col">Scrollytelling</td>
+                        <td><span class="check">✓</span></td>
+                        <td><span class="skill-tag">High</span></td>
+                        <td>Excellent</td>
+                        <td>Excellent</td>
+                        <td>HTML file</td>
+                        <td>Story-driven content</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Recommendations -->
+        <div class="recommendations">
+            <h3>Recommendations by Use Case</h3>
+            <div class="rec-grid">
+                <div class="rec-item">
+                    <h4>School Program Concepts</h4>
+                    <p>Best choices: <strong>Scrollytelling</strong> or <strong>Gamma Style</strong> - they tell a story and look professional without overwhelming.</p>
+                </div>
+                <div class="rec-item">
+                    <h4>Technical Workshops</h4>
+                    <p>Best choices: <strong>Slidev</strong> or <strong>Reveal.js</strong> - perfect for code examples and technical content.</p>
+                </div>
+                <div class="rec-item">
+                    <h4>Marketing to Decision Makers</h4>
+                    <p>Best choices: <strong>Framer Style</strong> or <strong>Motion Canvas</strong> - premium feel that impresses.</p>
+                </div>
+                <div class="rec-item">
+                    <h4>Quick Turnaround</h4>
+                    <p>Best choice: <strong>Gamma Style</strong> - fastest to create while still looking professional.</p>
+                </div>
+                <div class="rec-item">
+                    <h4>Offline Distribution</h4>
+                    <p>Best choices: <strong>Scrollytelling</strong>, <strong>Reveal.js</strong>, or <strong>Lottie + HTML</strong> - work without internet.</p>
+                </div>
+                <div class="rec-item">
+                    <h4>Maximum Engagement</h4>
+                    <p>Best choices: <strong>Scrollytelling</strong> or <strong>Framer Style</strong> - most interactive and memorable.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <footer class="footer">
+        <p>Interactive Documentation Showcase - Created for TechEd Academy Concept Testing</p>
+        <p style="margin-top: 10px; font-size: 0.9em;">All demos work offline as single HTML files</p>
+    </footer>
+</body>
+</html>
