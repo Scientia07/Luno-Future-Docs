@@ -1,0 +1,1400 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LunoLabs - Offerte Technisches Jugendförderprogramm</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        :root {
+            --primary: #6366f1;
+            --primary-dark: #4f46e5;
+            --secondary: #10b981;
+            --accent: #f59e0b;
+            --danger: #ef4444;
+            --bg-dark: #0f172a;
+            --bg-card: #1e293b;
+            --bg-light: #f8fafc;
+            --text-light: #f1f5f9;
+            --text-dark: #1e293b;
+            --text-muted: #94a3b8;
+            --border: #334155;
+        }
+        html {
+            scroll-behavior: smooth;
+        }
+        body {
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+            background: var(--bg-dark);
+            color: var(--text-light);
+            line-height: 1.7;
+        }
+
+        /* Navigation */
+        .nav {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+            background: rgba(15, 23, 42, 0.95);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid var(--border);
+            padding: 15px 40px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .nav-logo {
+            font-size: 1.5em;
+            font-weight: 700;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        .nav-links {
+            display: flex;
+            gap: 30px;
+        }
+        .nav-links a {
+            color: var(--text-muted);
+            text-decoration: none;
+            font-size: 0.9em;
+            transition: color 0.3s;
+        }
+        .nav-links a:hover {
+            color: var(--primary);
+        }
+        .nav-cta {
+            background: var(--primary);
+            color: white;
+            padding: 10px 24px;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+        .nav-cta:hover {
+            background: var(--primary-dark);
+            transform: translateY(-2px);
+        }
+
+        /* Hero Section */
+        .hero {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 120px 40px 80px;
+            background: linear-gradient(180deg, var(--bg-dark) 0%, #1a1a3a 100%);
+            position: relative;
+            overflow: hidden;
+        }
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -20%;
+            width: 80%;
+            height: 150%;
+            background: radial-gradient(circle, rgba(99, 102, 241, 0.15) 0%, transparent 60%);
+            pointer-events: none;
+        }
+        .hero-content {
+            max-width: 900px;
+            text-align: center;
+            position: relative;
+            z-index: 1;
+        }
+        .hero-badge {
+            display: inline-block;
+            background: rgba(99, 102, 241, 0.2);
+            color: var(--primary);
+            padding: 8px 20px;
+            border-radius: 100px;
+            font-size: 0.85em;
+            font-weight: 600;
+            margin-bottom: 30px;
+            border: 1px solid rgba(99, 102, 241, 0.3);
+        }
+        .hero h1 {
+            font-size: clamp(2.5em, 6vw, 4em);
+            font-weight: 800;
+            line-height: 1.1;
+            margin-bottom: 25px;
+        }
+        .hero h1 span {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        .hero-subtitle {
+            font-size: 1.3em;
+            color: var(--text-muted);
+            max-width: 700px;
+            margin: 0 auto 40px;
+        }
+        .hero-meta {
+            display: flex;
+            justify-content: center;
+            gap: 40px;
+            flex-wrap: wrap;
+            margin-bottom: 50px;
+        }
+        .hero-meta-item {
+            text-align: center;
+        }
+        .hero-meta-value {
+            font-size: 2.5em;
+            font-weight: 700;
+            color: var(--secondary);
+        }
+        .hero-meta-label {
+            font-size: 0.9em;
+            color: var(--text-muted);
+        }
+
+        /* Section Base */
+        .section {
+            padding: 100px 40px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        .section-dark {
+            background: var(--bg-card);
+            max-width: 100%;
+            padding-left: calc((100% - 1120px) / 2);
+            padding-right: calc((100% - 1120px) / 2);
+        }
+        .section-title {
+            font-size: 2.2em;
+            font-weight: 700;
+            margin-bottom: 15px;
+        }
+        .section-subtitle {
+            color: var(--text-muted);
+            font-size: 1.1em;
+            margin-bottom: 50px;
+            max-width: 600px;
+        }
+
+        /* Cards */
+        .card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 30px;
+            transition: all 0.3s;
+        }
+        .card:hover {
+            border-color: var(--primary);
+            transform: translateY(-5px);
+        }
+
+        /* Cost Overview */
+        .cost-overview {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 25px;
+            margin-bottom: 60px;
+        }
+        .cost-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 30px;
+            text-align: center;
+        }
+        .cost-card.highlight {
+            border-color: var(--primary);
+            background: linear-gradient(135deg, rgba(99, 102, 241, 0.1), rgba(16, 185, 129, 0.1));
+        }
+        .cost-icon {
+            font-size: 2.5em;
+            margin-bottom: 15px;
+        }
+        .cost-label {
+            color: var(--text-muted);
+            font-size: 0.9em;
+            margin-bottom: 10px;
+        }
+        .cost-value {
+            font-size: 2.2em;
+            font-weight: 700;
+        }
+        .cost-value.primary { color: var(--primary); }
+        .cost-value.secondary { color: var(--secondary); }
+        .cost-value.accent { color: var(--accent); }
+        .cost-note {
+            font-size: 0.85em;
+            color: var(--text-muted);
+            margin-top: 10px;
+        }
+
+        /* Tables */
+        .table-container {
+            overflow-x: auto;
+            margin: 30px 0;
+            border-radius: 12px;
+            border: 1px solid var(--border);
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            min-width: 600px;
+        }
+        th, td {
+            padding: 16px 20px;
+            text-align: left;
+            border-bottom: 1px solid var(--border);
+        }
+        th {
+            background: rgba(99, 102, 241, 0.1);
+            font-weight: 600;
+            font-size: 0.85em;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: var(--primary);
+        }
+        tr:hover {
+            background: rgba(255, 255, 255, 0.02);
+        }
+        .price {
+            font-weight: 600;
+            color: var(--secondary);
+        }
+        .qty {
+            color: var(--text-muted);
+        }
+        .subtotal {
+            font-weight: 700;
+            color: var(--accent);
+        }
+        .table-total {
+            background: rgba(16, 185, 129, 0.1);
+        }
+        .table-total td {
+            font-weight: 700;
+            font-size: 1.1em;
+        }
+
+        /* Charts */
+        .chart-container {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 30px;
+            margin: 30px 0;
+        }
+        .chart-title {
+            font-size: 1.2em;
+            font-weight: 600;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        .charts-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+            gap: 30px;
+        }
+
+        /* Timeline */
+        .timeline {
+            position: relative;
+            padding-left: 40px;
+            margin: 40px 0;
+        }
+        .timeline::before {
+            content: '';
+            position: absolute;
+            left: 15px;
+            top: 0;
+            bottom: 0;
+            width: 2px;
+            background: linear-gradient(180deg, var(--primary), var(--secondary));
+        }
+        .timeline-item {
+            position: relative;
+            margin-bottom: 40px;
+            padding: 25px;
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+        }
+        .timeline-item::before {
+            content: '';
+            position: absolute;
+            left: -33px;
+            top: 30px;
+            width: 16px;
+            height: 16px;
+            background: var(--primary);
+            border-radius: 50%;
+            border: 3px solid var(--bg-dark);
+        }
+        .timeline-phase {
+            font-size: 0.8em;
+            color: var(--primary);
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            margin-bottom: 8px;
+        }
+        .timeline-title {
+            font-size: 1.3em;
+            font-weight: 600;
+            margin-bottom: 10px;
+        }
+        .timeline-desc {
+            color: var(--text-muted);
+        }
+
+        /* Features Grid */
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 25px;
+        }
+        .feature-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 30px;
+        }
+        .feature-icon {
+            width: 50px;
+            height: 50px;
+            background: rgba(99, 102, 241, 0.2);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5em;
+            margin-bottom: 20px;
+        }
+        .feature-title {
+            font-size: 1.2em;
+            font-weight: 600;
+            margin-bottom: 10px;
+        }
+        .feature-desc {
+            color: var(--text-muted);
+            font-size: 0.95em;
+        }
+
+        /* Quote Box */
+        .quote-box {
+            background: linear-gradient(135deg, rgba(99, 102, 241, 0.15), rgba(16, 185, 129, 0.15));
+            border-left: 4px solid var(--primary);
+            padding: 30px;
+            border-radius: 0 12px 12px 0;
+            margin: 40px 0;
+        }
+        .quote-text {
+            font-size: 1.3em;
+            font-style: italic;
+            margin-bottom: 15px;
+        }
+        .quote-author {
+            color: var(--text-muted);
+        }
+
+        /* Info Boxes */
+        .info-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin: 30px 0;
+        }
+        .info-box {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 25px;
+            text-align: center;
+        }
+        .info-box-value {
+            font-size: 2em;
+            font-weight: 700;
+            color: var(--primary);
+        }
+        .info-box-label {
+            color: var(--text-muted);
+            font-size: 0.9em;
+            margin-top: 5px;
+        }
+
+        /* Category Headers */
+        .category-header {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin: 50px 0 25px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid var(--border);
+        }
+        .category-icon {
+            width: 45px;
+            height: 45px;
+            background: rgba(99, 102, 241, 0.2);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.3em;
+        }
+        .category-title {
+            font-size: 1.5em;
+            font-weight: 600;
+        }
+        .category-subtitle {
+            color: var(--text-muted);
+            font-size: 0.9em;
+        }
+
+        /* Footer */
+        .footer {
+            background: var(--bg-card);
+            padding: 60px 40px;
+            text-align: center;
+            border-top: 1px solid var(--border);
+        }
+        .footer-logo {
+            font-size: 2em;
+            font-weight: 700;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 20px;
+        }
+        .footer-text {
+            color: var(--text-muted);
+            max-width: 500px;
+            margin: 0 auto 30px;
+        }
+        .footer-date {
+            color: var(--text-muted);
+            font-size: 0.9em;
+        }
+
+        /* CTA Section */
+        .cta-section {
+            text-align: center;
+            padding: 80px 40px;
+            background: linear-gradient(135deg, rgba(99, 102, 241, 0.2), rgba(16, 185, 129, 0.2));
+        }
+        .cta-title {
+            font-size: 2.5em;
+            font-weight: 700;
+            margin-bottom: 20px;
+        }
+        .cta-text {
+            color: var(--text-muted);
+            font-size: 1.2em;
+            max-width: 600px;
+            margin: 0 auto 40px;
+        }
+        .cta-buttons {
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+        .btn {
+            padding: 16px 32px;
+            border-radius: 10px;
+            font-size: 1em;
+            font-weight: 600;
+            text-decoration: none;
+            transition: all 0.3s;
+        }
+        .btn-primary {
+            background: var(--primary);
+            color: white;
+        }
+        .btn-primary:hover {
+            background: var(--primary-dark);
+            transform: translateY(-3px);
+            box-shadow: 0 10px 30px rgba(99, 102, 241, 0.3);
+        }
+        .btn-secondary {
+            background: transparent;
+            color: var(--text-light);
+            border: 2px solid var(--border);
+        }
+        .btn-secondary:hover {
+            border-color: var(--primary);
+            color: var(--primary);
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .nav {
+                padding: 15px 20px;
+            }
+            .nav-links {
+                display: none;
+            }
+            .hero {
+                padding: 100px 20px 60px;
+            }
+            .hero-meta {
+                gap: 20px;
+            }
+            .section {
+                padding: 60px 20px;
+            }
+            .charts-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* Print Styles */
+        @media print {
+            .nav, .cta-section {
+                display: none;
+            }
+            body {
+                background: white;
+                color: black;
+            }
+            .section {
+                page-break-inside: avoid;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="nav">
+        <div class="nav-logo">LunoLabs</div>
+        <div class="nav-links">
+            <a href="#overview">Uebersicht</a>
+            <a href="#infrastructure">Infrastruktur</a>
+            <a href="#costs">Kosten</a>
+            <a href="#timeline">Zeitplan</a>
+            <a href="#benefits">Mehrwert</a>
+        </div>
+        <a href="#contact" class="nav-cta">Kontakt</a>
+    </nav>
+
+    <!-- Hero Section -->
+    <header class="hero">
+        <div class="hero-content">
+            <div class="hero-badge">Offerte 2025</div>
+            <h1>Technisches <span>Jugendfoerderprogramm</span></h1>
+            <p class="hero-subtitle">
+                Infrastruktur- & Entwicklungskonzept fuer den Aufbau eines zukunftsorientierten
+                MakerSpace im Jugendtreff
+            </p>
+            <div class="hero-meta">
+                <div class="hero-meta-item">
+                    <div class="hero-meta-value">CHF 18'450</div>
+                    <div class="hero-meta-label">Gesamtinvestition</div>
+                </div>
+                <div class="hero-meta-item">
+                    <div class="hero-meta-value">10-20</div>
+                    <div class="hero-meta-label">Zielgruppe Alter</div>
+                </div>
+                <div class="hero-meta-item">
+                    <div class="hero-meta-value">4</div>
+                    <div class="hero-meta-label">Kernbereiche</div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Executive Summary -->
+    <section class="section" id="overview">
+        <h2 class="section-title">Executive Summary</h2>
+        <p class="section-subtitle">
+            Zugang schaffen - Kompetenz aufbauen - Perspektiven eroeffnen
+        </p>
+
+        <div class="quote-box">
+            <p class="quote-text">
+                "LunoLabs schafft einen technischen Moeglichkeitsraum, der Jugendlichen
+                echte Zukunftskompetenzen vermittelt, Gemeinden entlastet, und langfristig
+                gesellschaftlichen sowie wirtschaftlichen Mehrwert schafft."
+            </p>
+        </div>
+
+        <div class="features-grid">
+            <div class="feature-card">
+                <div class="feature-icon">3D</div>
+                <h3 class="feature-title">3D-Druck Infrastruktur</h3>
+                <p class="feature-desc">
+                    Professionelle Open-Source 3D-Drucker fuer Prototyping, Ersatzteile und Lernprojekte.
+                </p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">E</div>
+                <h3 class="feature-title">Elektronik-Werkstatt</h3>
+                <p class="feature-desc">
+                    Vollausgestattete Loetarbeitsplaetze mit Messgeraeten und Mikrocontrollern.
+                </p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">C</div>
+                <h3 class="feature-title">Coding & Computing</h3>
+                <p class="feature-desc">
+                    Raspberry Pi Systeme fuer Python, Hardware-Ansteuerung und AI-Projekte.
+                </p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">W</div>
+                <h3 class="feature-title">Werkstatt & Sicherheit</h3>
+                <p class="feature-desc">
+                    Professionelle Werkzeuge und strukturierte Arbeitsplaetze mit Sicherheitsausstattung.
+                </p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Cost Overview -->
+    <section class="section section-dark" id="costs">
+        <h2 class="section-title">Kostenuebbersicht</h2>
+        <p class="section-subtitle">
+            Transparente Aufstellung aller Investitionen fuer die Grundinfrastruktur
+        </p>
+
+        <div class="cost-overview">
+            <div class="cost-card highlight">
+                <div class="cost-icon">O</div>
+                <div class="cost-label">Gesamtinvestition</div>
+                <div class="cost-value primary">CHF 18'450</div>
+                <div class="cost-note">Einmalige Anschaffung</div>
+            </div>
+            <div class="cost-card">
+                <div class="cost-icon">3D</div>
+                <div class="cost-label">3D-Druck</div>
+                <div class="cost-value secondary">CHF 6'650</div>
+                <div class="cost-note">36% der Investition</div>
+            </div>
+            <div class="cost-card">
+                <div class="cost-icon">E</div>
+                <div class="cost-label">Elektronik</div>
+                <div class="cost-value secondary">CHF 5'200</div>
+                <div class="cost-note">28% der Investition</div>
+            </div>
+            <div class="cost-card">
+                <div class="cost-icon">PC</div>
+                <div class="cost-label">Computing</div>
+                <div class="cost-value secondary">CHF 3'800</div>
+                <div class="cost-note">21% der Investition</div>
+            </div>
+            <div class="cost-card">
+                <div class="cost-icon">T</div>
+                <div class="cost-label">Werkstatt</div>
+                <div class="cost-value secondary">CHF 2'800</div>
+                <div class="cost-note">15% der Investition</div>
+            </div>
+        </div>
+
+        <!-- Charts -->
+        <div class="charts-grid">
+            <div class="chart-container">
+                <h3 class="chart-title">Kostenverteilung nach Bereich</h3>
+                <canvas id="costDistributionChart"></canvas>
+            </div>
+            <div class="chart-container">
+                <h3 class="chart-title">Investition vs. Jaehrlicher Nutzen</h3>
+                <canvas id="roiChart"></canvas>
+            </div>
+        </div>
+    </section>
+
+    <!-- Detailed Infrastructure -->
+    <section class="section" id="infrastructure">
+        <h2 class="section-title">Detaillierte Infrastruktur</h2>
+        <p class="section-subtitle">
+            Vollstaendige Materialliste mit aktuellen Marktpreisen (Stand: Dezember 2025)
+        </p>
+
+        <!-- 3D Printing -->
+        <div class="category-header">
+            <div class="category-icon">3D</div>
+            <div>
+                <div class="category-title">3D-Druck Infrastruktur</div>
+                <div class="category-subtitle">Professionelle Open-Source Drucksysteme</div>
+            </div>
+        </div>
+
+        <div class="table-container">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Artikel</th>
+                        <th>Beschreibung</th>
+                        <th>Menge</th>
+                        <th>Stueckpreis</th>
+                        <th>Total</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong>VORON 2.4 R2 Kit (350mm)</strong></td>
+                        <td>High-End CoreXY 3D-Drucker Kit, Open Source</td>
+                        <td class="qty">2x</td>
+                        <td class="price">CHF 1'450</td>
+                        <td class="subtotal">CHF 2'900</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Bambu Lab P1S Combo</strong></td>
+                        <td>Einsteiger-freundlicher Drucker mit AMS</td>
+                        <td class="qty">2x</td>
+                        <td class="price">CHF 530</td>
+                        <td class="subtotal">CHF 1'060</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Filament Sortiment</strong></td>
+                        <td>PLA, PETG, TPU - verschiedene Farben (50 Rollen)</td>
+                        <td class="qty">1x</td>
+                        <td class="price">CHF 1'200</td>
+                        <td class="subtotal">CHF 1'200</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Ersatzteile & Duesen</strong></td>
+                        <td>Nozzles, Bauplatte, Belts, Lager</td>
+                        <td class="qty">1x</td>
+                        <td class="price">CHF 400</td>
+                        <td class="subtotal">CHF 400</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Werkzeug-Set 3D-Druck</strong></td>
+                        <td>Spachtel, Zangen, Feilen, Cutter</td>
+                        <td class="qty">2x</td>
+                        <td class="price">CHF 75</td>
+                        <td class="subtotal">CHF 150</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Trockenbox</strong></td>
+                        <td>Filament-Trockner fuer optimale Druckqualitaet</td>
+                        <td class="qty">2x</td>
+                        <td class="price">CHF 90</td>
+                        <td class="subtotal">CHF 180</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Drucker-Einhausung</strong></td>
+                        <td>Enclosure fuer VORON (Temperaturkontrolle)</td>
+                        <td class="qty">2x</td>
+                        <td class="price">CHF 180</td>
+                        <td class="subtotal">CHF 360</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Luftfilter HEPA</strong></td>
+                        <td>Luftreinigung beim Drucken</td>
+                        <td class="qty">4x</td>
+                        <td class="price">CHF 100</td>
+                        <td class="subtotal">CHF 400</td>
+                    </tr>
+                    <tr class="table-total">
+                        <td colspan="4"><strong>Zwischentotal 3D-Druck</strong></td>
+                        <td class="subtotal">CHF 6'650</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Electronics -->
+        <div class="category-header">
+            <div class="category-icon">E</div>
+            <div>
+                <div class="category-title">Elektronik-Grundausstattung</div>
+                <div class="category-subtitle">Professionelle Loet- und Messarbeitsplaetze</div>
+            </div>
+        </div>
+
+        <div class="table-container">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Artikel</th>
+                        <th>Beschreibung</th>
+                        <th>Menge</th>
+                        <th>Stueckpreis</th>
+                        <th>Total</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong>Weller WE1010 Loetstation</strong></td>
+                        <td>Digitale 70W Loetstation, Professional</td>
+                        <td class="qty">4x</td>
+                        <td class="price">CHF 160</td>
+                        <td class="subtotal">CHF 640</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Rigol DS1054Z Oszilloskop</strong></td>
+                        <td>4-Kanal Digital-Oszilloskop, 50MHz</td>
+                        <td class="qty">2x</td>
+                        <td class="price">CHF 380</td>
+                        <td class="subtotal">CHF 760</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Multimeter Digital</strong></td>
+                        <td>Fluke 117 oder aequivalent</td>
+                        <td class="qty">6x</td>
+                        <td class="price">CHF 180</td>
+                        <td class="subtotal">CHF 1'080</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Labornetzgeraet</strong></td>
+                        <td>0-30V / 0-5A regelbar, digital</td>
+                        <td class="qty">4x</td>
+                        <td class="price">CHF 120</td>
+                        <td class="subtotal">CHF 480</td>
+                    </tr>
+                    <tr>
+                        <td><strong>ESP32 Starter Kit</strong></td>
+                        <td>Komplettes Set mit Sensoren und Komponenten</td>
+                        <td class="qty">20x</td>
+                        <td class="price">CHF 45</td>
+                        <td class="subtotal">CHF 900</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Arduino Mega Starter Kit</strong></td>
+                        <td>Erweitertes Set fuer komplexe Projekte</td>
+                        <td class="qty">10x</td>
+                        <td class="price">CHF 55</td>
+                        <td class="subtotal">CHF 550</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Elektronik-Bauteile Sortiment</strong></td>
+                        <td>Widerstaende, Kondensatoren, LEDs, Transistoren</td>
+                        <td class="qty">1x</td>
+                        <td class="price">CHF 400</td>
+                        <td class="subtotal">CHF 400</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Loetzubehoer</strong></td>
+                        <td>Loetzinn, Entloetlitze, Flussmittel, Halterungen</td>
+                        <td class="qty">1x</td>
+                        <td class="price">CHF 200</td>
+                        <td class="subtotal">CHF 200</td>
+                    </tr>
+                    <tr>
+                        <td><strong>ESD-Schutzausruestung</strong></td>
+                        <td>Matten, Armbaender, Erdungskabel</td>
+                        <td class="qty">4x</td>
+                        <td class="price">CHF 45</td>
+                        <td class="subtotal">CHF 180</td>
+                    </tr>
+                    <tr class="table-total">
+                        <td colspan="4"><strong>Zwischentotal Elektronik</strong></td>
+                        <td class="subtotal">CHF 5'190</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Computing -->
+        <div class="category-header">
+            <div class="category-icon">PC</div>
+            <div>
+                <div class="category-title">Programmierung & Computing</div>
+                <div class="category-subtitle">Raspberry Pi Systeme und Entwicklungsumgebung</div>
+            </div>
+        </div>
+
+        <div class="table-container">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Artikel</th>
+                        <th>Beschreibung</th>
+                        <th>Menge</th>
+                        <th>Stueckpreis</th>
+                        <th>Total</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong>Raspberry Pi 5 (8GB)</strong></td>
+                        <td>Hauptrechner fuer Projekte</td>
+                        <td class="qty">10x</td>
+                        <td class="price">CHF 95</td>
+                        <td class="subtotal">CHF 950</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Raspberry Pi 5 (4GB)</strong></td>
+                        <td>Fuer einfachere Projekte und Automation</td>
+                        <td class="qty">10x</td>
+                        <td class="price">CHF 65</td>
+                        <td class="subtotal">CHF 650</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Pi Zubehoer-Sets</strong></td>
+                        <td>Gehaeuse, Kueehler, Netzteil, SD-Karten</td>
+                        <td class="qty">20x</td>
+                        <td class="price">CHF 45</td>
+                        <td class="subtotal">CHF 900</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Monitore 24"</strong></td>
+                        <td>Full HD Monitore fuer Arbeitsplaetze</td>
+                        <td class="qty">6x</td>
+                        <td class="price">CHF 150</td>
+                        <td class="subtotal">CHF 900</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Tastatur & Maus Sets</strong></td>
+                        <td>Kabelgebunden, robust</td>
+                        <td class="qty">10x</td>
+                        <td class="price">CHF 40</td>
+                        <td class="subtotal">CHF 400</td>
+                    </tr>
+                    <tr class="table-total">
+                        <td colspan="4"><strong>Zwischentotal Computing</strong></td>
+                        <td class="subtotal">CHF 3'800</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Workshop -->
+        <div class="category-header">
+            <div class="category-icon">T</div>
+            <div>
+                <div class="category-title">Werkstatt & Sicherheit</div>
+                <div class="category-subtitle">Handwerkzeug und Arbeitsplatzausstattung</div>
+            </div>
+        </div>
+
+        <div class="table-container">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Artikel</th>
+                        <th>Beschreibung</th>
+                        <th>Menge</th>
+                        <th>Stueckpreis</th>
+                        <th>Total</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong>Werkbank</strong></td>
+                        <td>Stabile Arbeitsflaeche 180x80cm</td>
+                        <td class="qty">2x</td>
+                        <td class="price">CHF 450</td>
+                        <td class="subtotal">CHF 900</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Werkzeugwagen</strong></td>
+                        <td>Mit Schubladen und Rollen</td>
+                        <td class="qty">2x</td>
+                        <td class="price">CHF 280</td>
+                        <td class="subtotal">CHF 560</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Handwerkzeug-Set</strong></td>
+                        <td>Schraubendreher, Zangen, Inbus, etc.</td>
+                        <td class="qty">4x</td>
+                        <td class="price">CHF 150</td>
+                        <td class="subtotal">CHF 600</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Sicherheitsausruestung</strong></td>
+                        <td>Schutzbrillen, Handschuhe, Erste-Hilfe</td>
+                        <td class="qty">1x</td>
+                        <td class="price">CHF 300</td>
+                        <td class="subtotal">CHF 300</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Aufbewahrungssystem</strong></td>
+                        <td>Regale, Boxen, Sortierkaesten</td>
+                        <td class="qty">1x</td>
+                        <td class="price">CHF 450</td>
+                        <td class="subtotal">CHF 450</td>
+                    </tr>
+                    <tr class="table-total">
+                        <td colspan="4"><strong>Zwischentotal Werkstatt</strong></td>
+                        <td class="subtotal">CHF 2'810</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Grand Total -->
+        <div class="chart-container" style="margin-top: 50px; background: linear-gradient(135deg, rgba(99, 102, 241, 0.15), rgba(16, 185, 129, 0.15));">
+            <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 20px;">
+                <div>
+                    <h3 style="font-size: 1.5em; margin-bottom: 10px;">Gesamtinvestition</h3>
+                    <p style="color: var(--text-muted);">Alle Positionen inkl. MwSt.</p>
+                </div>
+                <div style="text-align: right;">
+                    <div style="font-size: 3em; font-weight: 700; color: var(--primary);">CHF 18'450</div>
+                    <p style="color: var(--secondary);">Einmalige Anschaffung</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Timeline -->
+    <section class="section" id="timeline">
+        <h2 class="section-title">Umsetzungsplan</h2>
+        <p class="section-subtitle">
+            Strukturierter Ablauf fuer die Einfuehrung der LunoLabs Infrastruktur
+        </p>
+
+        <div class="timeline">
+            <div class="timeline-item">
+                <div class="timeline-phase">Phase 1</div>
+                <h3 class="timeline-title">Beschaffung & Vorbereitung</h3>
+                <p class="timeline-desc">
+                    Bestellung aller Materialien, Vorbereitung der Raeumlichkeiten,
+                    Installation der Grundinfrastruktur (Strom, Netzwerk, Arbeitsplaetze).
+                </p>
+            </div>
+            <div class="timeline-item">
+                <div class="timeline-phase">Phase 2</div>
+                <h3 class="timeline-title">Aufbau 3D-Druck Station</h3>
+                <p class="timeline-desc">
+                    Zusammenbau der VORON Drucker (kann als erstes Projekt mit Jugendlichen erfolgen),
+                    Einrichtung der Bambu Lab Drucker, Testdrucke und Kalibrierung.
+                </p>
+            </div>
+            <div class="timeline-item">
+                <div class="timeline-phase">Phase 3</div>
+                <h3 class="timeline-title">Elektronik-Werkstatt</h3>
+                <p class="timeline-desc">
+                    Einrichtung der Loetarbeitsplaetze, Installation der Messgeraete,
+                    Vorbereitung der Mikrocontroller-Kits, ESD-Schutz implementieren.
+                </p>
+            </div>
+            <div class="timeline-item">
+                <div class="timeline-phase">Phase 4</div>
+                <h3 class="timeline-title">Computing & Software</h3>
+                <p class="timeline-desc">
+                    Raspberry Pi Systeme einrichten, Software installieren (Python, Arduino IDE,
+                    CAD-Software), Netzwerk konfigurieren.
+                </p>
+            </div>
+            <div class="timeline-item">
+                <div class="timeline-phase">Phase 5</div>
+                <h3 class="timeline-title">Pilotbetrieb</h3>
+                <p class="timeline-desc">
+                    Erste offene Werkstattzeiten, Feedback sammeln, Prozesse optimieren,
+                    Sicherheitsunterweisungen durchfuehren.
+                </p>
+            </div>
+            <div class="timeline-item">
+                <div class="timeline-phase">Phase 6</div>
+                <h3 class="timeline-title">Regelbetrieb</h3>
+                <p class="timeline-desc">
+                    Etablierung regelmaessiger Angebote, Start der Semesterkurse,
+                    Aufbau der Community, Dokumentation und Weiterentwicklung.
+                </p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Benefits -->
+    <section class="section section-dark" id="benefits">
+        <h2 class="section-title">Wirkung & Mehrwert</h2>
+        <p class="section-subtitle">
+            Nachhaltige Investition in die Zukunft der Jugend
+        </p>
+
+        <div class="info-grid">
+            <div class="info-box">
+                <div class="info-box-value">50+</div>
+                <div class="info-box-label">Jugendliche pro Jahr erreicht</div>
+            </div>
+            <div class="info-box">
+                <div class="info-box-value">200+</div>
+                <div class="info-box-label">Projektstunden pro Monat</div>
+            </div>
+            <div class="info-box">
+                <div class="info-box-value">5+</div>
+                <div class="info-box-label">Jahre Nutzungsdauer</div>
+            </div>
+            <div class="info-box">
+                <div class="info-box-value">< CHF 400</div>
+                <div class="info-box-label">Kosten pro Jugendlichem/Jahr</div>
+            </div>
+        </div>
+
+        <div class="features-grid" style="margin-top: 50px;">
+            <div class="feature-card">
+                <div class="feature-icon">J</div>
+                <h3 class="feature-title">Fuer Jugendliche</h3>
+                <ul style="color: var(--text-muted); padding-left: 20px; margin-top: 15px;">
+                    <li>Zugang zu moderner Technologie</li>
+                    <li>Staerkung von Selbstwirksamkeit</li>
+                    <li>Orientierung fuer Ausbildung & Beruf</li>
+                    <li>Foerderung von Kreativitaet</li>
+                </ul>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">G</div>
+                <h3 class="feature-title">Fuer Gemeinden</h3>
+                <ul style="color: var(--text-muted); padding-left: 20px; margin-top: 15px;">
+                    <li>Nachhaltige Jugendfoerderung</li>
+                    <li>Erfuellung gesetzlicher Aufgaben</li>
+                    <li>Positive Aussenwirkung</li>
+                    <li>Zukunftsorientierte Standortentwicklung</li>
+                </ul>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">R</div>
+                <h3 class="feature-title">Fuer die Region</h3>
+                <ul style="color: var(--text-muted); padding-left: 20px; margin-top: 15px;">
+                    <li>Technische Grundbildung</li>
+                    <li>Nachwuchsfoerderung</li>
+                    <li>Innovationskultur</li>
+                    <li>Skalierbarkeit auf weitere Bezirke</li>
+                </ul>
+            </div>
+        </div>
+    </section>
+
+    <!-- Future Vision -->
+    <section class="section">
+        <h2 class="section-title">Ausbaustufe: Kreislaufwirtschaft</h2>
+        <p class="section-subtitle">
+            Optionale Erweiterung fuer Nachhaltigkeit und unternehmerisches Lernen
+        </p>
+
+        <div class="chart-container">
+            <h3 class="chart-title">Filament-Recycling Kreislauf</h3>
+            <canvas id="recyclingChart"></canvas>
+        </div>
+
+        <div class="table-container" style="margin-top: 30px;">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Artikel</th>
+                        <th>Beschreibung</th>
+                        <th>Preis</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong>Felfil Evo Extruder (Complete)</strong></td>
+                        <td>Filament-Extruder fuer eigene Produktion</td>
+                        <td class="price">CHF 650</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Felfil Shredder+</strong></td>
+                        <td>Kunststoff-Schredder fuer Recycling</td>
+                        <td class="price">CHF 480</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Felfil Spooler+</strong></td>
+                        <td>Automatische Filament-Aufwicklung</td>
+                        <td class="price">CHF 350</td>
+                    </tr>
+                    <tr class="table-total">
+                        <td colspan="2"><strong>Total Ausbaustufe</strong></td>
+                        <td class="subtotal">CHF 1'480</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <p style="color: var(--text-muted); margin-top: 20px; font-style: italic;">
+            * Diese Ausbaustufe ist nicht Teil der Grundfinanzierung und kann spaeter ergaenzt werden.
+        </p>
+    </section>
+
+    <!-- CTA Section -->
+    <section class="cta-section" id="contact">
+        <h2 class="cta-title">Bereit fuer die Zukunft?</h2>
+        <p class="cta-text">
+            Lassen Sie uns gemeinsam den naechsten Schritt gehen und LunoLabs
+            in Ihrem Jugendtreff verwirklichen.
+        </p>
+        <div class="cta-buttons">
+            <a href="mailto:kontakt@lunolabs.ch" class="btn btn-primary">Kontakt aufnehmen</a>
+            <a href="#" class="btn btn-secondary" onclick="window.print()">PDF exportieren</a>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="footer-logo">LunoLabs</div>
+        <p class="footer-text">
+            Technisches Jugendförderprogramm<br>
+            Zugang schaffen - Kompetenz aufbauen - Perspektiven eroeffnen
+        </p>
+        <p class="footer-date">
+            Offerte erstellt: Dezember 2025<br>
+            Gueltigkeit: 90 Tage
+        </p>
+    </footer>
+
+    <!-- Charts JavaScript -->
+    <script>
+        // Cost Distribution Pie Chart
+        const costCtx = document.getElementById('costDistributionChart').getContext('2d');
+        new Chart(costCtx, {
+            type: 'doughnut',
+            data: {
+                labels: ['3D-Druck', 'Elektronik', 'Computing', 'Werkstatt'],
+                datasets: [{
+                    data: [6650, 5190, 3800, 2810],
+                    backgroundColor: [
+                        '#6366f1',
+                        '#10b981',
+                        '#f59e0b',
+                        '#ec4899'
+                    ],
+                    borderWidth: 0,
+                    hoverOffset: 10
+                }]
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: {
+                        position: 'bottom',
+                        labels: {
+                            color: '#94a3b8',
+                            padding: 20,
+                            font: { size: 13 }
+                        }
+                    },
+                    tooltip: {
+                        callbacks: {
+                            label: function(context) {
+                                return context.label + ': CHF ' + context.raw.toLocaleString();
+                            }
+                        }
+                    }
+                }
+            }
+        });
+
+        // ROI Bar Chart
+        const roiCtx = document.getElementById('roiChart').getContext('2d');
+        new Chart(roiCtx, {
+            type: 'bar',
+            data: {
+                labels: ['Jahr 1', 'Jahr 2', 'Jahr 3', 'Jahr 4', 'Jahr 5'],
+                datasets: [
+                    {
+                        label: 'Kumulierte Investition',
+                        data: [18450, 19450, 20450, 21450, 22450],
+                        backgroundColor: '#6366f1',
+                        borderRadius: 6
+                    },
+                    {
+                        label: 'Geschaetzter Nutzen (Jugendliche x Stunden)',
+                        data: [12000, 26000, 42000, 60000, 80000],
+                        backgroundColor: '#10b981',
+                        borderRadius: 6
+                    }
+                ]
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: {
+                        position: 'bottom',
+                        labels: {
+                            color: '#94a3b8',
+                            padding: 15
+                        }
+                    },
+                    tooltip: {
+                        callbacks: {
+                            label: function(context) {
+                                return context.dataset.label + ': CHF ' + context.raw.toLocaleString();
+                            }
+                        }
+                    }
+                },
+                scales: {
+                    x: {
+                        grid: { color: '#334155' },
+                        ticks: { color: '#94a3b8' }
+                    },
+                    y: {
+                        grid: { color: '#334155' },
+                        ticks: {
+                            color: '#94a3b8',
+                            callback: function(value) {
+                                return 'CHF ' + value.toLocaleString();
+                            }
+                        }
+                    }
+                }
+            }
+        });
+
+        // Recycling Flow Chart
+        const recyclingCtx = document.getElementById('recyclingChart').getContext('2d');
+        new Chart(recyclingCtx, {
+            type: 'bar',
+            data: {
+                labels: ['Sammeln', 'Schreddern', 'Extrudieren', 'Drucken', 'Verkaufen'],
+                datasets: [{
+                    label: 'Wertschoepfungskette',
+                    data: [10, 30, 60, 85, 100],
+                    backgroundColor: [
+                        '#ef4444',
+                        '#f59e0b',
+                        '#10b981',
+                        '#6366f1',
+                        '#ec4899'
+                    ],
+                    borderRadius: 8,
+                    borderSkipped: false
+                }]
+            },
+            options: {
+                indexAxis: 'y',
+                responsive: true,
+                plugins: {
+                    legend: { display: false },
+                    tooltip: {
+                        callbacks: {
+                            label: function(context) {
+                                return 'Wertsteigerung: ' + context.raw + '%';
+                            }
+                        }
+                    }
+                },
+                scales: {
+                    x: {
+                        grid: { color: '#334155' },
+                        ticks: {
+                            color: '#94a3b8',
+                            callback: function(value) {
+                                return value + '%';
+                            }
+                        },
+                        max: 100
+                    },
+                    y: {
+                        grid: { display: false },
+                        ticks: { color: '#94a3b8' }
+                    }
+                }
+            }
+        });
+
+        // Smooth scroll for navigation
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function(e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                }
+            });
+        });
+    </script>
+</body>
+</html>
