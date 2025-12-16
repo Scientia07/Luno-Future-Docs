@@ -1,0 +1,1055 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LunoLabs - Gamma Style Offerte</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap');
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        :root {
+            --bg: #f8f7f4;
+            --card: #ffffff;
+            --text: #1a1a2e;
+            --text-muted: #6b7280;
+            --primary: #6366f1;
+            --primary-light: #a5b4fc;
+            --secondary: #10b981;
+            --accent: #f59e0b;
+            --border: #e5e7eb;
+            --shadow: 0 4px 20px rgba(0,0,0,0.06);
+            --shadow-hover: 0 10px 40px rgba(0,0,0,0.1);
+        }
+        html {
+            scroll-behavior: smooth;
+        }
+        body {
+            font-family: 'Plus Jakarta Sans', system-ui, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            line-height: 1.7;
+        }
+
+        /* Navigation Bar */
+        .topbar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+            background: rgba(248, 247, 244, 0.95);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid var(--border);
+            padding: 15px 40px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .topbar-logo {
+            font-weight: 800;
+            font-size: 1.3em;
+            color: var(--primary);
+        }
+        .topbar-nav {
+            display: flex;
+            gap: 30px;
+        }
+        .topbar-nav a {
+            color: var(--text-muted);
+            text-decoration: none;
+            font-size: 0.9em;
+            font-weight: 500;
+            transition: color 0.3s;
+        }
+        .topbar-nav a:hover {
+            color: var(--primary);
+        }
+
+        /* Main Container */
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 100px 30px 60px;
+        }
+
+        /* Cards */
+        .card {
+            background: var(--card);
+            border-radius: 24px;
+            box-shadow: var(--shadow);
+            margin-bottom: 30px;
+            overflow: hidden;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .card:hover {
+            box-shadow: var(--shadow-hover);
+            transform: translateY(-5px);
+        }
+        .card-content {
+            padding: 50px;
+        }
+
+        /* Hero Card */
+        .hero-card {
+            background: linear-gradient(135deg, #6366f1 0%, #818cf8 50%, #a5b4fc 100%);
+            color: white;
+            text-align: center;
+            padding: 80px 50px;
+        }
+        .hero-badge {
+            display: inline-block;
+            background: rgba(255,255,255,0.2);
+            padding: 8px 20px;
+            border-radius: 100px;
+            font-size: 0.85em;
+            font-weight: 600;
+            margin-bottom: 30px;
+        }
+        .hero-card h1 {
+            font-size: 3em;
+            font-weight: 800;
+            margin-bottom: 20px;
+            line-height: 1.2;
+        }
+        .hero-card p {
+            font-size: 1.2em;
+            opacity: 0.9;
+            max-width: 500px;
+            margin: 0 auto 40px;
+        }
+        .hero-stats {
+            display: flex;
+            justify-content: center;
+            gap: 50px;
+            flex-wrap: wrap;
+        }
+        .hero-stat {
+            text-align: center;
+        }
+        .hero-stat-value {
+            font-size: 2.5em;
+            font-weight: 800;
+        }
+        .hero-stat-label {
+            font-size: 0.9em;
+            opacity: 0.8;
+        }
+
+        /* Section Header */
+        .section-header {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 25px;
+        }
+        .section-icon {
+            width: 50px;
+            height: 50px;
+            background: linear-gradient(135deg, var(--primary), var(--primary-light));
+            border-radius: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 700;
+            font-size: 1.2em;
+        }
+        .section-title {
+            font-size: 1.8em;
+            font-weight: 700;
+        }
+        .section-subtitle {
+            color: var(--text-muted);
+            font-size: 1em;
+            margin-bottom: 30px;
+        }
+
+        /* Stats Grid */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+        }
+        .stat-card {
+            background: var(--bg);
+            border-radius: 16px;
+            padding: 25px;
+            text-align: center;
+            transition: all 0.3s;
+        }
+        .stat-card:hover {
+            background: linear-gradient(135deg, rgba(99, 102, 241, 0.1), rgba(129, 140, 248, 0.1));
+        }
+        .stat-icon {
+            font-size: 1.8em;
+            margin-bottom: 10px;
+        }
+        .stat-value {
+            font-size: 1.8em;
+            font-weight: 800;
+            color: var(--primary);
+        }
+        .stat-label {
+            color: var(--text-muted);
+            font-size: 0.85em;
+        }
+
+        /* Quote Card */
+        .quote-card {
+            background: linear-gradient(135deg, #fef3c7, #fde68a);
+            border-left: 4px solid var(--accent);
+        }
+        .quote-card .card-content {
+            padding: 40px 50px;
+        }
+        .quote-text {
+            font-size: 1.3em;
+            font-style: italic;
+            color: #92400e;
+            margin-bottom: 15px;
+        }
+        .quote-author {
+            color: #b45309;
+            font-weight: 600;
+        }
+
+        /* Table Card */
+        .table-container {
+            overflow-x: auto;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        th {
+            text-align: left;
+            padding: 15px 20px;
+            background: var(--bg);
+            font-weight: 600;
+            font-size: 0.85em;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: var(--text-muted);
+            border-bottom: 2px solid var(--border);
+        }
+        td {
+            padding: 18px 20px;
+            border-bottom: 1px solid var(--border);
+        }
+        tr:hover {
+            background: rgba(99, 102, 241, 0.03);
+        }
+        .item-name {
+            font-weight: 600;
+        }
+        .item-desc {
+            color: var(--text-muted);
+            font-size: 0.9em;
+        }
+        .item-qty {
+            color: var(--text-muted);
+        }
+        .item-price {
+            font-weight: 700;
+            color: var(--secondary);
+        }
+        .table-total {
+            background: linear-gradient(135deg, rgba(16, 185, 129, 0.1), rgba(16, 185, 129, 0.05));
+        }
+        .table-total td {
+            font-weight: 700;
+            font-size: 1.1em;
+            border-bottom: none;
+        }
+
+        /* Chart Card */
+        .chart-wrapper {
+            max-width: 400px;
+            margin: 0 auto;
+        }
+        .charts-row {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+        }
+        .chart-card-inner {
+            background: var(--bg);
+            border-radius: 16px;
+            padding: 30px;
+        }
+        .chart-title {
+            font-weight: 600;
+            margin-bottom: 20px;
+            text-align: center;
+            color: var(--text-muted);
+        }
+
+        /* Timeline Card */
+        .timeline {
+            position: relative;
+            padding-left: 30px;
+        }
+        .timeline::before {
+            content: '';
+            position: absolute;
+            left: 8px;
+            top: 5px;
+            bottom: 5px;
+            width: 3px;
+            background: linear-gradient(180deg, var(--primary), var(--secondary));
+            border-radius: 3px;
+        }
+        .timeline-item {
+            position: relative;
+            margin-bottom: 35px;
+            padding-left: 25px;
+        }
+        .timeline-item:last-child {
+            margin-bottom: 0;
+        }
+        .timeline-item::before {
+            content: '';
+            position: absolute;
+            left: -26px;
+            top: 5px;
+            width: 14px;
+            height: 14px;
+            background: var(--primary);
+            border-radius: 50%;
+            border: 3px solid var(--card);
+        }
+        .timeline-phase {
+            display: inline-block;
+            background: rgba(99, 102, 241, 0.1);
+            color: var(--primary);
+            padding: 4px 12px;
+            border-radius: 100px;
+            font-size: 0.75em;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+        .timeline-title {
+            font-size: 1.1em;
+            font-weight: 700;
+            margin-bottom: 5px;
+        }
+        .timeline-desc {
+            color: var(--text-muted);
+            font-size: 0.95em;
+        }
+
+        /* Benefits Cards */
+        .benefits-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+        }
+        .benefit-mini-card {
+            background: var(--bg);
+            border-radius: 16px;
+            padding: 25px;
+            text-align: center;
+            transition: all 0.3s;
+        }
+        .benefit-mini-card:hover {
+            background: var(--card);
+            box-shadow: var(--shadow);
+        }
+        .benefit-mini-icon {
+            width: 50px;
+            height: 50px;
+            background: linear-gradient(135deg, var(--primary), var(--primary-light));
+            border-radius: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.2em;
+            margin: 0 auto 15px;
+        }
+        .benefit-mini-title {
+            font-weight: 700;
+            margin-bottom: 10px;
+        }
+        .benefit-mini-list {
+            list-style: none;
+            text-align: left;
+            font-size: 0.9em;
+            color: var(--text-muted);
+        }
+        .benefit-mini-list li {
+            padding: 5px 0;
+            padding-left: 20px;
+            position: relative;
+        }
+        .benefit-mini-list li::before {
+            content: '✓';
+            position: absolute;
+            left: 0;
+            color: var(--secondary);
+        }
+
+        /* CTA Card */
+        .cta-card {
+            background: linear-gradient(135deg, #1e1b4b, #312e81);
+            color: white;
+            text-align: center;
+        }
+        .cta-card .card-content {
+            padding: 60px 50px;
+        }
+        .cta-card h2 {
+            font-size: 2.2em;
+            font-weight: 800;
+            margin-bottom: 15px;
+        }
+        .cta-card p {
+            opacity: 0.8;
+            margin-bottom: 30px;
+            font-size: 1.1em;
+        }
+        .cta-buttons {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+        .btn {
+            padding: 14px 30px;
+            border-radius: 12px;
+            font-size: 1em;
+            font-weight: 600;
+            text-decoration: none;
+            transition: all 0.3s;
+        }
+        .btn-white {
+            background: white;
+            color: var(--text);
+        }
+        .btn-white:hover {
+            transform: scale(1.05);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+        .btn-outline {
+            background: transparent;
+            color: white;
+            border: 2px solid rgba(255,255,255,0.3);
+        }
+        .btn-outline:hover {
+            border-color: white;
+        }
+
+        /* Footer */
+        .footer {
+            text-align: center;
+            padding: 40px;
+            color: var(--text-muted);
+            font-size: 0.9em;
+        }
+
+        /* Tabs */
+        .tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+        }
+        .tab {
+            padding: 10px 20px;
+            background: var(--bg);
+            border: none;
+            border-radius: 100px;
+            font-size: 0.9em;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s;
+            color: var(--text-muted);
+        }
+        .tab:hover {
+            background: var(--border);
+        }
+        .tab.active {
+            background: var(--primary);
+            color: white;
+        }
+        .tab-content {
+            display: none;
+        }
+        .tab-content.active {
+            display: block;
+        }
+
+        /* Animations */
+        .card {
+            opacity: 0;
+            transform: translateY(30px);
+            animation: cardFadeIn 0.6s ease forwards;
+        }
+        .card:nth-child(1) { animation-delay: 0s; }
+        .card:nth-child(2) { animation-delay: 0.1s; }
+        .card:nth-child(3) { animation-delay: 0.2s; }
+        .card:nth-child(4) { animation-delay: 0.3s; }
+        .card:nth-child(5) { animation-delay: 0.4s; }
+        .card:nth-child(6) { animation-delay: 0.5s; }
+        .card:nth-child(7) { animation-delay: 0.6s; }
+
+        @keyframes cardFadeIn {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .container {
+                padding: 80px 20px 40px;
+            }
+            .card-content {
+                padding: 30px;
+            }
+            .hero-card {
+                padding: 50px 30px;
+            }
+            .hero-card h1 {
+                font-size: 2em;
+            }
+            .hero-stats {
+                gap: 30px;
+            }
+            .benefits-grid {
+                grid-template-columns: 1fr;
+            }
+            .topbar-nav {
+                display: none;
+            }
+        }
+
+        /* Print */
+        @media print {
+            .topbar {
+                display: none;
+            }
+            .card {
+                break-inside: avoid;
+                box-shadow: none;
+                border: 1px solid var(--border);
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Top Bar -->
+    <nav class="topbar">
+        <div class="topbar-logo">LunoLabs</div>
+        <div class="topbar-nav">
+            <a href="#kosten">Kosten</a>
+            <a href="#infrastruktur">Infrastruktur</a>
+            <a href="#zeitplan">Zeitplan</a>
+            <a href="#mehrwert">Mehrwert</a>
+        </div>
+    </nav>
+
+    <div class="container">
+        <!-- Hero Card -->
+        <div class="card">
+            <div class="hero-card">
+                <div class="hero-badge">Offerte 2025</div>
+                <h1>Technisches Jugendfoerderprogramm</h1>
+                <p>
+                    Zugang schaffen. Kompetenz aufbauen. Perspektiven eroeffnen.
+                </p>
+                <div class="hero-stats">
+                    <div class="hero-stat">
+                        <div class="hero-stat-value">CHF 18'450</div>
+                        <div class="hero-stat-label">Gesamtinvestition</div>
+                    </div>
+                    <div class="hero-stat">
+                        <div class="hero-stat-value">50+</div>
+                        <div class="hero-stat-label">Jugendliche/Jahr</div>
+                    </div>
+                    <div class="hero-stat">
+                        <div class="hero-stat-value">4</div>
+                        <div class="hero-stat-label">Kernbereiche</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Quote Card -->
+        <div class="card quote-card">
+            <div class="card-content">
+                <p class="quote-text">
+                    "LunoLabs ist ein technisches Fundament im Jugendtreff - ein Raum,
+                    in dem Jugendliche moderne Technologien nicht nur konsumieren,
+                    sondern aktiv gestalten und verstehen lernen."
+                </p>
+                <p class="quote-author">- Leitidee LunoLabs</p>
+            </div>
+        </div>
+
+        <!-- Costs Card -->
+        <div class="card" id="kosten">
+            <div class="card-content">
+                <div class="section-header">
+                    <div class="section-icon">$</div>
+                    <h2 class="section-title">Kostenuebersicht</h2>
+                </div>
+                <p class="section-subtitle">
+                    Transparente Aufstellung aller Investitionen (Dezember 2025)
+                </p>
+
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-icon">3D</div>
+                        <div class="stat-value">6'650</div>
+                        <div class="stat-label">3D-Druck (CHF)</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon">E</div>
+                        <div class="stat-value">5'190</div>
+                        <div class="stat-label">Elektronik (CHF)</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon">PC</div>
+                        <div class="stat-value">3'800</div>
+                        <div class="stat-label">Computing (CHF)</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon">W</div>
+                        <div class="stat-value">2'810</div>
+                        <div class="stat-label">Werkstatt (CHF)</div>
+                    </div>
+                </div>
+
+                <div class="charts-row" style="margin-top: 40px;">
+                    <div class="chart-card-inner">
+                        <div class="chart-title">Kostenverteilung</div>
+                        <canvas id="costChart"></canvas>
+                    </div>
+                    <div class="chart-card-inner">
+                        <div class="chart-title">ROI Projektion</div>
+                        <canvas id="roiChart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Infrastructure Card with Tabs -->
+        <div class="card" id="infrastruktur">
+            <div class="card-content">
+                <div class="section-header">
+                    <div class="section-icon">I</div>
+                    <h2 class="section-title">Detaillierte Infrastruktur</h2>
+                </div>
+                <p class="section-subtitle">
+                    Vollstaendige Materialliste mit aktuellen Marktpreisen
+                </p>
+
+                <div class="tabs">
+                    <button class="tab active" onclick="showTab('tab3d')">3D-Druck</button>
+                    <button class="tab" onclick="showTab('tabelektronik')">Elektronik</button>
+                    <button class="tab" onclick="showTab('tabcomputing')">Computing</button>
+                    <button class="tab" onclick="showTab('tabwerkstatt')">Werkstatt</button>
+                </div>
+
+                <div id="tab3d" class="tab-content active">
+                    <div class="table-container">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Artikel</th>
+                                    <th>Menge</th>
+                                    <th>Total</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>
+                                        <div class="item-name">VORON 2.4 R2 Kit (350mm)</div>
+                                        <div class="item-desc">High-End CoreXY 3D-Drucker</div>
+                                    </td>
+                                    <td class="item-qty">2x</td>
+                                    <td class="item-price">CHF 2'900</td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <div class="item-name">Bambu Lab P1S Combo</div>
+                                        <div class="item-desc">Einsteiger-freundlich mit AMS</div>
+                                    </td>
+                                    <td class="item-qty">2x</td>
+                                    <td class="item-price">CHF 1'060</td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <div class="item-name">Filament Sortiment</div>
+                                        <div class="item-desc">PLA, PETG, TPU (50 Rollen)</div>
+                                    </td>
+                                    <td class="item-qty">1x</td>
+                                    <td class="item-price">CHF 1'200</td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <div class="item-name">Zubehoer & Ersatzteile</div>
+                                        <div class="item-desc">Nozzles, Werkzeug, Trockenbox, Filter</div>
+                                    </td>
+                                    <td class="item-qty">-</td>
+                                    <td class="item-price">CHF 1'490</td>
+                                </tr>
+                                <tr class="table-total">
+                                    <td colspan="2"><strong>Zwischentotal 3D-Druck</strong></td>
+                                    <td class="item-price">CHF 6'650</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <div id="tabelektronik" class="tab-content">
+                    <div class="table-container">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Artikel</th>
+                                    <th>Menge</th>
+                                    <th>Total</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>
+                                        <div class="item-name">Weller WE1010 Loetstation</div>
+                                        <div class="item-desc">Digitale 70W Professional</div>
+                                    </td>
+                                    <td class="item-qty">4x</td>
+                                    <td class="item-price">CHF 640</td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <div class="item-name">Rigol DS1054Z Oszilloskop</div>
+                                        <div class="item-desc">4-Kanal 50MHz</div>
+                                    </td>
+                                    <td class="item-qty">2x</td>
+                                    <td class="item-price">CHF 760</td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <div class="item-name">Messgeraete & Netzteile</div>
+                                        <div class="item-desc">Multimeter + Labornetzgeraete</div>
+                                    </td>
+                                    <td class="item-qty">10x</td>
+                                    <td class="item-price">CHF 1'560</td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <div class="item-name">Mikrocontroller Kits</div>
+                                        <div class="item-desc">ESP32 & Arduino Sets</div>
+                                    </td>
+                                    <td class="item-qty">30x</td>
+                                    <td class="item-price">CHF 1'450</td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <div class="item-name">Bauteile & Zubehoer</div>
+                                        <div class="item-desc">Komponenten, ESD-Schutz</div>
+                                    </td>
+                                    <td class="item-qty">-</td>
+                                    <td class="item-price">CHF 780</td>
+                                </tr>
+                                <tr class="table-total">
+                                    <td colspan="2"><strong>Zwischentotal Elektronik</strong></td>
+                                    <td class="item-price">CHF 5'190</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <div id="tabcomputing" class="tab-content">
+                    <div class="table-container">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Artikel</th>
+                                    <th>Menge</th>
+                                    <th>Total</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>
+                                        <div class="item-name">Raspberry Pi 5 (8GB + 4GB)</div>
+                                        <div class="item-desc">Hauptrechner fuer Projekte</div>
+                                    </td>
+                                    <td class="item-qty">20x</td>
+                                    <td class="item-price">CHF 1'600</td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <div class="item-name">Pi Zubehoer-Sets</div>
+                                        <div class="item-desc">Gehaeuse, Kuehler, Netzteil, SD</div>
+                                    </td>
+                                    <td class="item-qty">20x</td>
+                                    <td class="item-price">CHF 900</td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <div class="item-name">Monitore 24"</div>
+                                        <div class="item-desc">Full HD fuer Arbeitsplaetze</div>
+                                    </td>
+                                    <td class="item-qty">6x</td>
+                                    <td class="item-price">CHF 900</td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <div class="item-name">Tastatur & Maus Sets</div>
+                                        <div class="item-desc">Kabelgebunden, robust</div>
+                                    </td>
+                                    <td class="item-qty">10x</td>
+                                    <td class="item-price">CHF 400</td>
+                                </tr>
+                                <tr class="table-total">
+                                    <td colspan="2"><strong>Zwischentotal Computing</strong></td>
+                                    <td class="item-price">CHF 3'800</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <div id="tabwerkstatt" class="tab-content">
+                    <div class="table-container">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Artikel</th>
+                                    <th>Menge</th>
+                                    <th>Total</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>
+                                        <div class="item-name">Werkbank 180x80cm</div>
+                                        <div class="item-desc">Stabile Arbeitsflaeche</div>
+                                    </td>
+                                    <td class="item-qty">2x</td>
+                                    <td class="item-price">CHF 900</td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <div class="item-name">Werkzeugwagen</div>
+                                        <div class="item-desc">Mit Schubladen und Rollen</div>
+                                    </td>
+                                    <td class="item-qty">2x</td>
+                                    <td class="item-price">CHF 560</td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <div class="item-name">Handwerkzeug-Set</div>
+                                        <div class="item-desc">Schraubendreher, Zangen, etc.</div>
+                                    </td>
+                                    <td class="item-qty">4x</td>
+                                    <td class="item-price">CHF 600</td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <div class="item-name">Sicherheit & Lagerung</div>
+                                        <div class="item-desc">Schutzbrillen, Regale, Boxen</div>
+                                    </td>
+                                    <td class="item-qty">-</td>
+                                    <td class="item-price">CHF 750</td>
+                                </tr>
+                                <tr class="table-total">
+                                    <td colspan="2"><strong>Zwischentotal Werkstatt</strong></td>
+                                    <td class="item-price">CHF 2'810</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Timeline Card -->
+        <div class="card" id="zeitplan">
+            <div class="card-content">
+                <div class="section-header">
+                    <div class="section-icon">T</div>
+                    <h2 class="section-title">Umsetzungsplan</h2>
+                </div>
+                <p class="section-subtitle">
+                    Strukturierter Ablauf fuer die Einfuehrung
+                </p>
+
+                <div class="timeline">
+                    <div class="timeline-item">
+                        <span class="timeline-phase">Phase 1</span>
+                        <h3 class="timeline-title">Beschaffung & Vorbereitung</h3>
+                        <p class="timeline-desc">Bestellung, Raeumlichkeiten vorbereiten, Grundinfrastruktur</p>
+                    </div>
+                    <div class="timeline-item">
+                        <span class="timeline-phase">Phase 2</span>
+                        <h3 class="timeline-title">Aufbau 3D-Druck Station</h3>
+                        <p class="timeline-desc">VORON Zusammenbau, Bambu Lab Setup, Kalibrierung</p>
+                    </div>
+                    <div class="timeline-item">
+                        <span class="timeline-phase">Phase 3</span>
+                        <h3 class="timeline-title">Elektronik-Werkstatt</h3>
+                        <p class="timeline-desc">Loetarbeitsplaetze, Messgeraete, ESD-Schutz</p>
+                    </div>
+                    <div class="timeline-item">
+                        <span class="timeline-phase">Phase 4</span>
+                        <h3 class="timeline-title">Computing & Software</h3>
+                        <p class="timeline-desc">Raspberry Pi Setup, Software Installation</p>
+                    </div>
+                    <div class="timeline-item">
+                        <span class="timeline-phase">Phase 5</span>
+                        <h3 class="timeline-title">Pilotbetrieb</h3>
+                        <p class="timeline-desc">Erste Workshops, Feedback sammeln</p>
+                    </div>
+                    <div class="timeline-item">
+                        <span class="timeline-phase">Phase 6</span>
+                        <h3 class="timeline-title">Regelbetrieb</h3>
+                        <p class="timeline-desc">Semesterkurse, Community Aufbau</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Benefits Card -->
+        <div class="card" id="mehrwert">
+            <div class="card-content">
+                <div class="section-header">
+                    <div class="section-icon">+</div>
+                    <h2 class="section-title">Wirkung & Mehrwert</h2>
+                </div>
+                <p class="section-subtitle">
+                    Nachhaltige Investition in die Zukunft
+                </p>
+
+                <div class="benefits-grid">
+                    <div class="benefit-mini-card">
+                        <div class="benefit-mini-icon">J</div>
+                        <h3 class="benefit-mini-title">Jugendliche</h3>
+                        <ul class="benefit-mini-list">
+                            <li>Zugang zu Technologie</li>
+                            <li>Selbstwirksamkeit</li>
+                            <li>Berufsorientierung</li>
+                            <li>Kreativitaet</li>
+                        </ul>
+                    </div>
+                    <div class="benefit-mini-card">
+                        <div class="benefit-mini-icon">G</div>
+                        <h3 class="benefit-mini-title">Gemeinden</h3>
+                        <ul class="benefit-mini-list">
+                            <li>Jugendfoerderung</li>
+                            <li>Gesetzliche Pflicht</li>
+                            <li>Aussenwirkung</li>
+                            <li>Standortentwicklung</li>
+                        </ul>
+                    </div>
+                    <div class="benefit-mini-card">
+                        <div class="benefit-mini-icon">R</div>
+                        <h3 class="benefit-mini-title">Region</h3>
+                        <ul class="benefit-mini-list">
+                            <li>Grundbildung</li>
+                            <li>Nachwuchs</li>
+                            <li>Innovation</li>
+                            <li>Skalierbarkeit</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- CTA Card -->
+        <div class="card cta-card">
+            <div class="card-content">
+                <h2>Bereit fuer die Zukunft?</h2>
+                <p>
+                    Lassen Sie uns gemeinsam LunoLabs verwirklichen.
+                </p>
+                <div class="cta-buttons">
+                    <a href="mailto:kontakt@lunolabs.ch" class="btn btn-white">Kontakt aufnehmen</a>
+                    <a href="#" class="btn btn-outline" onclick="window.print()">PDF exportieren</a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <div class="footer">
+            <strong>LunoLabs</strong> | Offerte erstellt: Dezember 2025 | Gueltigkeit: 90 Tage
+        </div>
+    </div>
+
+    <script>
+        // Tab Functionality
+        function showTab(tabId) {
+            // Hide all tabs
+            document.querySelectorAll('.tab-content').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            document.querySelectorAll('.tab').forEach(btn => {
+                btn.classList.remove('active');
+            });
+
+            // Show selected tab
+            document.getElementById(tabId).classList.add('active');
+            event.target.classList.add('active');
+        }
+
+        // Charts
+        new Chart(document.getElementById('costChart'), {
+            type: 'doughnut',
+            data: {
+                labels: ['3D-Druck', 'Elektronik', 'Computing', 'Werkstatt'],
+                datasets: [{
+                    data: [6650, 5190, 3800, 2810],
+                    backgroundColor: ['#6366f1', '#10b981', '#f59e0b', '#ec4899'],
+                    borderWidth: 0
+                }]
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: { position: 'bottom', labels: { padding: 15 } }
+                }
+            }
+        });
+
+        new Chart(document.getElementById('roiChart'), {
+            type: 'line',
+            data: {
+                labels: ['Start', 'J1', 'J2', 'J3', 'J4', 'J5'],
+                datasets: [{
+                    label: 'Nutzen',
+                    data: [0, 15000, 35000, 60000, 90000, 125000],
+                    borderColor: '#10b981',
+                    backgroundColor: 'rgba(16, 185, 129, 0.1)',
+                    fill: true,
+                    tension: 0.4
+                }, {
+                    label: 'Investition',
+                    data: [18450, 19450, 20450, 21450, 22450, 23450],
+                    borderColor: '#6366f1',
+                    borderDash: [5, 5]
+                }]
+            },
+            options: {
+                responsive: true,
+                plugins: { legend: { position: 'bottom' } },
+                scales: {
+                    y: { beginAtZero: true }
+                }
+            }
+        });
+    </script>
+</body>
+</html>

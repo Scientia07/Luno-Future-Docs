@@ -1,0 +1,481 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LunoLabs Offerte - Format Vergleich</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        :root {
+            --bg: #0f172a;
+            --card: #1e293b;
+            --border: #334155;
+            --text: #f1f5f9;
+            --muted: #94a3b8;
+            --primary: #6366f1;
+            --secondary: #10b981;
+            --accent: #f59e0b;
+        }
+        body {
+            font-family: 'Inter', system-ui, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            min-height: 100vh;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 60px 30px;
+        }
+
+        /* Header */
+        .header {
+            text-align: center;
+            margin-bottom: 60px;
+        }
+        .header-badge {
+            display: inline-block;
+            background: rgba(99, 102, 241, 0.2);
+            color: var(--primary);
+            padding: 8px 20px;
+            border-radius: 100px;
+            font-size: 0.85em;
+            font-weight: 600;
+            margin-bottom: 20px;
+        }
+        .header h1 {
+            font-size: 3em;
+            font-weight: 800;
+            margin-bottom: 15px;
+        }
+        .header h1 span {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        .header p {
+            color: var(--muted);
+            font-size: 1.2em;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        /* Cards Grid */
+        .cards-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 30px;
+            margin-bottom: 60px;
+        }
+
+        .format-card {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            overflow: hidden;
+            transition: all 0.4s;
+        }
+        .format-card:hover {
+            transform: translateY(-10px);
+            border-color: var(--primary);
+            box-shadow: 0 20px 40px rgba(99, 102, 241, 0.2);
+        }
+
+        .card-preview {
+            height: 200px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 4em;
+            position: relative;
+        }
+        .card-preview.scrolly {
+            background: linear-gradient(135deg, #0f172a, #1e1b4b);
+        }
+        .card-preview.framer {
+            background: linear-gradient(135deg, #000000, #1a1a2e);
+        }
+        .card-preview.gamma {
+            background: linear-gradient(135deg, #f8f7f4, #e5e7eb);
+        }
+        .card-preview.lottie {
+            background: linear-gradient(135deg, #0a0a1a, #1a1a3a);
+        }
+        .card-preview.original {
+            background: linear-gradient(135deg, #6366f1, #818cf8);
+        }
+
+        .card-content {
+            padding: 30px;
+        }
+        .card-title {
+            font-size: 1.5em;
+            font-weight: 700;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .card-badge {
+            font-size: 0.5em;
+            background: var(--secondary);
+            color: white;
+            padding: 4px 10px;
+            border-radius: 100px;
+            font-weight: 600;
+        }
+        .card-desc {
+            color: var(--muted);
+            margin-bottom: 20px;
+            font-size: 0.95em;
+        }
+        .card-features {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-bottom: 25px;
+        }
+        .feature-tag {
+            background: rgba(99, 102, 241, 0.1);
+            color: var(--primary);
+            padding: 5px 12px;
+            border-radius: 6px;
+            font-size: 0.8em;
+            font-weight: 500;
+        }
+        .card-link {
+            display: block;
+            background: var(--primary);
+            color: white;
+            text-decoration: none;
+            text-align: center;
+            padding: 14px;
+            border-radius: 10px;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+        .card-link:hover {
+            background: #4f46e5;
+            transform: scale(1.02);
+        }
+
+        /* Comparison Table */
+        .comparison-section {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            padding: 40px;
+            margin-bottom: 40px;
+        }
+        .comparison-title {
+            font-size: 1.5em;
+            font-weight: 700;
+            margin-bottom: 30px;
+        }
+        .comparison-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        .comparison-table th,
+        .comparison-table td {
+            padding: 15px 20px;
+            text-align: left;
+            border-bottom: 1px solid var(--border);
+        }
+        .comparison-table th {
+            font-weight: 600;
+            color: var(--muted);
+            font-size: 0.85em;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+        .comparison-table td:first-child {
+            font-weight: 600;
+            color: var(--primary);
+        }
+        .check {
+            color: var(--secondary);
+            font-size: 1.2em;
+        }
+        .partial {
+            color: var(--accent);
+            font-size: 1.2em;
+        }
+
+        /* Recommendation */
+        .recommendation {
+            background: linear-gradient(135deg, rgba(99, 102, 241, 0.1), rgba(16, 185, 129, 0.1));
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            padding: 40px;
+        }
+        .recommendation h3 {
+            font-size: 1.5em;
+            margin-bottom: 20px;
+        }
+        .rec-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+        }
+        .rec-item {
+            background: rgba(0,0,0,0.2);
+            border-radius: 12px;
+            padding: 20px;
+        }
+        .rec-item h4 {
+            color: var(--primary);
+            margin-bottom: 8px;
+        }
+        .rec-item p {
+            color: var(--muted);
+            font-size: 0.9em;
+        }
+
+        /* Footer */
+        .footer {
+            text-align: center;
+            padding: 40px;
+            color: var(--muted);
+            border-top: 1px solid var(--border);
+            margin-top: 40px;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .cards-grid {
+                grid-template-columns: 1fr;
+            }
+            .header h1 {
+                font-size: 2em;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header class="header">
+            <div class="header-badge">Format Vergleich</div>
+            <h1>LunoLabs <span>Offerte</span></h1>
+            <p>
+                Die gleiche Offerte in 5 verschiedenen interaktiven Formaten.
+                Welches passt am besten zu deinen Kunden?
+            </p>
+        </header>
+
+        <div class="cards-grid">
+            <!-- Scrollytelling -->
+            <div class="format-card">
+                <div class="card-preview scrolly">
+                    <span>📜</span>
+                </div>
+                <div class="card-content">
+                    <h2 class="card-title">
+                        Scrollytelling
+                        <span class="card-badge">Empfohlen</span>
+                    </h2>
+                    <p class="card-desc">
+                        Scroll-getriebene Narrative mit Parallax-Effekten,
+                        Progress-Bar und animierten Reveals.
+                    </p>
+                    <div class="card-features">
+                        <span class="feature-tag">Progress Bar</span>
+                        <span class="feature-tag">Side Navigation</span>
+                        <span class="feature-tag">Sticky Sections</span>
+                        <span class="feature-tag">Reveal Animations</span>
+                    </div>
+                    <a href="lunolabs-scrollytelling.html" class="card-link">Demo ansehen →</a>
+                </div>
+            </div>
+
+            <!-- Framer -->
+            <div class="format-card">
+                <div class="card-preview framer">
+                    <span>🎨</span>
+                </div>
+                <div class="card-content">
+                    <h2 class="card-title">Framer Style</h2>
+                    <p class="card-desc">
+                        Premium Web-Design mit Bento-Grid, Cursor-Glow-Effekt
+                        und massiver Typografie.
+                    </p>
+                    <div class="card-features">
+                        <span class="feature-tag">Bento Grid</span>
+                        <span class="feature-tag">Cursor Glow</span>
+                        <span class="feature-tag">Bold Typography</span>
+                        <span class="feature-tag">Horizontal Timeline</span>
+                    </div>
+                    <a href="lunolabs-framer.html" class="card-link">Demo ansehen →</a>
+                </div>
+            </div>
+
+            <!-- Gamma -->
+            <div class="format-card">
+                <div class="card-preview gamma">
+                    <span style="filter: grayscale(1);">✨</span>
+                </div>
+                <div class="card-content">
+                    <h2 class="card-title">Gamma Style</h2>
+                    <p class="card-desc">
+                        Card-basiertes Design mit hellen Farben, Tabs fuer
+                        Navigation und klarer Struktur.
+                    </p>
+                    <div class="card-features">
+                        <span class="feature-tag">Card Layout</span>
+                        <span class="feature-tag">Light Theme</span>
+                        <span class="feature-tag">Tab Navigation</span>
+                        <span class="feature-tag">Clean Design</span>
+                    </div>
+                    <a href="lunolabs-gamma.html" class="card-link">Demo ansehen →</a>
+                </div>
+            </div>
+
+            <!-- Lottie -->
+            <div class="format-card">
+                <div class="card-preview lottie">
+                    <span>🎪</span>
+                </div>
+                <div class="card-content">
+                    <h2 class="card-title">Lottie Animations</h2>
+                    <p class="card-desc">
+                        Animierte Vektorgrafiken fuer jeden Bereich mit
+                        Dracula-Farbschema und Feature-Rows.
+                    </p>
+                    <div class="card-features">
+                        <span class="feature-tag">Lottie Player</span>
+                        <span class="feature-tag">Feature Rows</span>
+                        <span class="feature-tag">Dark Theme</span>
+                        <span class="feature-tag">Animated Icons</span>
+                    </div>
+                    <a href="lunolabs-lottie.html" class="card-link">Demo ansehen →</a>
+                </div>
+            </div>
+
+            <!-- Original -->
+            <div class="format-card" style="grid-column: span 2;">
+                <div class="card-preview original">
+                    <span>📊</span>
+                </div>
+                <div class="card-content">
+                    <h2 class="card-title">Original Version</h2>
+                    <p class="card-desc">
+                        Die erste Version mit vollstaendiger Kostenaufstellung,
+                        Timeline und allen Details. Basis fuer alle anderen Formate.
+                    </p>
+                    <div class="card-features">
+                        <span class="feature-tag">Vollstaendig</span>
+                        <span class="feature-tag">Chart.js</span>
+                        <span class="feature-tag">Alle Details</span>
+                        <span class="feature-tag">Print-Ready</span>
+                    </div>
+                    <a href="lunolabs-offerte.html" class="card-link">Demo ansehen →</a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Comparison Table -->
+        <div class="comparison-section">
+            <h3 class="comparison-title">Feature Vergleich</h3>
+            <table class="comparison-table">
+                <thead>
+                    <tr>
+                        <th>Feature</th>
+                        <th>Scrolly</th>
+                        <th>Framer</th>
+                        <th>Gamma</th>
+                        <th>Lottie</th>
+                        <th>Original</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Animationen</td>
+                        <td><span class="check">✓</span></td>
+                        <td><span class="check">✓</span></td>
+                        <td><span class="partial">◐</span></td>
+                        <td><span class="check">✓✓</span></td>
+                        <td><span class="partial">◐</span></td>
+                    </tr>
+                    <tr>
+                        <td>Interaktivitaet</td>
+                        <td><span class="check">✓✓</span></td>
+                        <td><span class="check">✓</span></td>
+                        <td><span class="check">✓</span></td>
+                        <td><span class="check">✓</span></td>
+                        <td><span class="partial">◐</span></td>
+                    </tr>
+                    <tr>
+                        <td>Mobile-Friendly</td>
+                        <td><span class="check">✓</span></td>
+                        <td><span class="check">✓</span></td>
+                        <td><span class="check">✓✓</span></td>
+                        <td><span class="check">✓</span></td>
+                        <td><span class="check">✓</span></td>
+                    </tr>
+                    <tr>
+                        <td>Print/PDF</td>
+                        <td><span class="partial">◐</span></td>
+                        <td><span class="partial">◐</span></td>
+                        <td><span class="check">✓✓</span></td>
+                        <td><span class="partial">◐</span></td>
+                        <td><span class="check">✓✓</span></td>
+                    </tr>
+                    <tr>
+                        <td>WOW-Faktor</td>
+                        <td><span class="check">✓✓</span></td>
+                        <td><span class="check">✓✓✓</span></td>
+                        <td><span class="check">✓</span></td>
+                        <td><span class="check">✓✓</span></td>
+                        <td><span class="check">✓</span></td>
+                    </tr>
+                    <tr>
+                        <td>Ladezeit</td>
+                        <td>Schnell</td>
+                        <td>Schnell</td>
+                        <td>Sehr schnell</td>
+                        <td>Mittel</td>
+                        <td>Schnell</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Recommendations -->
+        <div class="recommendation">
+            <h3>Empfehlungen nach Anwendungsfall</h3>
+            <div class="rec-grid">
+                <div class="rec-item">
+                    <h4>Kunden-Pitch</h4>
+                    <p><strong>Framer</strong> oder <strong>Scrollytelling</strong> - maximaler Eindruck</p>
+                </div>
+                <div class="rec-item">
+                    <h4>Formelle Offerte</h4>
+                    <p><strong>Gamma</strong> oder <strong>Original</strong> - professionell, druckbar</p>
+                </div>
+                <div class="rec-item">
+                    <h4>Tech-Interessierte</h4>
+                    <p><strong>Lottie</strong> - zeigt technische Kompetenz</p>
+                </div>
+                <div class="rec-item">
+                    <h4>Quick Overview</h4>
+                    <p><strong>Gamma</strong> - schnell erfassbar, Tabs fuer Navigation</p>
+                </div>
+            </div>
+        </div>
+
+        <footer class="footer">
+            <p><strong>LunoLabs</strong> - Technisches Jugendförderprogramm</p>
+            <p style="margin-top: 10px;">Alle Formate enthalten die gleichen Daten (CHF 18'450 Gesamtinvestition)</p>
+        </footer>
+    </div>
+</body>
+</html>

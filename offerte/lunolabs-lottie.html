@@ -1,0 +1,923 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LunoLabs - Lottie Animation Offerte</title>
+    <script src="https://unpkg.com/@dotlottie/player-component@2.7.12/dist/dotlottie-player.mjs" type="module"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&display=swap');
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        :root {
+            --bg: #0a0a1a;
+            --card: rgba(255,255,255,0.03);
+            --card-border: rgba(255,255,255,0.08);
+            --text: #ffffff;
+            --text-muted: #8892b0;
+            --primary: #64ffda;
+            --secondary: #bd93f9;
+            --accent: #ff79c6;
+            --yellow: #f1fa8c;
+        }
+        html {
+            scroll-behavior: smooth;
+        }
+        body {
+            font-family: 'Space Grotesk', system-ui, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            line-height: 1.7;
+            overflow-x: hidden;
+        }
+
+        /* Animated Background */
+        .bg-animation {
+            position: fixed;
+            inset: 0;
+            z-index: -1;
+            background:
+                radial-gradient(circle at 20% 20%, rgba(100, 255, 218, 0.08) 0%, transparent 40%),
+                radial-gradient(circle at 80% 80%, rgba(189, 147, 249, 0.08) 0%, transparent 40%),
+                var(--bg);
+        }
+
+        /* Navigation */
+        .nav {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+            background: rgba(10, 10, 26, 0.9);
+            backdrop-filter: blur(20px);
+            padding: 20px 50px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid var(--card-border);
+        }
+        .nav-logo {
+            font-size: 1.5em;
+            font-weight: 700;
+            color: var(--primary);
+        }
+        .nav-links {
+            display: flex;
+            gap: 35px;
+        }
+        .nav-links a {
+            color: var(--text-muted);
+            text-decoration: none;
+            font-size: 0.9em;
+            transition: color 0.3s;
+        }
+        .nav-links a:hover {
+            color: var(--primary);
+        }
+
+        /* Container */
+        .container {
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 0 30px;
+        }
+
+        /* Hero Section */
+        .hero {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            padding-top: 80px;
+        }
+        .hero-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 60px;
+            align-items: center;
+        }
+        .hero-content {
+            z-index: 1;
+        }
+        .hero-badge {
+            display: inline-block;
+            background: rgba(100, 255, 218, 0.1);
+            border: 1px solid rgba(100, 255, 218, 0.3);
+            color: var(--primary);
+            padding: 8px 20px;
+            border-radius: 100px;
+            font-size: 0.85em;
+            font-weight: 500;
+            margin-bottom: 30px;
+        }
+        .hero h1 {
+            font-size: 3.5em;
+            font-weight: 700;
+            line-height: 1.1;
+            margin-bottom: 25px;
+        }
+        .hero h1 span {
+            color: var(--primary);
+        }
+        .hero-subtitle {
+            font-size: 1.2em;
+            color: var(--text-muted);
+            margin-bottom: 40px;
+        }
+        .hero-stats {
+            display: flex;
+            gap: 40px;
+        }
+        .hero-stat {
+            text-align: center;
+        }
+        .hero-stat-value {
+            font-size: 2em;
+            font-weight: 700;
+            color: var(--primary);
+        }
+        .hero-stat-label {
+            color: var(--text-muted);
+            font-size: 0.85em;
+        }
+        .hero-animation {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        /* Section */
+        .section {
+            padding: 120px 0;
+        }
+        .section-header {
+            text-align: center;
+            margin-bottom: 60px;
+        }
+        .section-label {
+            color: var(--primary);
+            font-size: 0.85em;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.2em;
+            margin-bottom: 15px;
+        }
+        .section-title {
+            font-size: 2.8em;
+            font-weight: 700;
+            margin-bottom: 15px;
+        }
+        .section-subtitle {
+            color: var(--text-muted);
+            font-size: 1.1em;
+        }
+
+        /* Animation Cards */
+        .animation-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 25px;
+        }
+        .animation-card {
+            background: var(--card);
+            border: 1px solid var(--card-border);
+            border-radius: 20px;
+            padding: 30px;
+            text-align: center;
+            transition: all 0.4s;
+        }
+        .animation-card:hover {
+            border-color: var(--primary);
+            transform: translateY(-10px);
+            box-shadow: 0 20px 40px rgba(100, 255, 218, 0.1);
+        }
+        .animation-card.featured {
+            grid-column: span 2;
+            background: linear-gradient(135deg, rgba(100, 255, 218, 0.1), rgba(189, 147, 249, 0.1));
+        }
+        .animation-icon {
+            margin-bottom: 20px;
+        }
+        .animation-label {
+            color: var(--text-muted);
+            font-size: 0.85em;
+            margin-bottom: 10px;
+        }
+        .animation-value {
+            font-size: 2em;
+            font-weight: 700;
+            color: var(--primary);
+        }
+        .animation-value.secondary {
+            color: var(--secondary);
+        }
+        .animation-value.accent {
+            color: var(--accent);
+        }
+        .animation-value.yellow {
+            color: var(--yellow);
+        }
+
+        /* Feature Row */
+        .feature-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 80px;
+            align-items: center;
+            margin: 100px 0;
+        }
+        .feature-row.reverse {
+            direction: rtl;
+        }
+        .feature-row.reverse > * {
+            direction: ltr;
+        }
+        .feature-content h3 {
+            font-size: 2em;
+            font-weight: 700;
+            margin-bottom: 20px;
+        }
+        .feature-content p {
+            color: var(--text-muted);
+            font-size: 1.1em;
+            margin-bottom: 25px;
+        }
+        .feature-list {
+            list-style: none;
+        }
+        .feature-list li {
+            padding: 12px 0;
+            padding-left: 30px;
+            position: relative;
+            color: var(--text-muted);
+            border-bottom: 1px solid var(--card-border);
+        }
+        .feature-list li:last-child {
+            border-bottom: none;
+        }
+        .feature-list li::before {
+            content: '→';
+            position: absolute;
+            left: 0;
+            color: var(--primary);
+        }
+        .feature-animation {
+            display: flex;
+            justify-content: center;
+        }
+
+        /* Tables */
+        .table-card {
+            background: var(--card);
+            border: 1px solid var(--card-border);
+            border-radius: 20px;
+            overflow: hidden;
+            margin: 30px 0;
+        }
+        .table-header {
+            background: rgba(100, 255, 218, 0.05);
+            padding: 25px 30px;
+            border-bottom: 1px solid var(--card-border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .table-title {
+            font-size: 1.3em;
+            font-weight: 600;
+        }
+        .table-total {
+            color: var(--primary);
+            font-size: 1.5em;
+            font-weight: 700;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        th {
+            text-align: left;
+            padding: 15px 30px;
+            background: rgba(255,255,255,0.02);
+            font-weight: 500;
+            font-size: 0.8em;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            color: var(--text-muted);
+        }
+        td {
+            padding: 20px 30px;
+            border-bottom: 1px solid var(--card-border);
+        }
+        tr:last-child td {
+            border-bottom: none;
+        }
+        tr:hover {
+            background: rgba(100, 255, 218, 0.02);
+        }
+        .item-name {
+            font-weight: 600;
+        }
+        .item-desc {
+            color: var(--text-muted);
+            font-size: 0.9em;
+        }
+        .item-price {
+            color: var(--primary);
+            font-weight: 700;
+        }
+
+        /* Timeline */
+        .timeline-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 25px;
+        }
+        .timeline-card {
+            background: var(--card);
+            border: 1px solid var(--card-border);
+            border-radius: 20px;
+            padding: 35px;
+            transition: all 0.4s;
+            position: relative;
+            overflow: hidden;
+        }
+        .timeline-card:hover {
+            border-color: var(--secondary);
+            transform: scale(1.02);
+        }
+        .timeline-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+        }
+        .timeline-number {
+            display: inline-block;
+            background: rgba(189, 147, 249, 0.2);
+            color: var(--secondary);
+            width: 35px;
+            height: 35px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 0.9em;
+            margin-bottom: 20px;
+        }
+        .timeline-title {
+            font-size: 1.2em;
+            font-weight: 600;
+            margin-bottom: 10px;
+        }
+        .timeline-desc {
+            color: var(--text-muted);
+            font-size: 0.95em;
+        }
+
+        /* Charts */
+        .charts-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 30px;
+            margin-top: 50px;
+        }
+        .chart-card {
+            background: var(--card);
+            border: 1px solid var(--card-border);
+            border-radius: 20px;
+            padding: 35px;
+        }
+        .chart-title {
+            text-align: center;
+            margin-bottom: 25px;
+            font-weight: 600;
+            color: var(--text-muted);
+        }
+
+        /* Benefits */
+        .benefits-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 30px;
+        }
+        .benefit-card {
+            background: var(--card);
+            border: 1px solid var(--card-border);
+            border-radius: 20px;
+            padding: 40px;
+            transition: all 0.4s;
+        }
+        .benefit-card:hover {
+            border-color: var(--accent);
+        }
+        .benefit-animation {
+            margin-bottom: 25px;
+        }
+        .benefit-title {
+            font-size: 1.3em;
+            font-weight: 600;
+            margin-bottom: 15px;
+        }
+        .benefit-list {
+            list-style: none;
+        }
+        .benefit-list li {
+            padding: 10px 0;
+            padding-left: 25px;
+            position: relative;
+            color: var(--text-muted);
+            font-size: 0.95em;
+        }
+        .benefit-list li::before {
+            content: '✓';
+            position: absolute;
+            left: 0;
+            color: var(--primary);
+        }
+
+        /* CTA */
+        .cta {
+            text-align: center;
+            padding: 100px 0;
+            background: linear-gradient(135deg, rgba(100, 255, 218, 0.05), rgba(189, 147, 249, 0.05));
+            border-radius: 30px;
+            margin: 60px 0;
+        }
+        .cta h2 {
+            font-size: 2.5em;
+            font-weight: 700;
+            margin-bottom: 20px;
+        }
+        .cta p {
+            color: var(--text-muted);
+            font-size: 1.2em;
+            margin-bottom: 40px;
+        }
+        .cta-buttons {
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+        }
+        .btn {
+            padding: 16px 35px;
+            border-radius: 12px;
+            font-size: 1em;
+            font-weight: 600;
+            text-decoration: none;
+            transition: all 0.3s;
+        }
+        .btn-primary {
+            background: var(--primary);
+            color: var(--bg);
+        }
+        .btn-primary:hover {
+            transform: scale(1.05);
+            box-shadow: 0 10px 30px rgba(100, 255, 218, 0.3);
+        }
+        .btn-outline {
+            background: transparent;
+            color: var(--text);
+            border: 2px solid var(--card-border);
+        }
+        .btn-outline:hover {
+            border-color: var(--primary);
+            color: var(--primary);
+        }
+
+        /* Footer */
+        .footer {
+            text-align: center;
+            padding: 50px;
+            color: var(--text-muted);
+            border-top: 1px solid var(--card-border);
+        }
+
+        /* Animations */
+        .fade-in {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: all 0.8s ease;
+        }
+        .fade-in.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* Responsive */
+        @media (max-width: 968px) {
+            .hero-grid,
+            .feature-row {
+                grid-template-columns: 1fr;
+                gap: 40px;
+            }
+            .feature-row.reverse {
+                direction: ltr;
+            }
+            .animation-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            .animation-card.featured {
+                grid-column: span 2;
+            }
+            .timeline-grid,
+            .charts-grid,
+            .benefits-grid {
+                grid-template-columns: 1fr;
+            }
+            .nav-links {
+                display: none;
+            }
+        }
+        @media (max-width: 600px) {
+            .hero h1 {
+                font-size: 2.2em;
+            }
+            .animation-grid {
+                grid-template-columns: 1fr;
+            }
+            .animation-card.featured {
+                grid-column: span 1;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="bg-animation"></div>
+
+    <!-- Navigation -->
+    <nav class="nav">
+        <div class="nav-logo">LunoLabs</div>
+        <div class="nav-links">
+            <a href="#kosten">Kosten</a>
+            <a href="#infrastruktur">Infrastruktur</a>
+            <a href="#zeitplan">Zeitplan</a>
+            <a href="#mehrwert">Mehrwert</a>
+        </div>
+    </nav>
+
+    <!-- Hero -->
+    <section class="hero">
+        <div class="container">
+            <div class="hero-grid">
+                <div class="hero-content">
+                    <div class="hero-badge">Offerte 2025</div>
+                    <h1>Technisches <span>Jugendfoerder-programm</span></h1>
+                    <p class="hero-subtitle">
+                        Zugang schaffen. Kompetenz aufbauen. Perspektiven eroeffnen.
+                    </p>
+                    <div class="hero-stats">
+                        <div class="hero-stat">
+                            <div class="hero-stat-value">CHF 18'450</div>
+                            <div class="hero-stat-label">Investition</div>
+                        </div>
+                        <div class="hero-stat">
+                            <div class="hero-stat-value">50+</div>
+                            <div class="hero-stat-label">Jugendliche/Jahr</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="hero-animation">
+                    <dotlottie-player
+                        src="https://lottie.host/4db68bbd-31f6-4cd8-84eb-189571854463/jVhSPQkZwK.lottie"
+                        background="transparent"
+                        speed="1"
+                        style="width: 400px; height: 400px;"
+                        loop autoplay>
+                    </dotlottie-player>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Costs Section -->
+    <section class="section" id="kosten">
+        <div class="container">
+            <div class="section-header fade-in">
+                <div class="section-label">Investition</div>
+                <h2 class="section-title">Kostenuebersicht</h2>
+                <p class="section-subtitle">Transparente Aufstellung (Dezember 2025)</p>
+            </div>
+
+            <div class="animation-grid fade-in">
+                <div class="animation-card featured">
+                    <div class="animation-icon">
+                        <dotlottie-player
+                            src="https://lottie.host/f9f325ba-8cf6-4ca2-9c5b-d42d0ad3c8d9/AStLaQjkr8.lottie"
+                            background="transparent"
+                            speed="1"
+                            style="width: 100px; height: 100px; margin: 0 auto;"
+                            loop autoplay>
+                        </dotlottie-player>
+                    </div>
+                    <div class="animation-label">Gesamtinvestition</div>
+                    <div class="animation-value">CHF 18'450</div>
+                </div>
+                <div class="animation-card">
+                    <div class="animation-label">3D-Druck</div>
+                    <div class="animation-value secondary">CHF 6'650</div>
+                </div>
+                <div class="animation-card">
+                    <div class="animation-label">Elektronik</div>
+                    <div class="animation-value accent">CHF 5'190</div>
+                </div>
+                <div class="animation-card">
+                    <div class="animation-label">Computing</div>
+                    <div class="animation-value yellow">CHF 3'800</div>
+                </div>
+                <div class="animation-card">
+                    <div class="animation-label">Werkstatt</div>
+                    <div class="animation-value">CHF 2'810</div>
+                </div>
+            </div>
+
+            <div class="charts-grid fade-in">
+                <div class="chart-card">
+                    <div class="chart-title">Kostenverteilung</div>
+                    <canvas id="costChart"></canvas>
+                </div>
+                <div class="chart-card">
+                    <div class="chart-title">ROI Projektion</div>
+                    <canvas id="roiChart"></canvas>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Infrastructure Section -->
+    <section class="section" id="infrastruktur">
+        <div class="container">
+            <div class="section-header fade-in">
+                <div class="section-label">Ausstattung</div>
+                <h2 class="section-title">Infrastruktur</h2>
+            </div>
+
+            <!-- 3D Printing Feature -->
+            <div class="feature-row fade-in">
+                <div class="feature-content">
+                    <h3>3D-Druck Infrastruktur</h3>
+                    <p>Professionelle Open-Source Drucksysteme fuer Prototyping und Lernprojekte.</p>
+                    <ul class="feature-list">
+                        <li>2x VORON 2.4 R2 Kit (CHF 2'900)</li>
+                        <li>2x Bambu Lab P1S Combo (CHF 1'060)</li>
+                        <li>Filament Sortiment 50 Rollen (CHF 1'200)</li>
+                        <li>Zubehoer & Ersatzteile (CHF 1'490)</li>
+                    </ul>
+                </div>
+                <div class="feature-animation">
+                    <dotlottie-player
+                        src="https://lottie.host/c5e27595-83ad-4a79-99cc-4f3a934c53ed/qUAj15SH7d.lottie"
+                        background="transparent"
+                        speed="1"
+                        style="width: 350px; height: 350px;"
+                        loop autoplay>
+                    </dotlottie-player>
+                </div>
+            </div>
+
+            <!-- Electronics Feature -->
+            <div class="feature-row reverse fade-in">
+                <div class="feature-content">
+                    <h3>Elektronik-Werkstatt</h3>
+                    <p>Vollausgestattete Arbeitsplaetze mit professionellen Messgeraeten.</p>
+                    <ul class="feature-list">
+                        <li>4x Weller WE1010 Loetstationen (CHF 640)</li>
+                        <li>2x Rigol DS1054Z Oszilloskope (CHF 760)</li>
+                        <li>30x Mikrocontroller Kits (CHF 1'450)</li>
+                        <li>Messgeraete & Bauteile (CHF 2'340)</li>
+                    </ul>
+                </div>
+                <div class="feature-animation">
+                    <dotlottie-player
+                        src="https://lottie.host/eb83eb4b-8eec-4730-941f-4d0c61bf9ef4/JqPKzQPvgz.lottie"
+                        background="transparent"
+                        speed="1"
+                        style="width: 350px; height: 350px;"
+                        loop autoplay>
+                    </dotlottie-player>
+                </div>
+            </div>
+
+            <!-- Computing Feature -->
+            <div class="feature-row fade-in">
+                <div class="feature-content">
+                    <h3>Computing & Werkstatt</h3>
+                    <p>Raspberry Pi Systeme und professionelle Arbeitsplaetze.</p>
+                    <ul class="feature-list">
+                        <li>20x Raspberry Pi 5 mit Zubehoer (CHF 2'500)</li>
+                        <li>Monitore & Peripherie (CHF 1'300)</li>
+                        <li>Werkbaenke & Werkzeug (CHF 2'060)</li>
+                        <li>Sicherheit & Lagerung (CHF 750)</li>
+                    </ul>
+                </div>
+                <div class="feature-animation">
+                    <dotlottie-player
+                        src="https://lottie.host/d77bc7e7-f96c-4c9f-a4a2-50d2c7e5c4f9/gqvDqAMfZC.lottie"
+                        background="transparent"
+                        speed="1"
+                        style="width: 350px; height: 350px;"
+                        loop autoplay>
+                    </dotlottie-player>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Timeline Section -->
+    <section class="section" id="zeitplan">
+        <div class="container">
+            <div class="section-header fade-in">
+                <div class="section-label">Umsetzung</div>
+                <h2 class="section-title">Projektphasen</h2>
+            </div>
+
+            <div class="timeline-grid fade-in">
+                <div class="timeline-card">
+                    <div class="timeline-number">1</div>
+                    <h3 class="timeline-title">Beschaffung</h3>
+                    <p class="timeline-desc">Bestellung aller Materialien, Raeumlichkeiten vorbereiten</p>
+                </div>
+                <div class="timeline-card">
+                    <div class="timeline-number">2</div>
+                    <h3 class="timeline-title">3D-Druck Setup</h3>
+                    <p class="timeline-desc">VORON Zusammenbau, Bambu Lab einrichten</p>
+                </div>
+                <div class="timeline-card">
+                    <div class="timeline-number">3</div>
+                    <h3 class="timeline-title">Elektronik</h3>
+                    <p class="timeline-desc">Loetarbeitsplaetze, Messgeraete installieren</p>
+                </div>
+                <div class="timeline-card">
+                    <div class="timeline-number">4</div>
+                    <h3 class="timeline-title">Computing</h3>
+                    <p class="timeline-desc">Raspberry Pi einrichten, Software installieren</p>
+                </div>
+                <div class="timeline-card">
+                    <div class="timeline-number">5</div>
+                    <h3 class="timeline-title">Pilotbetrieb</h3>
+                    <p class="timeline-desc">Erste Workshops, Feedback sammeln</p>
+                </div>
+                <div class="timeline-card">
+                    <div class="timeline-number">6</div>
+                    <h3 class="timeline-title">Regelbetrieb</h3>
+                    <p class="timeline-desc">Semesterkurse starten, Community aufbauen</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Benefits Section -->
+    <section class="section" id="mehrwert">
+        <div class="container">
+            <div class="section-header fade-in">
+                <div class="section-label">Wirkung</div>
+                <h2 class="section-title">Mehrwert</h2>
+            </div>
+
+            <div class="benefits-grid fade-in">
+                <div class="benefit-card">
+                    <div class="benefit-animation">
+                        <dotlottie-player
+                            src="https://lottie.host/7a8b4db2-2c71-4ef9-8fac-ef1aa8dc8c97/cRrNbZlvPd.lottie"
+                            background="transparent"
+                            speed="1"
+                            style="width: 80px; height: 80px;"
+                            loop autoplay>
+                        </dotlottie-player>
+                    </div>
+                    <h3 class="benefit-title">Fuer Jugendliche</h3>
+                    <ul class="benefit-list">
+                        <li>Zugang zu Technologie</li>
+                        <li>Selbstwirksamkeit</li>
+                        <li>Berufsorientierung</li>
+                        <li>Kreativitaet</li>
+                    </ul>
+                </div>
+                <div class="benefit-card">
+                    <div class="benefit-animation">
+                        <dotlottie-player
+                            src="https://lottie.host/ed3bfbb0-7b35-4b07-8a09-3e9fac1c7c5a/Md0RmGxWGL.lottie"
+                            background="transparent"
+                            speed="1"
+                            style="width: 80px; height: 80px;"
+                            loop autoplay>
+                        </dotlottie-player>
+                    </div>
+                    <h3 class="benefit-title">Fuer Gemeinden</h3>
+                    <ul class="benefit-list">
+                        <li>Jugendfoerderung</li>
+                        <li>Gesetzliche Pflicht</li>
+                        <li>Aussenwirkung</li>
+                        <li>Standortentwicklung</li>
+                    </ul>
+                </div>
+                <div class="benefit-card">
+                    <div class="benefit-animation">
+                        <dotlottie-player
+                            src="https://lottie.host/90f2e53f-8e7d-4e07-9ef5-ce1f8c8e0b0a/nxhwYZVDJv.lottie"
+                            background="transparent"
+                            speed="1"
+                            style="width: 80px; height: 80px;"
+                            loop autoplay>
+                        </dotlottie-player>
+                    </div>
+                    <h3 class="benefit-title">Fuer die Region</h3>
+                    <ul class="benefit-list">
+                        <li>Grundbildung</li>
+                        <li>Nachwuchs</li>
+                        <li>Innovation</li>
+                        <li>Skalierbarkeit</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA -->
+    <section class="container">
+        <div class="cta fade-in">
+            <h2>Bereit fuer die Zukunft?</h2>
+            <p>Lassen Sie uns gemeinsam LunoLabs verwirklichen.</p>
+            <div class="cta-buttons">
+                <a href="mailto:kontakt@lunolabs.ch" class="btn btn-primary">Kontakt aufnehmen</a>
+                <a href="#" class="btn btn-outline" onclick="window.print()">PDF exportieren</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <strong>LunoLabs</strong> | Offerte: Dezember 2025 | Gueltigkeit: 90 Tage
+    </footer>
+
+    <script>
+        // Fade in on scroll
+        const fadeElements = document.querySelectorAll('.fade-in');
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('visible');
+                }
+            });
+        }, { threshold: 0.1 });
+
+        fadeElements.forEach(el => observer.observe(el));
+
+        // Charts
+        new Chart(document.getElementById('costChart'), {
+            type: 'doughnut',
+            data: {
+                labels: ['3D-Druck', 'Elektronik', 'Computing', 'Werkstatt'],
+                datasets: [{
+                    data: [6650, 5190, 3800, 2810],
+                    backgroundColor: ['#64ffda', '#bd93f9', '#f1fa8c', '#ff79c6'],
+                    borderWidth: 0
+                }]
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: { position: 'bottom', labels: { color: '#8892b0', padding: 15 } }
+                }
+            }
+        });
+
+        new Chart(document.getElementById('roiChart'), {
+            type: 'line',
+            data: {
+                labels: ['Start', 'J1', 'J2', 'J3', 'J4', 'J5'],
+                datasets: [{
+                    label: 'Nutzen',
+                    data: [0, 15000, 35000, 60000, 90000, 125000],
+                    borderColor: '#64ffda',
+                    backgroundColor: 'rgba(100, 255, 218, 0.1)',
+                    fill: true,
+                    tension: 0.4
+                }, {
+                    label: 'Investition',
+                    data: [18450, 19450, 20450, 21450, 22450, 23450],
+                    borderColor: '#bd93f9',
+                    borderDash: [5, 5]
+                }]
+            },
+            options: {
+                responsive: true,
+                plugins: { legend: { position: 'bottom', labels: { color: '#8892b0' } } },
+                scales: {
+                    x: { grid: { color: 'rgba(255,255,255,0.05)' }, ticks: { color: '#8892b0' } },
+                    y: { grid: { color: 'rgba(255,255,255,0.05)' }, ticks: { color: '#8892b0' } }
+                }
+            }
+        });
+    </script>
+</body>
+</html>

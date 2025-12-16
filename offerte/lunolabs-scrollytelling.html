@@ -1,0 +1,1140 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LunoLabs - Scrollytelling Offerte</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        :root {
+            --primary: #6366f1;
+            --secondary: #10b981;
+            --accent: #f59e0b;
+            --dark: #0f172a;
+            --darker: #020617;
+            --light: #f1f5f9;
+            --muted: #64748b;
+        }
+        html {
+            scroll-behavior: smooth;
+        }
+        body {
+            font-family: 'Segoe UI', system-ui, sans-serif;
+            background: var(--darker);
+            color: var(--light);
+            line-height: 1.7;
+            overflow-x: hidden;
+        }
+
+        /* Progress Bar */
+        .progress-bar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            height: 4px;
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+            width: 0%;
+            z-index: 1000;
+            transition: width 0.1s;
+        }
+
+        /* Side Navigation */
+        .side-nav {
+            position: fixed;
+            right: 30px;
+            top: 50%;
+            transform: translateY(-50%);
+            z-index: 100;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+        .side-nav a {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.2);
+            border: 2px solid rgba(255,255,255,0.3);
+            transition: all 0.3s;
+            position: relative;
+        }
+        .side-nav a:hover,
+        .side-nav a.active {
+            background: var(--primary);
+            border-color: var(--primary);
+            transform: scale(1.3);
+        }
+        .side-nav a::after {
+            content: attr(data-label);
+            position: absolute;
+            right: 25px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: var(--dark);
+            padding: 5px 12px;
+            border-radius: 6px;
+            font-size: 0.8em;
+            white-space: nowrap;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s;
+        }
+        .side-nav a:hover::after {
+            opacity: 1;
+        }
+
+        /* Hero Section - Full Screen */
+        .hero {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            overflow: hidden;
+        }
+        .hero-bg {
+            position: absolute;
+            inset: 0;
+            background:
+                radial-gradient(circle at 20% 50%, rgba(99, 102, 241, 0.3) 0%, transparent 50%),
+                radial-gradient(circle at 80% 50%, rgba(16, 185, 129, 0.2) 0%, transparent 50%),
+                var(--darker);
+        }
+        .hero-content {
+            position: relative;
+            z-index: 1;
+            text-align: center;
+            max-width: 900px;
+            padding: 40px;
+        }
+        .hero-badge {
+            display: inline-block;
+            background: rgba(99, 102, 241, 0.2);
+            border: 1px solid rgba(99, 102, 241, 0.4);
+            color: var(--primary);
+            padding: 10px 25px;
+            border-radius: 100px;
+            font-size: 0.9em;
+            font-weight: 600;
+            margin-bottom: 30px;
+            animation: fadeInUp 0.8s ease;
+        }
+        .hero h1 {
+            font-size: clamp(3em, 8vw, 5em);
+            font-weight: 800;
+            line-height: 1.1;
+            margin-bottom: 25px;
+            animation: fadeInUp 0.8s ease 0.2s both;
+        }
+        .hero h1 span {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        .hero-subtitle {
+            font-size: 1.4em;
+            color: var(--muted);
+            margin-bottom: 50px;
+            animation: fadeInUp 0.8s ease 0.4s both;
+        }
+        .hero-stats {
+            display: flex;
+            justify-content: center;
+            gap: 60px;
+            flex-wrap: wrap;
+            animation: fadeInUp 0.8s ease 0.6s both;
+        }
+        .hero-stat {
+            text-align: center;
+        }
+        .hero-stat-value {
+            font-size: 3em;
+            font-weight: 700;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        .hero-stat-label {
+            color: var(--muted);
+            font-size: 0.9em;
+        }
+        .scroll-indicator {
+            position: absolute;
+            bottom: 40px;
+            left: 50%;
+            transform: translateX(-50%);
+            animation: bounce 2s infinite;
+        }
+        .scroll-indicator span {
+            display: block;
+            width: 30px;
+            height: 50px;
+            border: 2px solid var(--muted);
+            border-radius: 25px;
+            position: relative;
+        }
+        .scroll-indicator span::before {
+            content: '';
+            position: absolute;
+            top: 8px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 6px;
+            height: 6px;
+            background: var(--primary);
+            border-radius: 50%;
+            animation: scroll 2s infinite;
+        }
+
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        @keyframes bounce {
+            0%, 100% { transform: translateX(-50%) translateY(0); }
+            50% { transform: translateX(-50%) translateY(10px); }
+        }
+        @keyframes scroll {
+            0%, 100% { opacity: 1; top: 8px; }
+            50% { opacity: 0.5; top: 20px; }
+        }
+
+        /* Scroll Sections */
+        .scroll-section {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            padding: 100px 40px;
+            position: relative;
+        }
+        .scroll-section:nth-child(even) {
+            background: var(--dark);
+        }
+        .section-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            width: 100%;
+        }
+
+        /* Sticky Section */
+        .sticky-section {
+            min-height: 300vh;
+            position: relative;
+        }
+        .sticky-content {
+            position: sticky;
+            top: 0;
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            padding: 40px;
+        }
+        .sticky-inner {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 80px;
+            align-items: center;
+        }
+        .sticky-text h2 {
+            font-size: 3em;
+            font-weight: 700;
+            margin-bottom: 25px;
+        }
+        .sticky-text p {
+            font-size: 1.2em;
+            color: var(--muted);
+            margin-bottom: 30px;
+        }
+        .sticky-visual {
+            background: var(--dark);
+            border-radius: 20px;
+            padding: 40px;
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+
+        /* Reveal Animation */
+        .reveal {
+            opacity: 0;
+            transform: translateY(60px);
+            transition: all 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .reveal.active {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        .reveal-left {
+            opacity: 0;
+            transform: translateX(-60px);
+            transition: all 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .reveal-left.active {
+            opacity: 1;
+            transform: translateX(0);
+        }
+        .reveal-right {
+            opacity: 0;
+            transform: translateX(60px);
+            transition: all 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .reveal-right.active {
+            opacity: 1;
+            transform: translateX(0);
+        }
+
+        /* Section Title */
+        .section-header {
+            text-align: center;
+            margin-bottom: 60px;
+        }
+        .section-label {
+            color: var(--primary);
+            font-size: 0.9em;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.2em;
+            margin-bottom: 15px;
+        }
+        .section-title {
+            font-size: 3em;
+            font-weight: 700;
+            margin-bottom: 20px;
+        }
+        .section-subtitle {
+            color: var(--muted);
+            font-size: 1.2em;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        /* Cost Cards */
+        .cost-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 25px;
+        }
+        .cost-card {
+            background: rgba(255,255,255,0.03);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 20px;
+            padding: 35px;
+            text-align: center;
+            transition: all 0.4s;
+        }
+        .cost-card:hover {
+            transform: translateY(-10px);
+            border-color: var(--primary);
+            background: rgba(99, 102, 241, 0.1);
+        }
+        .cost-card.featured {
+            background: linear-gradient(135deg, rgba(99, 102, 241, 0.2), rgba(16, 185, 129, 0.2));
+            border-color: var(--primary);
+        }
+        .cost-icon {
+            font-size: 2.5em;
+            margin-bottom: 20px;
+        }
+        .cost-label {
+            color: var(--muted);
+            font-size: 0.9em;
+            margin-bottom: 10px;
+        }
+        .cost-value {
+            font-size: 2.5em;
+            font-weight: 700;
+        }
+        .cost-value.primary { color: var(--primary); }
+        .cost-value.green { color: var(--secondary); }
+
+        /* Tables */
+        .table-wrapper {
+            overflow-x: auto;
+            border-radius: 16px;
+            border: 1px solid rgba(255,255,255,0.1);
+            margin: 30px 0;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        th, td {
+            padding: 18px 24px;
+            text-align: left;
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+        }
+        th {
+            background: rgba(99, 102, 241, 0.1);
+            font-weight: 600;
+            font-size: 0.85em;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: var(--primary);
+        }
+        tr:hover {
+            background: rgba(255,255,255,0.02);
+        }
+        .price { color: var(--secondary); font-weight: 600; }
+        .subtotal { color: var(--accent); font-weight: 700; }
+        .table-total {
+            background: rgba(16, 185, 129, 0.1);
+        }
+        .table-total td {
+            font-weight: 700;
+            font-size: 1.1em;
+        }
+
+        /* Timeline */
+        .timeline {
+            position: relative;
+            padding-left: 50px;
+        }
+        .timeline::before {
+            content: '';
+            position: absolute;
+            left: 20px;
+            top: 0;
+            bottom: 0;
+            width: 3px;
+            background: linear-gradient(180deg, var(--primary), var(--secondary));
+            border-radius: 3px;
+        }
+        .timeline-item {
+            position: relative;
+            margin-bottom: 50px;
+            padding: 30px;
+            background: rgba(255,255,255,0.03);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 16px;
+            transition: all 0.4s;
+        }
+        .timeline-item:hover {
+            background: rgba(99, 102, 241, 0.1);
+            border-color: var(--primary);
+            transform: translateX(10px);
+        }
+        .timeline-item::before {
+            content: '';
+            position: absolute;
+            left: -38px;
+            top: 35px;
+            width: 20px;
+            height: 20px;
+            background: var(--primary);
+            border-radius: 50%;
+            border: 4px solid var(--darker);
+        }
+        .timeline-phase {
+            display: inline-block;
+            background: rgba(99, 102, 241, 0.2);
+            color: var(--primary);
+            padding: 5px 15px;
+            border-radius: 100px;
+            font-size: 0.8em;
+            font-weight: 600;
+            margin-bottom: 15px;
+        }
+        .timeline-title {
+            font-size: 1.4em;
+            font-weight: 600;
+            margin-bottom: 10px;
+        }
+        .timeline-desc {
+            color: var(--muted);
+        }
+
+        /* Benefits Grid */
+        .benefits-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 30px;
+        }
+        .benefit-card {
+            background: rgba(255,255,255,0.03);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 20px;
+            padding: 40px;
+            transition: all 0.4s;
+        }
+        .benefit-card:hover {
+            transform: translateY(-10px);
+            border-color: var(--secondary);
+        }
+        .benefit-icon {
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5em;
+            margin-bottom: 25px;
+        }
+        .benefit-title {
+            font-size: 1.3em;
+            font-weight: 600;
+            margin-bottom: 15px;
+        }
+        .benefit-list {
+            list-style: none;
+        }
+        .benefit-list li {
+            color: var(--muted);
+            padding: 8px 0;
+            padding-left: 25px;
+            position: relative;
+        }
+        .benefit-list li::before {
+            content: '✓';
+            position: absolute;
+            left: 0;
+            color: var(--secondary);
+        }
+
+        /* Chart Container */
+        .chart-box {
+            background: rgba(255,255,255,0.03);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 20px;
+            padding: 40px;
+            margin: 30px 0;
+        }
+        .chart-title {
+            text-align: center;
+            font-size: 1.3em;
+            font-weight: 600;
+            margin-bottom: 30px;
+        }
+        .charts-row {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+            gap: 30px;
+        }
+
+        /* CTA Section */
+        .cta-section {
+            min-height: 60vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, rgba(99, 102, 241, 0.2), rgba(16, 185, 129, 0.2));
+            text-align: center;
+            padding: 80px 40px;
+        }
+        .cta-content h2 {
+            font-size: 3em;
+            font-weight: 700;
+            margin-bottom: 20px;
+        }
+        .cta-content p {
+            font-size: 1.3em;
+            color: var(--muted);
+            margin-bottom: 40px;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        .cta-buttons {
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+        .btn {
+            padding: 18px 40px;
+            border-radius: 12px;
+            font-size: 1.1em;
+            font-weight: 600;
+            text-decoration: none;
+            transition: all 0.3s;
+        }
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary), #818cf8);
+            color: white;
+        }
+        .btn-primary:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 40px rgba(99, 102, 241, 0.4);
+        }
+        .btn-outline {
+            background: transparent;
+            color: var(--light);
+            border: 2px solid rgba(255,255,255,0.2);
+        }
+        .btn-outline:hover {
+            border-color: var(--primary);
+            color: var(--primary);
+        }
+
+        /* Footer */
+        .footer {
+            text-align: center;
+            padding: 60px 40px;
+            background: var(--darker);
+            border-top: 1px solid rgba(255,255,255,0.1);
+        }
+        .footer-logo {
+            font-size: 2em;
+            font-weight: 700;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 15px;
+        }
+        .footer-text {
+            color: var(--muted);
+        }
+
+        /* Responsive */
+        @media (max-width: 968px) {
+            .sticky-inner {
+                grid-template-columns: 1fr;
+                gap: 40px;
+            }
+            .benefits-grid {
+                grid-template-columns: 1fr;
+            }
+            .side-nav {
+                display: none;
+            }
+        }
+        @media (max-width: 768px) {
+            .hero h1 {
+                font-size: 2.5em;
+            }
+            .hero-stats {
+                gap: 30px;
+            }
+            .section-title {
+                font-size: 2em;
+            }
+            .scroll-section {
+                padding: 60px 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Progress Bar -->
+    <div class="progress-bar" id="progressBar"></div>
+
+    <!-- Side Navigation -->
+    <nav class="side-nav">
+        <a href="#hero" data-label="Start" class="active"></a>
+        <a href="#vision" data-label="Vision"></a>
+        <a href="#costs" data-label="Kosten"></a>
+        <a href="#infrastructure" data-label="Infrastruktur"></a>
+        <a href="#timeline" data-label="Zeitplan"></a>
+        <a href="#benefits" data-label="Mehrwert"></a>
+        <a href="#contact" data-label="Kontakt"></a>
+    </nav>
+
+    <!-- Hero -->
+    <section class="hero" id="hero">
+        <div class="hero-bg"></div>
+        <div class="hero-content">
+            <div class="hero-badge">Offerte 2025</div>
+            <h1>Technisches <span>Jugendfoerderprogramm</span></h1>
+            <p class="hero-subtitle">
+                Zugang schaffen. Kompetenz aufbauen. Perspektiven eroeffnen.
+            </p>
+            <div class="hero-stats">
+                <div class="hero-stat">
+                    <div class="hero-stat-value">CHF 18'450</div>
+                    <div class="hero-stat-label">Gesamtinvestition</div>
+                </div>
+                <div class="hero-stat">
+                    <div class="hero-stat-value">10-20</div>
+                    <div class="hero-stat-label">Jahre Zielgruppe</div>
+                </div>
+                <div class="hero-stat">
+                    <div class="hero-stat-value">50+</div>
+                    <div class="hero-stat-label">Jugendliche/Jahr</div>
+                </div>
+            </div>
+        </div>
+        <div class="scroll-indicator">
+            <span></span>
+        </div>
+    </section>
+
+    <!-- Vision Section -->
+    <section class="sticky-section" id="vision">
+        <div class="sticky-content">
+            <div class="sticky-inner">
+                <div class="sticky-text">
+                    <h2>Die <span style="color: var(--primary)">Vision</span></h2>
+                    <p>
+                        LunoLabs ist ein technisches Fundament im Jugendtreff.
+                        Wir schaffen einen Raum, in dem Jugendliche moderne Technologien
+                        nicht nur konsumieren, sondern aktiv gestalten und verstehen lernen.
+                    </p>
+                    <p>
+                        3D-Druck, Elektronik, Programmierung und angewandte Technologien
+                        werden zu Werkzeugen der Selbstwirksamkeit.
+                    </p>
+                </div>
+                <div class="sticky-visual">
+                    <h3 style="margin-bottom: 25px; font-size: 1.3em;">Zentrale Prinzipien</h3>
+                    <ul class="benefit-list">
+                        <li>Niederschwelliger Einstieg - einfach kommen und ausprobieren</li>
+                        <li>Praxisorientierung - Lernen durch echte Projekte</li>
+                        <li>Open-Source-Denken - Zugang zu globalen Communitys</li>
+                        <li>Nachhaltigkeit - Technik als Kreislauf verstehen</li>
+                        <li>Skalierbarkeit - Infrastruktur waechst mit Bedarf</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Costs Overview -->
+    <section class="scroll-section" id="costs">
+        <div class="section-container">
+            <div class="section-header reveal">
+                <div class="section-label">Investition</div>
+                <h2 class="section-title">Kostenuebersicht</h2>
+                <p class="section-subtitle">
+                    Transparente Aufstellung aller Investitionen mit aktuellen Marktpreisen
+                </p>
+            </div>
+
+            <div class="cost-cards reveal">
+                <div class="cost-card featured">
+                    <div class="cost-icon">O</div>
+                    <div class="cost-label">Gesamtinvestition</div>
+                    <div class="cost-value primary">CHF 18'450</div>
+                </div>
+                <div class="cost-card">
+                    <div class="cost-icon">3D</div>
+                    <div class="cost-label">3D-Druck</div>
+                    <div class="cost-value green">CHF 6'650</div>
+                </div>
+                <div class="cost-card">
+                    <div class="cost-icon">E</div>
+                    <div class="cost-label">Elektronik</div>
+                    <div class="cost-value green">CHF 5'190</div>
+                </div>
+                <div class="cost-card">
+                    <div class="cost-icon">PC</div>
+                    <div class="cost-label">Computing</div>
+                    <div class="cost-value green">CHF 3'800</div>
+                </div>
+                <div class="cost-card">
+                    <div class="cost-icon">W</div>
+                    <div class="cost-label">Werkstatt</div>
+                    <div class="cost-value green">CHF 2'810</div>
+                </div>
+            </div>
+
+            <div class="charts-row reveal" style="margin-top: 50px;">
+                <div class="chart-box">
+                    <h3 class="chart-title">Kostenverteilung</h3>
+                    <canvas id="costChart"></canvas>
+                </div>
+                <div class="chart-box">
+                    <h3 class="chart-title">ROI Projektion</h3>
+                    <canvas id="roiChart"></canvas>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Infrastructure -->
+    <section class="scroll-section" id="infrastructure">
+        <div class="section-container">
+            <div class="section-header reveal">
+                <div class="section-label">Ausstattung</div>
+                <h2 class="section-title">Detaillierte Infrastruktur</h2>
+                <p class="section-subtitle">
+                    Vollstaendige Materialliste mit aktuellen Marktpreisen (Dezember 2025)
+                </p>
+            </div>
+
+            <!-- 3D Printing Table -->
+            <h3 class="reveal" style="margin: 40px 0 20px; font-size: 1.4em;">
+                <span style="color: var(--primary)">01</span> 3D-Druck Infrastruktur
+            </h3>
+            <div class="table-wrapper reveal">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Artikel</th>
+                            <th>Beschreibung</th>
+                            <th>Menge</th>
+                            <th>Preis</th>
+                            <th>Total</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>VORON 2.4 R2 Kit</strong></td>
+                            <td>High-End CoreXY 3D-Drucker</td>
+                            <td>2x</td>
+                            <td class="price">CHF 1'450</td>
+                            <td class="subtotal">CHF 2'900</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Bambu Lab P1S Combo</strong></td>
+                            <td>Einsteiger-freundlich mit AMS</td>
+                            <td>2x</td>
+                            <td class="price">CHF 530</td>
+                            <td class="subtotal">CHF 1'060</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Filament Sortiment</strong></td>
+                            <td>PLA, PETG, TPU (50 Rollen)</td>
+                            <td>1x</td>
+                            <td class="price">CHF 1'200</td>
+                            <td class="subtotal">CHF 1'200</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Zubehoer & Ersatzteile</strong></td>
+                            <td>Nozzles, Werkzeug, Trockenbox, Filter</td>
+                            <td>-</td>
+                            <td class="price">-</td>
+                            <td class="subtotal">CHF 1'490</td>
+                        </tr>
+                        <tr class="table-total">
+                            <td colspan="4"><strong>Zwischentotal</strong></td>
+                            <td class="subtotal">CHF 6'650</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Electronics Table -->
+            <h3 class="reveal" style="margin: 40px 0 20px; font-size: 1.4em;">
+                <span style="color: var(--primary)">02</span> Elektronik-Werkstatt
+            </h3>
+            <div class="table-wrapper reveal">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Artikel</th>
+                            <th>Beschreibung</th>
+                            <th>Menge</th>
+                            <th>Preis</th>
+                            <th>Total</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>Weller WE1010</strong></td>
+                            <td>Digitale 70W Loetstation</td>
+                            <td>4x</td>
+                            <td class="price">CHF 160</td>
+                            <td class="subtotal">CHF 640</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Rigol DS1054Z</strong></td>
+                            <td>4-Kanal Oszilloskop 50MHz</td>
+                            <td>2x</td>
+                            <td class="price">CHF 380</td>
+                            <td class="subtotal">CHF 760</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Multimeter & Netzgeraete</strong></td>
+                            <td>Fluke + regelbare Labornetzteile</td>
+                            <td>10x</td>
+                            <td class="price">-</td>
+                            <td class="subtotal">CHF 1'560</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Mikrocontroller Kits</strong></td>
+                            <td>ESP32 & Arduino Starter Sets</td>
+                            <td>30x</td>
+                            <td class="price">-</td>
+                            <td class="subtotal">CHF 1'450</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Bauteile & Zubehoer</strong></td>
+                            <td>Komponenten, Loetzinn, ESD-Schutz</td>
+                            <td>-</td>
+                            <td class="price">-</td>
+                            <td class="subtotal">CHF 780</td>
+                        </tr>
+                        <tr class="table-total">
+                            <td colspan="4"><strong>Zwischentotal</strong></td>
+                            <td class="subtotal">CHF 5'190</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Computing & Workshop -->
+            <h3 class="reveal" style="margin: 40px 0 20px; font-size: 1.4em;">
+                <span style="color: var(--primary)">03</span> Computing & Werkstatt
+            </h3>
+            <div class="table-wrapper reveal">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Bereich</th>
+                            <th>Details</th>
+                            <th>Total</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>Computing</strong></td>
+                            <td>20x Raspberry Pi 5, Monitore, Peripherie</td>
+                            <td class="subtotal">CHF 3'800</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Werkstatt</strong></td>
+                            <td>Werkbaenke, Werkzeug, Sicherheit, Lagerung</td>
+                            <td class="subtotal">CHF 2'810</td>
+                        </tr>
+                        <tr class="table-total">
+                            <td colspan="2"><strong>Gesamttotal</strong></td>
+                            <td class="subtotal" style="font-size: 1.3em;">CHF 18'450</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </section>
+
+    <!-- Timeline -->
+    <section class="scroll-section" id="timeline">
+        <div class="section-container">
+            <div class="section-header reveal">
+                <div class="section-label">Umsetzung</div>
+                <h2 class="section-title">Projektphasen</h2>
+                <p class="section-subtitle">
+                    Strukturierter Ablauf fuer die Einfuehrung der LunoLabs Infrastruktur
+                </p>
+            </div>
+
+            <div class="timeline">
+                <div class="timeline-item reveal">
+                    <div class="timeline-phase">Phase 1</div>
+                    <h3 class="timeline-title">Beschaffung & Vorbereitung</h3>
+                    <p class="timeline-desc">
+                        Bestellung aller Materialien, Vorbereitung der Raeumlichkeiten,
+                        Installation der Grundinfrastruktur.
+                    </p>
+                </div>
+                <div class="timeline-item reveal">
+                    <div class="timeline-phase">Phase 2</div>
+                    <h3 class="timeline-title">Aufbau 3D-Druck Station</h3>
+                    <p class="timeline-desc">
+                        Zusammenbau der VORON Drucker (erstes Projekt mit Jugendlichen moeglich),
+                        Einrichtung der Bambu Lab Drucker.
+                    </p>
+                </div>
+                <div class="timeline-item reveal">
+                    <div class="timeline-phase">Phase 3</div>
+                    <h3 class="timeline-title">Elektronik-Werkstatt</h3>
+                    <p class="timeline-desc">
+                        Einrichtung der Loetarbeitsplaetze, Installation der Messgeraete,
+                        ESD-Schutz implementieren.
+                    </p>
+                </div>
+                <div class="timeline-item reveal">
+                    <div class="timeline-phase">Phase 4</div>
+                    <h3 class="timeline-title">Computing & Software</h3>
+                    <p class="timeline-desc">
+                        Raspberry Pi Systeme einrichten, Software installieren,
+                        Netzwerk konfigurieren.
+                    </p>
+                </div>
+                <div class="timeline-item reveal">
+                    <div class="timeline-phase">Phase 5</div>
+                    <h3 class="timeline-title">Pilotbetrieb</h3>
+                    <p class="timeline-desc">
+                        Erste offene Werkstattzeiten, Feedback sammeln, Prozesse optimieren.
+                    </p>
+                </div>
+                <div class="timeline-item reveal">
+                    <div class="timeline-phase">Phase 6</div>
+                    <h3 class="timeline-title">Regelbetrieb</h3>
+                    <p class="timeline-desc">
+                        Etablierung regelmaessiger Angebote, Start der Semesterkurse,
+                        Aufbau der Community.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Benefits -->
+    <section class="scroll-section" id="benefits">
+        <div class="section-container">
+            <div class="section-header reveal">
+                <div class="section-label">Wirkung</div>
+                <h2 class="section-title">Mehrwert & Nutzen</h2>
+                <p class="section-subtitle">
+                    Nachhaltige Investition in die Zukunft der Jugend
+                </p>
+            </div>
+
+            <div class="benefits-grid">
+                <div class="benefit-card reveal-left">
+                    <div class="benefit-icon">J</div>
+                    <h3 class="benefit-title">Fuer Jugendliche</h3>
+                    <ul class="benefit-list">
+                        <li>Zugang zu moderner Technologie</li>
+                        <li>Staerkung von Selbstwirksamkeit</li>
+                        <li>Orientierung fuer Ausbildung</li>
+                        <li>Foerderung von Kreativitaet</li>
+                    </ul>
+                </div>
+                <div class="benefit-card reveal">
+                    <div class="benefit-icon">G</div>
+                    <h3 class="benefit-title">Fuer Gemeinden</h3>
+                    <ul class="benefit-list">
+                        <li>Nachhaltige Jugendfoerderung</li>
+                        <li>Gesetzliche Aufgaben erfuellt</li>
+                        <li>Positive Aussenwirkung</li>
+                        <li>Zukunftsorientierte Entwicklung</li>
+                    </ul>
+                </div>
+                <div class="benefit-card reveal-right">
+                    <div class="benefit-icon">R</div>
+                    <h3 class="benefit-title">Fuer die Region</h3>
+                    <ul class="benefit-list">
+                        <li>Technische Grundbildung</li>
+                        <li>Nachwuchsfoerderung</li>
+                        <li>Innovationskultur</li>
+                        <li>Skalierbar auf Bezirke</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA -->
+    <section class="cta-section" id="contact">
+        <div class="cta-content">
+            <h2 class="reveal">Bereit fuer die Zukunft?</h2>
+            <p class="reveal">
+                Lassen Sie uns gemeinsam LunoLabs in Ihrem Jugendtreff verwirklichen.
+            </p>
+            <div class="cta-buttons reveal">
+                <a href="mailto:kontakt@lunolabs.ch" class="btn btn-primary">Kontakt aufnehmen</a>
+                <a href="#" class="btn btn-outline" onclick="window.print()">PDF exportieren</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="footer-logo">LunoLabs</div>
+        <p class="footer-text">
+            Offerte erstellt: Dezember 2025 | Gueltigkeit: 90 Tage
+        </p>
+    </footer>
+
+    <script>
+        // Progress Bar
+        window.addEventListener('scroll', () => {
+            const winScroll = document.body.scrollTop || document.documentElement.scrollTop;
+            const height = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+            const scrolled = (winScroll / height) * 100;
+            document.getElementById('progressBar').style.width = scrolled + '%';
+        });
+
+        // Reveal on Scroll
+        const reveals = document.querySelectorAll('.reveal, .reveal-left, .reveal-right');
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('active');
+                }
+            });
+        }, { threshold: 0.1 });
+
+        reveals.forEach(el => observer.observe(el));
+
+        // Side Navigation Active State
+        const sections = document.querySelectorAll('section[id]');
+        const navLinks = document.querySelectorAll('.side-nav a');
+
+        window.addEventListener('scroll', () => {
+            let current = '';
+            sections.forEach(section => {
+                const sectionTop = section.offsetTop;
+                if (scrollY >= sectionTop - 300) {
+                    current = section.getAttribute('id');
+                }
+            });
+
+            navLinks.forEach(link => {
+                link.classList.remove('active');
+                if (link.getAttribute('href') === '#' + current) {
+                    link.classList.add('active');
+                }
+            });
+        });
+
+        // Charts
+        const costCtx = document.getElementById('costChart').getContext('2d');
+        new Chart(costCtx, {
+            type: 'doughnut',
+            data: {
+                labels: ['3D-Druck', 'Elektronik', 'Computing', 'Werkstatt'],
+                datasets: [{
+                    data: [6650, 5190, 3800, 2810],
+                    backgroundColor: ['#6366f1', '#10b981', '#f59e0b', '#ec4899'],
+                    borderWidth: 0
+                }]
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: {
+                        position: 'bottom',
+                        labels: { color: '#94a3b8', padding: 15 }
+                    }
+                }
+            }
+        });
+
+        const roiCtx = document.getElementById('roiChart').getContext('2d');
+        new Chart(roiCtx, {
+            type: 'line',
+            data: {
+                labels: ['Start', 'Jahr 1', 'Jahr 2', 'Jahr 3', 'Jahr 4', 'Jahr 5'],
+                datasets: [{
+                    label: 'Kumulierter Nutzen',
+                    data: [0, 15000, 35000, 60000, 90000, 125000],
+                    borderColor: '#10b981',
+                    backgroundColor: 'rgba(16, 185, 129, 0.1)',
+                    fill: true,
+                    tension: 0.4
+                }, {
+                    label: 'Investition',
+                    data: [18450, 19450, 20450, 21450, 22450, 23450],
+                    borderColor: '#6366f1',
+                    borderDash: [5, 5],
+                    tension: 0
+                }]
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: {
+                        position: 'bottom',
+                        labels: { color: '#94a3b8' }
+                    }
+                },
+                scales: {
+                    x: { grid: { color: '#334155' }, ticks: { color: '#94a3b8' } },
+                    y: { grid: { color: '#334155' }, ticks: { color: '#94a3b8' } }
+                }
+            }
+        });
+    </script>
+</body>
+</html>
