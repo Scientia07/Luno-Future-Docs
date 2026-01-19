@@ -4,15 +4,36 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>TechEd Academy - Program Concept 2025</title>
+    <!-- Performance hints -->
+    <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@4.5.0/dist/reveal.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@4.5.0/dist/theme/black.css">
     <style>
         :root {
-            --r-background-color: #0a0a1a;
+            /* Unified Color System */
+            --color-primary: #6366f1;
+            --color-primary-dark: #4f46e5;
+            --color-secondary: #ec4899;
+            --color-accent: #10b981;
+            --color-warning: #f59e0b;
+            --color-danger: #ef4444;
+
+            /* Background Colors */
+            --bg-darker: #0a0a1a;
+            --bg-dark: #0f172a;
+            --bg-card: rgba(255,255,255,0.05);
+
+            /* Text Colors */
+            --text-primary: #ffffff;
+            --text-muted: rgba(255,255,255,0.75);
+            --text-dark: #1e293b;
+
+            /* Reveal.js-specific theme overrides */
+            --r-background-color: var(--bg-darker);
             --r-main-font: 'Segoe UI', system-ui, sans-serif;
             --r-heading-font: 'Segoe UI', system-ui, sans-serif;
             --r-main-color: #e0e0e0;
-            --r-heading-color: #fff;
+            --r-heading-color: var(--text-primary);
             --r-link-color: #42affa;
         }
         .reveal {

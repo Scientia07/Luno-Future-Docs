@@ -3,7 +3,18 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='6' fill='%236366f1'/%3E%3Cpath d='M8 10h16v2H8zm0 5h12v2H8zm0 5h14v2H8z' fill='white'/%3E%3C/svg%3E">
+    <meta name="description" content="LunoLabs Technisches Jugendförderprogramm - Infrastruktur, Kostenübersicht und ROI für MakerSpace im Jugendtreff. CHF 18'000 Investition.">
+    <!-- Open Graph / Social Sharing -->
+    <meta property="og:title" content="LunoLabs - Technisches Jugendförderprogramm">
+    <meta property="og:description" content="MakerSpace Infrastruktur & Kostenübersicht - CHF 18'000 Investition mit messbarem ROI.">
+    <meta property="og:type" content="website">
+    <meta name="twitter:card" content="summary_large_image">
     <title>LunoLabs - Offerte Technisches Jugendförderprogramm</title>
+    <!-- Performance hints -->
+    <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
         * {
@@ -12,21 +23,46 @@
             box-sizing: border-box;
         }
         :root {
-            --primary: #6366f1;
-            --primary-dark: #4f46e5;
-            --secondary: #10b981;
-            --accent: #f59e0b;
-            --danger: #ef4444;
+            /* Unified Color System */
+            --color-primary: #6366f1;
+            --color-primary-dark: #4f46e5;
+            --color-secondary: #ec4899;
+            --color-accent: #10b981;
+            --color-warning: #f59e0b;
+            --color-danger: #ef4444;
+
+            /* Background Colors */
+            --bg-darker: #0a0a1a;
             --bg-dark: #0f172a;
             --bg-card: #1e293b;
             --bg-light: #f8fafc;
-            --text-light: #f1f5f9;
+
+            /* Text Colors */
+            --text-primary: #ffffff;
+            --text-muted: rgba(255,255,255,0.75);
             --text-dark: #1e293b;
-            --text-muted: #94a3b8;
+            --text-light: #f1f5f9;
+
+            /* Border */
             --border: #334155;
+
+            /* Legacy aliases for backward compatibility */
+            --primary: var(--color-primary);
+            --primary-dark: var(--color-primary-dark);
+            --secondary: var(--color-accent);
+            --accent: var(--color-warning);
+            --danger: var(--color-danger);
         }
         html {
             scroll-behavior: smooth;
+        }
+        /* Focus indicators for keyboard accessibility */
+        :focus-visible {
+            outline: 2px solid var(--primary);
+            outline-offset: 2px;
+        }
+        :focus:not(:focus-visible) {
+            outline: none;
         }
         body {
             font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
@@ -762,8 +798,12 @@
     </style>
 </head>
 <body>
+    <!-- Skip Link for Accessibility -->
+    <a href="#main-content" class="skip-link" style="position:absolute;top:-40px;left:0;padding:8px 16px;background:var(--primary);color:white;z-index:9999;transition:top 0.3s;">Zum Hauptinhalt springen</a>
+    <style>.skip-link:focus{top:0;}</style>
+
     <!-- Navigation -->
-    <nav class="nav">
+    <nav class="nav" role="navigation" aria-label="Hauptnavigation">
         <div class="nav-logo">LunoLabs</div>
         <div class="nav-links">
             <a href="#lunolabs">Was wir bieten</a>
@@ -774,6 +814,9 @@
         </div>
         <a href="#contact" class="nav-cta">Kontakt</a>
     </nav>
+
+    <!-- Main Content -->
+    <main id="main-content" role="main">
 
     <!-- Hero Section -->
     <header class="hero">
@@ -1488,8 +1531,10 @@
         </div>
     </section>
 
+    </main><!-- End Main Content -->
+
     <!-- Footer -->
-    <footer class="footer">
+    <footer class="footer" role="contentinfo">
         <div class="footer-logo">LunoLabs</div>
         <p class="footer-text">
             Technisches Jugendförderprogramm<br>
@@ -1504,7 +1549,9 @@
     <!-- Charts JavaScript -->
     <script>
         // Cost Distribution Pie Chart
-        const costCtx = document.getElementById('costDistributionChart').getContext('2d');
+        const costCanvas = document.getElementById('costDistributionChart');
+        if (costCanvas) {
+        const costCtx = costCanvas.getContext('2d');
         new Chart(costCtx, {
             type: 'doughnut',
             data: {
@@ -1542,9 +1589,12 @@
                 }
             }
         });
+        }
 
         // Cost per Youth Chart
-        const youthCtx = document.getElementById('costPerYouthChart').getContext('2d');
+        const youthCanvas = document.getElementById('costPerYouthChart');
+        if (youthCanvas) {
+        const youthCtx = youthCanvas.getContext('2d');
         new Chart(youthCtx, {
             type: 'bar',
             data: {
@@ -1606,6 +1656,7 @@
                 }
             }
         });
+        }
     </script>
 </body>
 </html>

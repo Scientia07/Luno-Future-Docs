@@ -3,7 +3,18 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='6' fill='%236366f1'/%3E%3Cpath d='M8 10h16v2H8zm0 5h12v2H8zm0 5h14v2H8z' fill='white'/%3E%3C/svg%3E">
+    <meta name="description" content="TechEd Academy - Interactive scroll-based story experience showcasing our programs, campus, and student success stories.">
+    <!-- Open Graph / Social Sharing -->
+    <meta property="og:title" content="TechEd Academy - Interactive Story Experience">
+    <meta property="og:description" content="Interactive scroll-based story showcasing tech education programs and student success.">
+    <meta property="og:type" content="website">
+    <meta name="twitter:card" content="summary_large_image">
     <title>TechEd Academy - Interactive Story Experience</title>
+    <!-- Performance hints -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="preconnect" href="https://images.unsplash.com">
     <style>
         * {
             margin: 0;
@@ -11,14 +22,42 @@
             box-sizing: border-box;
         }
         :root {
-            --primary: #6366f1;
-            --secondary: #ec4899;
-            --accent: #10b981;
-            --dark: #0f172a;
-            --light: #f8fafc;
+            /* Unified Color System */
+            --color-primary: #6366f1;
+            --color-primary-dark: #4f46e5;
+            --color-secondary: #ec4899;
+            --color-accent: #10b981;
+            --color-warning: #f59e0b;
+            --color-danger: #ef4444;
+
+            /* Background Colors */
+            --bg-darker: #0a0a1a;
+            --bg-dark: #0f172a;
+            --bg-card: rgba(255,255,255,0.05);
+
+            /* Text Colors */
+            --text-primary: #ffffff;
+            --text-muted: rgba(255,255,255,0.75);
+            --text-dark: #1e293b;
+            --text-light: #f8fafc;
+
+            /* Legacy aliases for backward compatibility */
+            --primary: var(--color-primary);
+            --secondary: var(--color-secondary);
+            --accent: var(--color-accent);
+            --dark: var(--bg-dark);
+            --light: var(--text-light);
         }
         html {
             scroll-behavior: smooth;
+        }
+        /* Focus indicators for keyboard accessibility */
+        :focus-visible {
+            outline: 2px solid var(--primary);
+            outline-offset: 2px;
+        }
+        :focus:not(:focus-visible) {
+            outline: none;
         }
         body {
             font-family: 'Segoe UI', system-ui, sans-serif;
@@ -47,7 +86,7 @@
             background: transparent;
             border: none;
             border-radius: 100px;
-            color: rgba(255,255,255,0.6);
+            color: rgba(255,255,255,0.75);
             font-size: 0.85em;
             cursor: pointer;
             transition: all 0.3s;
@@ -663,7 +702,7 @@
         .section-subtitle {
             text-align: center;
             font-size: 1.2em;
-            color: rgba(255,255,255,0.6);
+            color: rgba(255,255,255,0.75);
         }
 
         /* Lightbox */
@@ -721,11 +760,15 @@
     </style>
 </head>
 <body>
+    <!-- Skip Link -->
+    <a href="#main-content" class="skip-link" style="position:absolute;top:-40px;left:0;padding:8px 16px;background:var(--primary);color:white;z-index:9999;transition:top 0.3s;">Skip to main content</a>
+    <style>.skip-link:focus{top:0;}</style>
+
     <!-- Progress Bar -->
-    <div class="progress-bar" id="progressBar"></div>
+    <div class="progress-bar" id="progressBar" role="progressbar" aria-label="Page scroll progress"></div>
 
     <!-- Topic Selector -->
-    <nav class="topic-selector">
+    <nav class="topic-selector" aria-label="Section navigation">
         <button class="topic-tab active" onclick="goToSection('hero')">Start</button>
         <button class="topic-tab" onclick="goToSection('about')">About</button>
         <button class="topic-tab" onclick="goToSection('video')">Video</button>
@@ -737,16 +780,19 @@
     </nav>
 
     <!-- Side Progress -->
-    <div class="side-progress">
-        <div class="progress-dot active" data-label="Start" onclick="goToSection('hero')"></div>
-        <div class="progress-dot" data-label="About" onclick="goToSection('about')"></div>
-        <div class="progress-dot" data-label="Video" onclick="goToSection('video')"></div>
-        <div class="progress-dot" data-label="Programs" onclick="goToSection('programs')"></div>
-        <div class="progress-dot" data-label="Gallery" onclick="goToSection('gallery')"></div>
-        <div class="progress-dot" data-label="Timeline" onclick="goToSection('timeline')"></div>
-        <div class="progress-dot" data-label="Pricing" onclick="goToSection('pricing')"></div>
-        <div class="progress-dot" data-label="Contact" onclick="goToSection('contact')"></div>
-    </div>
+    <nav class="side-progress" aria-label="Page sections">
+        <div class="progress-dot active" data-label="Start" role="button" tabindex="0" aria-label="Go to Start section" onclick="goToSection('hero')" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();goToSection('hero')}"></div>
+        <div class="progress-dot" data-label="About" role="button" tabindex="0" aria-label="Go to About section" onclick="goToSection('about')" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();goToSection('about')}"></div>
+        <div class="progress-dot" data-label="Video" role="button" tabindex="0" aria-label="Go to Video section" onclick="goToSection('video')" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();goToSection('video')}"></div>
+        <div class="progress-dot" data-label="Programs" role="button" tabindex="0" aria-label="Go to Programs section" onclick="goToSection('programs')" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();goToSection('programs')}"></div>
+        <div class="progress-dot" data-label="Gallery" role="button" tabindex="0" aria-label="Go to Gallery section" onclick="goToSection('gallery')" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();goToSection('gallery')}"></div>
+        <div class="progress-dot" data-label="Timeline" role="button" tabindex="0" aria-label="Go to Timeline section" onclick="goToSection('timeline')" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();goToSection('timeline')}"></div>
+        <div class="progress-dot" data-label="Pricing" role="button" tabindex="0" aria-label="Go to Pricing section" onclick="goToSection('pricing')" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();goToSection('pricing')}"></div>
+        <div class="progress-dot" data-label="Contact" role="button" tabindex="0" aria-label="Go to Contact section" onclick="goToSection('contact')" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();goToSection('contact')}"></div>
+    </nav>
+
+    <!-- Main Content -->
+    <main id="main-content" role="main">
 
     <!-- Hero -->
     <section class="scroll-section hero-section" id="hero">
@@ -786,8 +832,8 @@
             <video id="mainVideo" poster="https://images.unsplash.com/photo-1524178232363-1fb2b075b655?w=1200&h=675&fit=crop">
                 <source src="https://sample-videos.com/video321/mp4/720/big_buck_bunny_720p_1mb.mp4" type="video/mp4">
             </video>
-            <div class="video-play" id="videoPlay" onclick="playVideo()">
-                <div class="play-btn">▶</div>
+            <div class="video-play" id="videoPlay" role="button" tabindex="0" aria-label="Play video" onclick="playVideo()" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();playVideo()}">
+                <div class="play-btn" aria-hidden="true">▶</div>
             </div>
         </div>
     </section>
@@ -797,7 +843,7 @@
         <div class="sticky-container">
             <div class="program-display">
                 <div class="program-visual">
-                    <img id="programImg" src="https://images.unsplash.com/photo-1627398242454-45a1465c2479?w=800&h=600&fit=crop" alt="Program">
+                    <img id="programImg" src="https://images.unsplash.com/photo-1627398242454-45a1465c2479?w=800&h=600&fit=crop" alt="Students learning web development with code displayed on screen">
                 </div>
                 <div class="program-info">
                     <h2 id="programTitle">Web Development</h2>
@@ -846,28 +892,28 @@
         <h2 class="section-title">Our Campus</h2>
         <p class="section-subtitle">Modern spaces designed for collaboration and innovation</p>
         <div class="gallery-grid">
-            <div class="gallery-item" onclick="openLightbox(this)">
+            <div class="gallery-item" role="button" tabindex="0" onclick="openLightbox(this)" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();openLightbox(this)}">
                 <img src="https://images.unsplash.com/photo-1497366216548-37526070297c?w=600&h=450&fit=crop" alt="Collaboration space" loading="lazy">
                 <div class="gallery-overlay"><h3>Collaboration Spaces</h3></div>
             </div>
-            <div class="gallery-item" onclick="openLightbox(this)">
-                <img src="https://images.unsplash.com/photo-1531482615713-2afd69097998?w=600&h=450&fit=crop" alt="Workshop" loading="lazy">
+            <div class="gallery-item" role="button" tabindex="0" onclick="openLightbox(this)" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();openLightbox(this)}">
+                <img src="https://images.unsplash.com/photo-1531482615713-2afd69097998?w=600&h=450&fit=crop" alt="Hands-on workshop with students collaborating at workstations" loading="lazy">
                 <div class="gallery-overlay"><h3>Workshop Rooms</h3></div>
             </div>
-            <div class="gallery-item" onclick="openLightbox(this)">
-                <img src="https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?w=600&h=450&fit=crop" alt="Team" loading="lazy">
+            <div class="gallery-item" role="button" tabindex="0" onclick="openLightbox(this)" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();openLightbox(this)}">
+                <img src="https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?w=600&h=450&fit=crop" alt="Team of students working together on a group project" loading="lazy">
                 <div class="gallery-overlay"><h3>Team Projects</h3></div>
             </div>
-            <div class="gallery-item" onclick="openLightbox(this)">
-                <img src="https://images.unsplash.com/photo-1515378960530-7c0da6231fb1?w=600&h=450&fit=crop" alt="Equipment" loading="lazy">
+            <div class="gallery-item" role="button" tabindex="0" onclick="openLightbox(this)" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();openLightbox(this)}">
+                <img src="https://images.unsplash.com/photo-1515378960530-7c0da6231fb1?w=600&h=450&fit=crop" alt="Modern technology equipment including laptops and displays" loading="lazy">
                 <div class="gallery-overlay"><h3>Latest Equipment</h3></div>
             </div>
-            <div class="gallery-item" onclick="openLightbox(this)">
-                <img src="https://images.unsplash.com/photo-1524178232363-1fb2b075b655?w=600&h=450&fit=crop" alt="Demo" loading="lazy">
+            <div class="gallery-item" role="button" tabindex="0" onclick="openLightbox(this)" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();openLightbox(this)}">
+                <img src="https://images.unsplash.com/photo-1524178232363-1fb2b075b655?w=600&h=450&fit=crop" alt="Student presenting project during demo day" loading="lazy">
                 <div class="gallery-overlay"><h3>Demo Days</h3></div>
             </div>
-            <div class="gallery-item" onclick="openLightbox(this)">
-                <img src="https://images.unsplash.com/photo-1522071820081-009f0129c71c?w=600&h=450&fit=crop" alt="Coding" loading="lazy">
+            <div class="gallery-item" role="button" tabindex="0" onclick="openLightbox(this)" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();openLightbox(this)}">
+                <img src="https://images.unsplash.com/photo-1522071820081-009f0129c71c?w=600&h=450&fit=crop" alt="Students coding together during a pair programming session" loading="lazy">
                 <div class="gallery-overlay"><h3>Coding Sessions</h3></div>
             </div>
         </div>
@@ -961,6 +1007,13 @@
         <a href="mailto:hello@techedacademy.com" class="cta-btn">Schedule a Meeting</a>
     </section>
 
+    </main>
+
+    <!-- Footer -->
+    <footer role="contentinfo" style="background: var(--dark); padding: 2rem; text-align: center; color: var(--text-muted);">
+        <p>&copy; 2026 TechEd Academy. All rights reserved.</p>
+    </footer>
+
     <!-- Lightbox -->
     <div class="lightbox" id="lightbox">
         <button class="lightbox-close" onclick="closeLightbox()">×</button>
@@ -1001,7 +1054,8 @@
 
         // Navigation
         function goToSection(id) {
-            document.getElementById(id).scrollIntoView({ behavior: 'smooth' });
+            const el = document.getElementById(id);
+            if (el) el.scrollIntoView({ behavior: 'smooth' });
         }
 
         // Update progress and active states
@@ -1009,7 +1063,8 @@
             const scrollTop = window.scrollY;
             const docHeight = document.documentElement.scrollHeight - window.innerHeight;
             const progress = (scrollTop / docHeight) * 100;
-            document.getElementById('progressBar').style.width = progress + '%';
+            const progressBar = document.getElementById('progressBar');
+            if (progressBar) progressBar.style.width = progress + '%';
 
             // Update active section
             sectionIds.forEach((id, i) => {
@@ -1033,6 +1088,8 @@
         // Programs sticky section
         function updatePrograms() {
             const section = document.getElementById('programs');
+            if (!section) return;
+
             const rect = section.getBoundingClientRect();
             const sectionHeight = section.offsetHeight;
             const viewportHeight = window.innerHeight;
@@ -1045,21 +1102,30 @@
                 const index = Math.min(Math.floor(progress * programs.length), programs.length - 1);
                 const program = programs[index];
 
-                document.getElementById('programTitle').textContent = program.title;
-                document.getElementById('programDesc').textContent = program.desc;
-                document.getElementById('programImg').src = program.img;
-                document.getElementById('programTags').innerHTML = program.tags.map(t => `<span class="program-tag">${t}</span>`).join('');
-                document.getElementById('programProgressFill').style.width = (progress * 100) + '%';
+                const titleEl = document.getElementById('programTitle');
+                const descEl = document.getElementById('programDesc');
+                const imgEl = document.getElementById('programImg');
+                const tagsEl = document.getElementById('programTags');
+                const progressEl = document.getElementById('programProgressFill');
+
+                if (titleEl) titleEl.textContent = program.title;
+                if (descEl) descEl.textContent = program.desc;
+                if (imgEl) imgEl.src = program.img;
+                if (tagsEl) tagsEl.innerHTML = program.tags.map(t => `<span class="program-tag">${t}</span>`).join('');
+                if (progressEl) progressEl.style.width = (progress * 100) + '%';
             }
         }
 
         // Timeline fill
         function updateTimeline() {
             const section = document.getElementById('timeline');
+            if (!section) return;
+
             const rect = section.getBoundingClientRect();
             if (rect.top < window.innerHeight && rect.bottom > 0) {
                 const progress = 1 - (rect.bottom / (window.innerHeight + rect.height));
-                document.getElementById('timelineFill').style.height = Math.min(100, progress * 150) + '%';
+                const fillEl = document.getElementById('timelineFill');
+                if (fillEl) fillEl.style.height = Math.min(100, progress * 150) + '%';
             }
         }
 
@@ -1080,25 +1146,35 @@
         function playVideo() {
             const video = document.getElementById('mainVideo');
             const overlay = document.getElementById('videoPlay');
-            video.play();
-            overlay.classList.add('hidden');
+            if (video) video.play();
+            if (overlay) overlay.classList.add('hidden');
         }
-        document.getElementById('mainVideo').addEventListener('pause', () => {
-            document.getElementById('videoPlay').classList.remove('hidden');
-        });
+        const mainVideo = document.getElementById('mainVideo');
+        if (mainVideo) {
+            mainVideo.addEventListener('pause', () => {
+                const overlay = document.getElementById('videoPlay');
+                if (overlay) overlay.classList.remove('hidden');
+            });
+        }
 
         // Lightbox
         function openLightbox(el) {
-            const img = el.querySelector('img');
-            document.getElementById('lightboxImg').src = img.src;
-            document.getElementById('lightbox').classList.add('active');
+            const img = el?.querySelector('img');
+            const lightboxImg = document.getElementById('lightboxImg');
+            const lightbox = document.getElementById('lightbox');
+            if (img && lightboxImg) lightboxImg.src = img.src;
+            if (lightbox) lightbox.classList.add('active');
         }
         function closeLightbox() {
-            document.getElementById('lightbox').classList.remove('active');
+            const lightbox = document.getElementById('lightbox');
+            if (lightbox) lightbox.classList.remove('active');
         }
-        document.getElementById('lightbox').addEventListener('click', (e) => {
-            if (e.target === document.getElementById('lightbox')) closeLightbox();
-        });
+        const lightboxEl = document.getElementById('lightbox');
+        if (lightboxEl) {
+            lightboxEl.addEventListener('click', (e) => {
+                if (e.target === lightboxEl) closeLightbox();
+            });
+        }
         document.addEventListener('keydown', (e) => {
             if (e.key === 'Escape') closeLightbox();
         });

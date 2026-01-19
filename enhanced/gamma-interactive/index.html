@@ -11,12 +11,32 @@
             box-sizing: border-box;
         }
         :root {
-            --primary: #6366f1;
+            /* Unified Color System */
+            --color-primary: #6366f1;
+            --color-primary-dark: #4f46e5;
+            --color-secondary: #ec4899;
+            --color-accent: #10b981;
+            --color-warning: #f59e0b;
+            --color-danger: #ef4444;
+
+            /* Light Theme Background Colors */
+            --bg-light: #fafafa;
+            --bg-card: #ffffff;
+            --bg-dark: #0f172a;
+            --bg-darker: #0a0a1a;
+
+            /* Light Theme Text Colors */
+            --text-dark: #1f2937;
+            --text-muted: #6b7280;
+            --text-primary: #ffffff;
+
+            /* Legacy aliases for backward compatibility */
+            --primary: var(--color-primary);
             --secondary: #8b5cf6;
-            --bg: #fafafa;
-            --card: #ffffff;
-            --text: #1f2937;
-            --muted: #6b7280;
+            --bg: var(--bg-light);
+            --card: var(--bg-card);
+            --text: var(--text-dark);
+            --muted: var(--text-muted);
         }
         body {
             font-family: 'Segoe UI', system-ui, sans-serif;
@@ -755,14 +775,14 @@
                         </div>
                     </div>
                     <div class="image-card" onclick="openLightbox(this)">
-                        <img src="https://images.unsplash.com/photo-1531482615713-2afd69097998?w=600&h=400&fit=crop" alt="Workshop">
+                        <img src="https://images.unsplash.com/photo-1531482615713-2afd69097998?w=600&h=400&fit=crop" alt="Hands-on workshop room with students at workstations">
                         <div class="image-overlay">
                             <h3>Workshop Rooms</h3>
                             <p>Hands-on learning spaces</p>
                         </div>
                     </div>
                     <div class="image-card" onclick="openLightbox(this)">
-                        <img src="https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?w=600&h=400&fit=crop" alt="Team">
+                        <img src="https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?w=600&h=400&fit=crop" alt="Team of students collaborating on a group project">
                         <div class="image-overlay">
                             <h3>Team Projects</h3>
                             <p>Real-world collaboration</p>
