@@ -1,0 +1,758 @@
+<!--
+==============================================================================
+FILE METADATA
+==============================================================================
+filename:       index.html
+created:        2026-01-27
+updated:        2026-01-27
+version:        1.0.0
+status:         active
+rating:         ★★★★☆
+author:         Joel + Claude
+related_docs:   [docs/frameworks/rive/prd-rive.md]
+description:    Rive interactive animation demo for TechEd Academy
+==============================================================================
+-->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rive Interactive Animations | TechEd Academy</title>
+    <meta name="description" content="Explore Rive's powerful state-machine driven animations for interactive web experiences.">
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='6' fill='%236366f1'/%3E%3Cpath d='M8 10h16v2H8zm0 5h12v2H8zm0 5h14v2H8z' fill='white'/%3E%3C/svg%3E">
+
+    <style>
+        :root {
+            --color-primary: #6366f1;
+            --color-primary-dark: #4f46e5;
+            --color-secondary: #ec4899;
+            --color-accent: #10b981;
+            --color-warning: #f59e0b;
+            --bg-dark: #0f172a;
+            --bg-darker: #0a0a1a;
+            --text-primary: #ffffff;
+            --text-muted: rgba(255,255,255,0.75);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: var(--bg-darker);
+            color: var(--text-primary);
+            line-height: 1.6;
+            min-height: 100vh;
+        }
+
+        /* Skip Link */
+        .skip-link {
+            position: absolute;
+            top: -40px;
+            left: 0;
+            padding: 8px 16px;
+            background: var(--color-primary);
+            color: white;
+            z-index: 9999;
+            transition: top 0.3s;
+            text-decoration: none;
+        }
+        .skip-link:focus { top: 0; }
+
+        /* Header */
+        .header {
+            background: linear-gradient(135deg, var(--color-primary), var(--color-secondary));
+            padding: 60px 40px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .header::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 50%);
+            animation: pulse 4s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); opacity: 0.5; }
+            50% { transform: scale(1.1); opacity: 0.8; }
+        }
+
+        .header-content {
+            position: relative;
+            z-index: 1;
+        }
+
+        .header h1 {
+            font-size: clamp(2rem, 5vw, 3.5rem);
+            font-weight: 700;
+            margin-bottom: 15px;
+        }
+
+        .header p {
+            font-size: 1.2rem;
+            opacity: 0.9;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 6px 16px;
+            background: rgba(255,255,255,0.2);
+            border-radius: 100px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            margin-bottom: 20px;
+        }
+
+        /* Main Content */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 60px 40px;
+        }
+
+        .section-title {
+            font-size: 2rem;
+            font-weight: 600;
+            margin-bottom: 30px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .section-title::before {
+            content: '';
+            width: 4px;
+            height: 30px;
+            background: linear-gradient(180deg, var(--color-primary), var(--color-secondary));
+            border-radius: 4px;
+        }
+
+        /* Hero Animation Section */
+        .hero-animation {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 40px;
+            align-items: center;
+            margin-bottom: 80px;
+        }
+
+        @media (max-width: 900px) {
+            .hero-animation {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .hero-text h2 {
+            font-size: 2.5rem;
+            margin-bottom: 20px;
+            background: linear-gradient(135deg, var(--color-primary), var(--color-secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .hero-text p {
+            color: var(--text-muted);
+            font-size: 1.1rem;
+            margin-bottom: 30px;
+        }
+
+        .hero-canvas-container {
+            background: rgba(255,255,255,0.05);
+            border-radius: 20px;
+            padding: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 400px;
+            border: 1px solid rgba(255,255,255,0.1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .rive-canvas {
+            width: 100%;
+            height: 300px;
+            max-width: 400px;
+        }
+
+        /* Feature Cards */
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+            margin-bottom: 80px;
+        }
+
+        .feature-card {
+            background: rgba(255,255,255,0.05);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 16px;
+            padding: 30px;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-5px);
+            border-color: var(--color-primary);
+            box-shadow: 0 20px 40px rgba(99, 102, 241, 0.2);
+        }
+
+        .feature-icon {
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(135deg, var(--color-primary), var(--color-secondary));
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            margin-bottom: 20px;
+        }
+
+        .feature-card h3 {
+            font-size: 1.3rem;
+            margin-bottom: 10px;
+        }
+
+        .feature-card p {
+            color: var(--text-muted);
+            font-size: 0.95rem;
+        }
+
+        /* Interactive Demo Section */
+        .demo-section {
+            background: linear-gradient(135deg, rgba(99, 102, 241, 0.1), rgba(236, 72, 153, 0.1));
+            border-radius: 20px;
+            padding: 50px;
+            margin-bottom: 80px;
+        }
+
+        .demo-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 30px;
+            margin-top: 30px;
+        }
+
+        .demo-item {
+            background: rgba(0,0,0,0.3);
+            border-radius: 16px;
+            padding: 30px;
+            text-align: center;
+            transition: all 0.3s;
+            cursor: pointer;
+            border: 2px solid transparent;
+        }
+
+        .demo-item:hover {
+            border-color: var(--color-accent);
+            background: rgba(16, 185, 129, 0.1);
+        }
+
+        .demo-item.active {
+            border-color: var(--color-primary);
+            background: rgba(99, 102, 241, 0.2);
+        }
+
+        .demo-canvas {
+            width: 150px;
+            height: 150px;
+            margin: 0 auto 20px;
+            background: rgba(255,255,255,0.05);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 3rem;
+            transition: transform 0.3s;
+        }
+
+        .demo-item:hover .demo-canvas {
+            transform: scale(1.1);
+        }
+
+        .demo-item h4 {
+            margin-bottom: 8px;
+        }
+
+        .demo-item p {
+            color: var(--text-muted);
+            font-size: 0.9rem;
+        }
+
+        .state-indicator {
+            display: inline-block;
+            padding: 4px 12px;
+            background: var(--color-primary);
+            border-radius: 100px;
+            font-size: 0.8rem;
+            margin-top: 15px;
+        }
+
+        /* Animation Showcase */
+        .showcase-section {
+            margin-bottom: 80px;
+        }
+
+        .showcase-container {
+            background: rgba(255,255,255,0.05);
+            border-radius: 20px;
+            padding: 40px;
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .showcase-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+
+        .showcase-controls {
+            display: flex;
+            gap: 10px;
+        }
+
+        .control-btn {
+            padding: 10px 20px;
+            background: rgba(255,255,255,0.1);
+            border: 1px solid rgba(255,255,255,0.2);
+            border-radius: 8px;
+            color: white;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-size: 0.9rem;
+        }
+
+        .control-btn:hover {
+            background: var(--color-primary);
+            border-color: var(--color-primary);
+        }
+
+        .control-btn.active {
+            background: var(--color-primary);
+            border-color: var(--color-primary);
+        }
+
+        .showcase-canvas-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+        }
+
+        .showcase-item {
+            background: rgba(0,0,0,0.3);
+            border-radius: 12px;
+            padding: 20px;
+            text-align: center;
+        }
+
+        .showcase-item canvas,
+        .showcase-item .placeholder-animation {
+            width: 100%;
+            height: 150px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+        }
+
+        .placeholder-animation {
+            background: linear-gradient(135deg, var(--color-primary), var(--color-secondary));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 3rem;
+            animation: float 3s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+
+        .showcase-item h5 {
+            font-size: 1rem;
+            margin-bottom: 5px;
+        }
+
+        .showcase-item p {
+            color: var(--text-muted);
+            font-size: 0.85rem;
+        }
+
+        /* CTA Section */
+        .cta-section {
+            text-align: center;
+            padding: 60px 40px;
+            background: linear-gradient(135deg, var(--color-primary), var(--color-secondary));
+            border-radius: 20px;
+            margin-bottom: 40px;
+        }
+
+        .cta-section h2 {
+            font-size: 2rem;
+            margin-bottom: 15px;
+        }
+
+        .cta-section p {
+            opacity: 0.9;
+            margin-bottom: 30px;
+            max-width: 500px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .cta-buttons {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            padding: 14px 28px;
+            border-radius: 10px;
+            font-weight: 600;
+            text-decoration: none;
+            transition: all 0.3s;
+            display: inline-block;
+        }
+
+        .btn-white {
+            background: white;
+            color: var(--color-primary);
+        }
+
+        .btn-white:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+
+        .btn-outline {
+            background: transparent;
+            color: white;
+            border: 2px solid white;
+        }
+
+        .btn-outline:hover {
+            background: white;
+            color: var(--color-primary);
+        }
+
+        /* Footer */
+        .footer {
+            text-align: center;
+            padding: 40px;
+            color: var(--text-muted);
+            border-top: 1px solid rgba(255,255,255,0.1);
+        }
+
+        /* Reduced Motion */
+        @media (prefers-reduced-motion: reduce) {
+            *, *::before, *::after {
+                animation-duration: 0.01ms !important;
+                animation-iteration-count: 1 !important;
+                transition-duration: 0.01ms !important;
+            }
+        }
+
+        /* Focus Visible */
+        :focus-visible {
+            outline: 2px solid var(--color-primary);
+            outline-offset: 2px;
+        }
+
+        /* No Rive Fallback */
+        .no-canvas-message {
+            display: none;
+            text-align: center;
+            padding: 40px;
+            background: rgba(239, 68, 68, 0.1);
+            border: 1px solid rgba(239, 68, 68, 0.3);
+            border-radius: 12px;
+            color: #ef4444;
+        }
+
+        .no-canvas .no-canvas-message {
+            display: block;
+        }
+
+        .no-canvas .rive-canvas,
+        .no-canvas .demo-canvas,
+        .no-canvas .placeholder-animation {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <a href="#main-content" class="skip-link">Skip to main content</a>
+
+    <header class="header" role="banner">
+        <div class="header-content">
+            <span class="badge">L2 Framework</span>
+            <h1>Rive Interactive Animations</h1>
+            <p>State-machine driven animations that respond to user input in real-time</p>
+        </div>
+    </header>
+
+    <main id="main-content" role="main" class="container">
+        <!-- Hero Animation Section -->
+        <section class="hero-animation" aria-label="Introduction to Rive">
+            <div class="hero-text">
+                <h2>Bring Your UI to Life</h2>
+                <p>Rive is a powerful animation tool that creates interactive, state-based animations. Unlike traditional animation formats, Rive animations can respond to user input, making them perfect for buttons, loaders, characters, and more.</p>
+                <div style="display: flex; gap: 15px; flex-wrap: wrap;">
+                    <a href="https://rive.app" target="_blank" rel="noopener" class="btn btn-white" style="background: var(--color-primary); color: white;">Learn Rive</a>
+                    <a href="https://rive.app/community" target="_blank" rel="noopener" class="btn btn-outline" style="border-color: var(--color-primary); color: var(--color-primary);">Community Files</a>
+                </div>
+            </div>
+            <div class="hero-canvas-container">
+                <div class="placeholder-animation" aria-label="Animated Rive demonstration">
+                    <span style="animation: float 2s ease-in-out infinite;">🎭</span>
+                </div>
+                <div class="no-canvas-message">
+                    <p>Canvas not supported in your browser.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Features Grid -->
+        <h2 class="section-title">Why Rive?</h2>
+        <div class="features-grid">
+            <div class="feature-card" tabindex="0" role="article">
+                <div class="feature-icon">⚡</div>
+                <h3>State Machines</h3>
+                <p>Define complex animation states and transitions. Animations respond to inputs like hover, click, or custom triggers.</p>
+            </div>
+            <div class="feature-card" tabindex="0" role="article">
+                <div class="feature-icon">🎨</div>
+                <h3>Design + Code</h3>
+                <p>Create in the Rive editor, export as a tiny .riv file, and control via JavaScript. Perfect designer-developer workflow.</p>
+            </div>
+            <div class="feature-card" tabindex="0" role="article">
+                <div class="feature-icon">📦</div>
+                <h3>Tiny File Size</h3>
+                <p>Rive files are incredibly small compared to video or GIF. A complex animation can be under 50KB.</p>
+            </div>
+            <div class="feature-card" tabindex="0" role="article">
+                <div class="feature-icon">🔄</div>
+                <h3>Runtime Control</h3>
+                <p>Change colors, text, and animation states at runtime. Perfect for theming and personalization.</p>
+            </div>
+            <div class="feature-card" tabindex="0" role="article">
+                <div class="feature-icon">📱</div>
+                <h3>Cross-Platform</h3>
+                <p>Use the same .riv file on web, iOS, Android, Flutter, React Native, and more. One animation, everywhere.</p>
+            </div>
+            <div class="feature-card" tabindex="0" role="article">
+                <div class="feature-icon">🎯</div>
+                <h3>Accessibility</h3>
+                <p>Built-in support for reduced motion preferences. Animations can be paused or simplified automatically.</p>
+            </div>
+        </div>
+
+        <!-- Interactive Demo Section -->
+        <section class="demo-section" aria-label="Interactive animation demo">
+            <h2 class="section-title" style="color: white;">Interactive States Demo</h2>
+            <p style="color: var(--text-muted); margin-bottom: 20px;">Click or hover on the items below to see how state machines work. In a real Rive implementation, these would trigger actual animation state changes.</p>
+
+            <div class="demo-grid">
+                <div class="demo-item" id="demo-idle" tabindex="0" role="button" aria-label="Idle state demo">
+                    <div class="demo-canvas">😊</div>
+                    <h4>Idle State</h4>
+                    <p>Default resting animation</p>
+                    <span class="state-indicator">idle</span>
+                </div>
+                <div class="demo-item" id="demo-hover" tabindex="0" role="button" aria-label="Hover state demo">
+                    <div class="demo-canvas">🤩</div>
+                    <h4>Hover State</h4>
+                    <p>Triggered on mouse over</p>
+                    <span class="state-indicator">hover</span>
+                </div>
+                <div class="demo-item" id="demo-click" tabindex="0" role="button" aria-label="Click state demo">
+                    <div class="demo-canvas">🎉</div>
+                    <h4>Click State</h4>
+                    <p>Triggered on interaction</p>
+                    <span class="state-indicator">pressed</span>
+                </div>
+                <div class="demo-item" id="demo-success" tabindex="0" role="button" aria-label="Success state demo">
+                    <div class="demo-canvas">✅</div>
+                    <h4>Success State</h4>
+                    <p>Completion feedback</p>
+                    <span class="state-indicator">success</span>
+                </div>
+            </div>
+        </section>
+
+        <!-- Animation Showcase -->
+        <section class="showcase-section" aria-label="Animation types showcase">
+            <h2 class="section-title">Animation Types</h2>
+            <div class="showcase-container">
+                <div class="showcase-header">
+                    <p style="color: var(--text-muted);">Common use cases for Rive in TechEd Academy</p>
+                    <div class="showcase-controls">
+                        <button class="control-btn active" data-filter="all">All</button>
+                        <button class="control-btn" data-filter="ui">UI</button>
+                        <button class="control-btn" data-filter="illustration">Illustration</button>
+                    </div>
+                </div>
+
+                <div class="showcase-canvas-grid">
+                    <div class="showcase-item" data-type="ui">
+                        <div class="placeholder-animation" style="animation-delay: 0s;">🔘</div>
+                        <h5>Toggle Switch</h5>
+                        <p>Interactive on/off state</p>
+                    </div>
+                    <div class="showcase-item" data-type="ui">
+                        <div class="placeholder-animation" style="animation-delay: 0.2s;">⏳</div>
+                        <h5>Loading Spinner</h5>
+                        <p>Progress indication</p>
+                    </div>
+                    <div class="showcase-item" data-type="ui">
+                        <div class="placeholder-animation" style="animation-delay: 0.4s;">❤️</div>
+                        <h5>Like Button</h5>
+                        <p>Satisfying feedback</p>
+                    </div>
+                    <div class="showcase-item" data-type="illustration">
+                        <div class="placeholder-animation" style="animation-delay: 0.6s;">🎓</div>
+                        <h5>Achievement Badge</h5>
+                        <p>Celebration animation</p>
+                    </div>
+                    <div class="showcase-item" data-type="illustration">
+                        <div class="placeholder-animation" style="animation-delay: 0.8s;">🚀</div>
+                        <h5>Progress Rocket</h5>
+                        <p>Course completion</p>
+                    </div>
+                    <div class="showcase-item" data-type="illustration">
+                        <div class="placeholder-animation" style="animation-delay: 1s;">🤖</div>
+                        <h5>Mascot Character</h5>
+                        <p>Interactive guide</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Code Example -->
+        <section class="showcase-section" aria-label="Code example">
+            <h2 class="section-title">Integration Code</h2>
+            <div class="showcase-container">
+                <pre style="background: rgba(0,0,0,0.5); padding: 20px; border-radius: 12px; overflow-x: auto; font-family: 'Fira Code', monospace; font-size: 0.9rem; line-height: 1.6;">
+<code style="color: var(--text-muted);">// Include Rive runtime
+&lt;script src="https://unpkg.com/@rive-app/canvas"&gt;&lt;/script&gt;
+
+// Initialize a Rive animation
+<span style="color: var(--color-primary);">const</span> rive = <span style="color: var(--color-primary);">new</span> <span style="color: var(--color-secondary);">Rive</span>({
+    src: <span style="color: var(--color-accent);">'animation.riv'</span>,
+    canvas: document.getElementById(<span style="color: var(--color-accent);">'canvas'</span>),
+    autoplay: <span style="color: var(--color-warning);">true</span>,
+    stateMachines: <span style="color: var(--color-accent);">'State Machine 1'</span>,
+    onLoad: () => {
+        <span style="color: #6b7280;">// Get state machine inputs</span>
+        <span style="color: var(--color-primary);">const</span> inputs = rive.stateMachineInputs(<span style="color: var(--color-accent);">'State Machine 1'</span>);
+        <span style="color: var(--color-primary);">const</span> trigger = inputs.find(i => i.name === <span style="color: var(--color-accent);">'click'</span>);
+
+        <span style="color: #6b7280;">// Fire trigger on click</span>
+        canvas.addEventListener(<span style="color: var(--color-accent);">'click'</span>, () => trigger?.fire());
+    }
+});</code></pre>
+            </div>
+        </section>
+
+        <!-- CTA Section -->
+        <section class="cta-section" aria-label="Call to action">
+            <h2>Ready to Add Rive to Your Project?</h2>
+            <p>Explore the Rive community for free animations or create your own in the Rive editor.</p>
+            <div class="cta-buttons">
+                <a href="https://rive.app/community" target="_blank" rel="noopener" class="btn btn-white">Browse Community</a>
+                <a href="https://rive.app/editor" target="_blank" rel="noopener" class="btn btn-outline">Open Editor</a>
+            </div>
+        </section>
+    </main>
+
+    <footer class="footer" role="contentinfo">
+        <p>Rive Animation Demo - TechEd Academy</p>
+        <p style="margin-top: 10px; font-size: 0.9rem; color: var(--text-muted);">Part of the Interactive Documentation Showcase</p>
+    </footer>
+
+    <!-- Navigation Component -->
+    <script src="../shared/nav-component.js"></script>
+
+    <script>
+        // Check for canvas support
+        (function() {
+            const canvas = document.createElement('canvas');
+            if (!canvas.getContext || !canvas.getContext('2d')) {
+                document.body.classList.add('no-canvas');
+            }
+        })();
+
+        // Interactive demo items
+        const demoItems = document.querySelectorAll('.demo-item');
+        demoItems.forEach(item => {
+            item.addEventListener('click', () => {
+                demoItems.forEach(i => i.classList.remove('active'));
+                item.classList.add('active');
+
+                // Animate the emoji
+                const canvas = item.querySelector('.demo-canvas');
+                canvas.style.transform = 'scale(1.2)';
+                setTimeout(() => {
+                    canvas.style.transform = 'scale(1)';
+                }, 200);
+            });
+
+            item.addEventListener('keypress', (e) => {
+                if (e.key === 'Enter' || e.key === ' ') {
+                    e.preventDefault();
+                    item.click();
+                }
+            });
+        });
+
+        // Filter controls
+        const filterBtns = document.querySelectorAll('.control-btn');
+        const showcaseItems = document.querySelectorAll('.showcase-item');
+
+        filterBtns.forEach(btn => {
+            btn.addEventListener('click', () => {
+                const filter = btn.dataset.filter;
+
+                filterBtns.forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+
+                showcaseItems.forEach(item => {
+                    if (filter === 'all' || item.dataset.type === filter) {
+                        item.style.display = 'block';
+                    } else {
+                        item.style.display = 'none';
+                    }
+                });
+            });
+        });
+
+        // Respect reduced motion
+        if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+            console.log('Reduced motion preference detected - animations simplified');
+        }
+
+        console.log('Rive Demo loaded successfully');
+        console.log('Note: This demo uses placeholder animations. In production, use actual .riv files.');
+    </script>
+</body>
+</html>

@@ -1,0 +1,868 @@
+<!--
+==============================================================================
+FILE METADATA
+==============================================================================
+filename:       index.html
+created:        2026-01-27
+updated:        2026-01-27
+version:        1.0.0
+status:         active
+rating:         ★★★★☆
+author:         Joel + Claude
+related_docs:   [docs/frameworks/impress-js/prd-impress-js.md, docs/frameworks/impress-js/integration-plan.md]
+description:    Impress.js 3D spatial presentation demo for TechEd Academy
+==============================================================================
+-->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="TechEd Academy - Interactive 3D presentation showcasing future-ready education programs using Impress.js">
+    <meta name="author" content="LunoLabs">
+
+    <!-- Open Graph Meta Tags -->
+    <meta property="og:title" content="TechEd Academy - 3D Presentation">
+    <meta property="og:description" content="Future-ready education programs presented in an immersive 3D experience">
+    <meta property="og:type" content="website">
+
+    <title>TechEd Academy - 3D Presentation | Impress.js Demo</title>
+
+    <!-- Performance hints -->
+    <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
+    <link rel="preconnect" href="https://fonts.googleapis.com" crossorigin>
+
+    <style>
+        /*
+        ==============================================================================
+        CSS STYLES
+        ==============================================================================
+        Impress.js 3D presentation theme matching LunoLabs design system
+        ==============================================================================
+        */
+
+        :root {
+            /* Project standard colors */
+            --color-primary: #6366f1;
+            --color-primary-dark: #4f46e5;
+            --color-secondary: #ec4899;
+            --color-accent: #10b981;
+            --color-warning: #f59e0b;
+            --color-danger: #ef4444;
+            --bg-dark: #0f172a;
+            --bg-darker: #0a0a1a;
+            --text-primary: #ffffff;
+            --text-muted: rgba(255, 255, 255, 0.75);
+
+            /* Impress.js specific */
+            --impress-transition-duration: 1000ms;
+            --impress-perspective: 1000px;
+            --impress-step-width: 900px;
+            --impress-step-padding: 40px;
+            --impress-step-bg: rgba(255, 255, 255, 0.05);
+            --impress-step-border: rgba(255, 255, 255, 0.1);
+            --impress-step-radius: 16px;
+        }
+
+        /* Reset and base styles */
+        *, *::before, *::after {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        html, body {
+            height: 100%;
+            overflow: hidden;
+        }
+
+        body {
+            font-family: 'Segoe UI', system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+            background: var(--bg-darker);
+            color: var(--text-primary);
+            line-height: 1.6;
+            min-height: 100%;
+        }
+
+        /* Skip link for accessibility */
+        .skip-link {
+            position: absolute;
+            top: -100px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: var(--color-primary);
+            color: white;
+            padding: 12px 24px;
+            border-radius: 0 0 8px 8px;
+            z-index: 10000;
+            text-decoration: none;
+            font-weight: 600;
+            transition: top 0.3s ease;
+        }
+
+        .skip-link:focus {
+            top: 0;
+            outline: 2px solid white;
+            outline-offset: 2px;
+        }
+
+        /* Fallback for unsupported browsers */
+        .fallback-message {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: var(--bg-darker);
+            z-index: 9999;
+            padding: 40px;
+        }
+
+        .impress-not-supported .fallback-message {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+        }
+
+        .fallback-message h1 {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+            background: linear-gradient(135deg, var(--color-primary), var(--color-secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .fallback-message p {
+            font-size: 1.2rem;
+            color: var(--text-muted);
+            max-width: 600px;
+            margin-bottom: 2rem;
+        }
+
+        .fallback-message .browser-list {
+            display: flex;
+            gap: 20px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .fallback-message .browser-item {
+            background: var(--impress-step-bg);
+            border: 1px solid var(--impress-step-border);
+            padding: 16px 24px;
+            border-radius: 12px;
+            font-size: 1rem;
+        }
+
+        /* Hide content when not supported */
+        .impress-not-supported #impress {
+            display: none;
+        }
+
+        /* Impress.js step container styling */
+        .step {
+            position: relative;
+            width: var(--impress-step-width);
+            padding: var(--impress-step-padding);
+            background: var(--impress-step-bg);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid var(--impress-step-border);
+            border-radius: var(--impress-step-radius);
+            box-shadow:
+                0 8px 32px rgba(0, 0, 0, 0.3),
+                inset 0 1px 0 rgba(255, 255, 255, 0.05);
+            transition: opacity 0.5s ease;
+        }
+
+        /* Step visibility states */
+        .impress-enabled .step {
+            opacity: 0.3;
+            transition: opacity var(--impress-transition-duration) ease;
+        }
+
+        .impress-enabled .step.active {
+            opacity: 1;
+        }
+
+        /* Typography */
+        h1, h2, h3 {
+            font-weight: 600;
+            line-height: 1.2;
+            margin-bottom: 1rem;
+        }
+
+        h1 {
+            font-size: 3rem;
+        }
+
+        h2 {
+            font-size: 2.25rem;
+        }
+
+        h3 {
+            font-size: 1.75rem;
+        }
+
+        p {
+            color: var(--text-muted);
+            margin-bottom: 1rem;
+        }
+
+        /* Gradient text */
+        .gradient-text {
+            background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-secondary) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        /* Large gradient heading */
+        .title-large {
+            font-size: 4rem;
+            font-weight: 700;
+            letter-spacing: -0.02em;
+        }
+
+        /* Subtitle styling */
+        .subtitle {
+            font-size: 1.5rem;
+            color: var(--text-muted);
+            margin-top: 0.5rem;
+        }
+
+        /* Feature cards */
+        .feature-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 20px;
+            margin-top: 24px;
+        }
+
+        .feature-card {
+            background: rgba(99, 102, 241, 0.1);
+            border: 1px solid rgba(99, 102, 241, 0.2);
+            border-radius: 12px;
+            padding: 20px;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 12px 24px rgba(99, 102, 241, 0.2);
+        }
+
+        .feature-card h4 {
+            color: var(--color-primary);
+            font-size: 1.1rem;
+            margin-bottom: 8px;
+        }
+
+        .feature-card p {
+            font-size: 0.9rem;
+            margin: 0;
+        }
+
+        /* Stats display */
+        .stats-row {
+            display: flex;
+            justify-content: space-around;
+            margin-top: 32px;
+            gap: 20px;
+        }
+
+        .stat {
+            text-align: center;
+        }
+
+        .stat-number {
+            font-size: 3rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, var(--color-primary), var(--color-secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .stat-label {
+            font-size: 0.9rem;
+            color: var(--text-muted);
+        }
+
+        /* Icon styling */
+        .icon {
+            font-size: 3rem;
+            margin-bottom: 16px;
+        }
+
+        /* List styling */
+        .feature-list {
+            list-style: none;
+            margin-top: 20px;
+        }
+
+        .feature-list li {
+            padding: 12px 0;
+            border-bottom: 1px solid var(--impress-step-border);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .feature-list li:last-child {
+            border-bottom: none;
+        }
+
+        .feature-list .check {
+            width: 24px;
+            height: 24px;
+            background: var(--color-accent);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+
+        .feature-list .check::after {
+            content: '';
+            width: 8px;
+            height: 12px;
+            border: 2px solid white;
+            border-top: none;
+            border-left: none;
+            transform: rotate(45deg) translateY(-1px);
+        }
+
+        /* CTA Button */
+        .cta-button {
+            display: inline-block;
+            padding: 16px 40px;
+            background: linear-gradient(135deg, var(--color-primary), var(--color-secondary));
+            color: white;
+            text-decoration: none;
+            border-radius: 30px;
+            font-weight: 600;
+            font-size: 1.1rem;
+            margin-top: 24px;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            border: none;
+            cursor: pointer;
+        }
+
+        .cta-button:hover {
+            transform: scale(1.05);
+            box-shadow: 0 12px 32px rgba(99, 102, 241, 0.4);
+        }
+
+        .cta-button:focus {
+            outline: 2px solid white;
+            outline-offset: 4px;
+        }
+
+        /* Contact info */
+        .contact-row {
+            display: flex;
+            justify-content: center;
+            gap: 40px;
+            margin-top: 32px;
+            flex-wrap: wrap;
+        }
+
+        .contact-item {
+            text-align: center;
+        }
+
+        .contact-item .icon {
+            font-size: 1.5rem;
+            margin-bottom: 8px;
+        }
+
+        .contact-item span {
+            display: block;
+            color: var(--text-muted);
+            font-size: 0.9rem;
+        }
+
+        /* Progress indicator */
+        .impress-progress {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: rgba(255, 255, 255, 0.1);
+            z-index: 1000;
+        }
+
+        .impress-progress div {
+            height: 100%;
+            background: linear-gradient(90deg, var(--color-primary), var(--color-secondary));
+            transition: width 0.3s ease;
+        }
+
+        /* Navigation hints */
+        .nav-hint {
+            position: fixed;
+            bottom: 60px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(0, 0, 0, 0.6);
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            padding: 12px 24px;
+            border-radius: 30px;
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            z-index: 100;
+            opacity: 1;
+            transition: opacity 0.5s ease;
+        }
+
+        .nav-hint kbd {
+            background: rgba(255, 255, 255, 0.15);
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-family: inherit;
+            margin: 0 4px;
+        }
+
+        /* Hide nav hint after first interaction */
+        .impress-on-stepmove .nav-hint {
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        /* Overview step special styling */
+        #overview {
+            background: transparent;
+            border: none;
+            box-shadow: none;
+        }
+
+        #overview .overview-title {
+            background: linear-gradient(135deg, var(--color-primary), var(--color-secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            font-size: 2rem;
+            text-align: center;
+        }
+
+        /* Reduced motion support */
+        @media (prefers-reduced-motion: reduce) {
+            .impress-enabled .step {
+                transition-duration: 0.1s !important;
+            }
+
+            .step,
+            .feature-card,
+            .cta-button {
+                transition-duration: 0.1s !important;
+            }
+
+            /* Reduce 3D complexity */
+            body.impress-enabled {
+                perspective: none !important;
+            }
+        }
+
+        /* Focus indicators */
+        *:focus {
+            outline: 2px solid var(--color-primary);
+            outline-offset: 2px;
+        }
+
+        *:focus:not(:focus-visible) {
+            outline: none;
+        }
+
+        *:focus-visible {
+            outline: 2px solid var(--color-primary);
+            outline-offset: 2px;
+        }
+
+        /* Responsive adjustments */
+        @media (max-width: 1024px) {
+            :root {
+                --impress-step-width: 700px;
+                --impress-step-padding: 32px;
+            }
+
+            h1 {
+                font-size: 2.5rem;
+            }
+
+            .title-large {
+                font-size: 3rem;
+            }
+
+            .feature-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 768px) {
+            :root {
+                --impress-step-width: 90vw;
+                --impress-step-padding: 24px;
+            }
+
+            h1 {
+                font-size: 2rem;
+            }
+
+            .title-large {
+                font-size: 2.5rem;
+            }
+
+            .stats-row {
+                flex-direction: column;
+                gap: 16px;
+            }
+
+            .stat-number {
+                font-size: 2rem;
+            }
+
+            .contact-row {
+                flex-direction: column;
+                gap: 20px;
+            }
+        }
+    </style>
+</head>
+<body class="impress-not-supported">
+    <!-- Skip link for accessibility -->
+    <a href="#impress" class="skip-link">Skip to presentation</a>
+
+    <!-- Fallback for unsupported browsers -->
+    <div class="fallback-message" role="alert">
+        <h1>3D Presentation Not Supported</h1>
+        <p>
+            This presentation uses advanced CSS 3D transforms that your browser doesn't fully support.
+            For the best experience, please use a modern browser:
+        </p>
+        <div class="browser-list">
+            <div class="browser-item">Chrome 80+</div>
+            <div class="browser-item">Firefox 75+</div>
+            <div class="browser-item">Safari 14+</div>
+            <div class="browser-item">Edge 80+</div>
+        </div>
+    </div>
+
+    <!-- Main Impress.js presentation -->
+    <div id="impress"
+         role="main"
+         aria-label="TechEd Academy 3D Presentation"
+         data-transition-duration="1000"
+         data-autoplay="0"
+         data-perspective="1000"
+         data-width="1920"
+         data-height="1080">
+
+        <!-- Step 1: Title (center, scale 2) -->
+        <div id="title"
+             class="step"
+             aria-label="Title slide"
+             data-x="0"
+             data-y="0"
+             data-z="0"
+             data-scale="2">
+            <h1 class="title-large gradient-text">TechEd Academy</h1>
+            <p class="subtitle">Future-Ready Education Programs</p>
+            <div class="stats-row">
+                <div class="stat">
+                    <div class="stat-number">12</div>
+                    <div class="stat-label">Programs</div>
+                </div>
+                <div class="stat">
+                    <div class="stat-number">48</div>
+                    <div class="stat-label">Workshops</div>
+                </div>
+                <div class="stat">
+                    <div class="stat-number">500+</div>
+                    <div class="stat-label">Students</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Step 2: Problem Statement (right, slight rotation) -->
+        <div id="problem"
+             class="step"
+             aria-label="The Challenge"
+             data-x="1500"
+             data-y="200"
+             data-z="0"
+             data-rotate-z="5">
+            <h2>The Challenge</h2>
+            <p>Traditional education isn't keeping pace with technology advancement.</p>
+            <div class="feature-grid">
+                <div class="feature-card">
+                    <h4>Skills Gap</h4>
+                    <p>87% of companies report difficulty finding qualified tech talent</p>
+                </div>
+                <div class="feature-card">
+                    <h4>Outdated Curriculum</h4>
+                    <p>Average textbook is 5+ years behind current technology</p>
+                </div>
+                <div class="feature-card">
+                    <h4>Access Barriers</h4>
+                    <p>High costs prevent many from quality tech education</p>
+                </div>
+                <div class="feature-card">
+                    <h4>Theory vs Practice</h4>
+                    <p>Students learn concepts but lack hands-on experience</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Step 3: Solution Overview (down-right, small scale) -->
+        <div id="solution"
+             class="step"
+             aria-label="Our Solution"
+             data-x="2200"
+             data-y="900"
+             data-z="0"
+             data-scale="0.8"
+             data-rotate-z="-3">
+            <div class="icon">💡</div>
+            <h2 class="gradient-text">Our Solution</h2>
+            <p>A comprehensive, technology-first learning ecosystem designed for the modern learner.</p>
+            <ul class="feature-list">
+                <li><span class="check"></span> Project-based curriculum with real-world applications</li>
+                <li><span class="check"></span> Industry partnerships for authentic learning experiences</li>
+                <li><span class="check"></span> Flexible formats: intensive, bootcamp, and evening options</li>
+                <li><span class="check"></span> Access to professional-grade tools and cloud resources</li>
+            </ul>
+        </div>
+
+        <!-- Step 4: Feature 1 - Web Development (z-axis depth, x-rotation) -->
+        <div id="feature-web"
+             class="step"
+             aria-label="Web Development Track"
+             data-x="1000"
+             data-y="1500"
+             data-z="-500"
+             data-rotate-x="15">
+            <div class="icon">🌐</div>
+            <h2>Web Development Track</h2>
+            <p>From fundamentals to full-stack mastery in 40 weeks.</p>
+            <div class="feature-grid">
+                <div class="feature-card">
+                    <h4>Foundation</h4>
+                    <p>HTML, CSS, JavaScript fundamentals (8 weeks)</p>
+                </div>
+                <div class="feature-card">
+                    <h4>Framework Mastery</h4>
+                    <p>React, Vue, or Angular deep dive (12 weeks)</p>
+                </div>
+                <div class="feature-card">
+                    <h4>Full Stack</h4>
+                    <p>Backend, databases, deployment (16 weeks)</p>
+                </div>
+                <div class="feature-card">
+                    <h4>Capstone</h4>
+                    <p>Real-world client project (4 weeks)</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Step 5: Feature 2 - AI/ML (further z-depth) -->
+        <div id="feature-ai"
+             class="step"
+             aria-label="AI and Machine Learning Track"
+             data-x="0"
+             data-y="1800"
+             data-z="-1000"
+             data-rotate-x="10"
+             data-rotate-y="15">
+            <div class="icon">🤖</div>
+            <h2>AI & Machine Learning</h2>
+            <p>Master the technologies shaping the future in 34 weeks.</p>
+            <div class="feature-grid">
+                <div class="feature-card">
+                    <h4>Python & Math</h4>
+                    <p>Programming, linear algebra, statistics (6 weeks)</p>
+                </div>
+                <div class="feature-card">
+                    <h4>ML Fundamentals</h4>
+                    <p>Supervised, unsupervised learning (10 weeks)</p>
+                </div>
+                <div class="feature-card">
+                    <h4>Deep Learning & LLMs</h4>
+                    <p>Transformers, fine-tuning, prompts (12 weeks)</p>
+                </div>
+                <div class="feature-card">
+                    <h4>Industry Project</h4>
+                    <p>Partner company collaboration (6 weeks)</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Step 6: Feature 3 - Cybersecurity (return to surface) -->
+        <div id="feature-security"
+             class="step"
+             aria-label="Cybersecurity Track"
+             data-x="-1000"
+             data-y="1500"
+             data-z="0"
+             data-rotate-y="-10">
+            <div class="icon">🔐</div>
+            <h2>Cybersecurity Track</h2>
+            <p>Protect digital assets and systems in 28 weeks of intensive training.</p>
+            <div class="feature-grid">
+                <div class="feature-card">
+                    <h4>Security Fundamentals</h4>
+                    <p>Networks, protocols, threat landscape (6 weeks)</p>
+                </div>
+                <div class="feature-card">
+                    <h4>Ethical Hacking</h4>
+                    <p>Penetration testing, vulnerabilities (10 weeks)</p>
+                </div>
+                <div class="feature-card">
+                    <h4>Defense & Response</h4>
+                    <p>SOC operations, incident response (8 weeks)</p>
+                </div>
+                <div class="feature-card">
+                    <h4>Certification Prep</h4>
+                    <p>CompTIA, CEH exam preparation (4 weeks)</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Step 7: Call to Action (left of title) -->
+        <div id="cta"
+             class="step"
+             aria-label="Call to action"
+             data-x="-1500"
+             data-y="0"
+             data-z="0"
+             data-rotate-z="-5">
+            <h2 class="gradient-text">Ready to Transform Education?</h2>
+            <p>Let's discuss how TechEd Academy can serve your community and prepare the next generation of tech professionals.</p>
+
+            <button class="cta-button" type="button" onclick="alert('Contact form coming soon!')">
+                Schedule a Meeting
+            </button>
+
+            <div class="contact-row">
+                <div class="contact-item">
+                    <div class="icon">📧</div>
+                    <span>hello@techedacademy.com</span>
+                </div>
+                <div class="contact-item">
+                    <div class="icon">📱</div>
+                    <span>+49 123 456 7890</span>
+                </div>
+                <div class="contact-item">
+                    <div class="icon">🌐</div>
+                    <span>techedacademy.com</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Step 8: Overview (center, scale 5, bird's eye view) -->
+        <div id="overview"
+             class="step"
+             aria-label="Overview of all slides"
+             data-x="500"
+             data-y="800"
+             data-z="0"
+             data-scale="5">
+            <p class="overview-title">The Complete TechEd Academy Experience</p>
+        </div>
+    </div>
+
+    <!-- Progress indicator -->
+    <div class="impress-progress" aria-hidden="true">
+        <div></div>
+    </div>
+
+    <!-- Navigation hints -->
+    <div class="nav-hint" aria-hidden="true">
+        Navigate: <kbd>←</kbd> <kbd>→</kbd> <kbd>Space</kbd> or <kbd>Page Up/Down</kbd>
+    </div>
+
+    <!-- Impress.js from CDN with local fallback -->
+    <script src="https://cdn.jsdelivr.net/gh/impress/impress.js@2.0.0/js/impress.js"></script>
+    <script>
+        // Local fallback if CDN fails
+        window.impress || document.write('<script src="lib/impress.js"><\/script>');
+    </script>
+
+    <!-- Initialize Impress.js -->
+    <script>
+        (function() {
+            'use strict';
+
+            // Wait for DOM to be ready
+            document.addEventListener('DOMContentLoaded', function() {
+                // Only initialize if supported
+                if (!document.body.classList.contains('impress-not-supported')) {
+                    // Initialize impress.js
+                    var impressInstance = impress();
+                    impressInstance.init();
+
+                    // Update progress bar
+                    var progressBar = document.querySelector('.impress-progress div');
+                    var steps = document.querySelectorAll('.step');
+                    var totalSteps = steps.length;
+
+                    document.addEventListener('impress:stepenter', function(event) {
+                        var currentStep = Array.from(steps).indexOf(event.target) + 1;
+                        var progress = (currentStep / totalSteps) * 100;
+                        if (progressBar) {
+                            progressBar.style.width = progress + '%';
+                        }
+
+                        // Add class for hiding nav hint after first move
+                        document.body.classList.add('impress-on-stepmove');
+                    });
+
+                    // Keyboard navigation enhancement
+                    document.addEventListener('keydown', function(event) {
+                        // H key for help (show nav hints)
+                        if (event.key === 'h' || event.key === 'H') {
+                            var navHint = document.querySelector('.nav-hint');
+                            if (navHint) {
+                                document.body.classList.remove('impress-on-stepmove');
+                                setTimeout(function() {
+                                    document.body.classList.add('impress-on-stepmove');
+                                }, 3000);
+                            }
+                        }
+
+                        // ESC to go to overview
+                        if (event.key === 'Escape') {
+                            impressInstance.goto('overview');
+                        }
+                    });
+
+                    // Respect reduced motion preference
+                    var mediaQuery = window.matchMedia('(prefers-reduced-motion: reduce)');
+                    if (mediaQuery.matches) {
+                        document.documentElement.style.setProperty('--impress-transition-duration', '100ms');
+                    }
+
+                    // Update on preference change
+                    mediaQuery.addEventListener('change', function(e) {
+                        if (e.matches) {
+                            document.documentElement.style.setProperty('--impress-transition-duration', '100ms');
+                        } else {
+                            document.documentElement.style.setProperty('--impress-transition-duration', '1000ms');
+                        }
+                    });
+                }
+            });
+        })();
+    </script>
+
+    <!-- Unified Demo Navigation -->
+    <script src="../shared/nav-component.js"></script>
+</body>
+</html>

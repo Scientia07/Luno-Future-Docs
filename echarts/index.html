@@ -1,0 +1,1191 @@
+<!--
+==============================================================================
+FILE METADATA
+==============================================================================
+filename:       index.html
+created:        2026-01-27
+updated:        2026-01-27
+version:        1.0.0
+status:         active
+rating:         ★★★★☆
+author:         Joel + Claude
+related_docs:   [docs/frameworks/echarts/prd-echarts.md, docs/frameworks/echarts/integration-plan.md]
+description:    Apache ECharts data visualization demo for TechEd Academy
+==============================================================================
+-->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='6' fill='%236366f1'/%3E%3Cpath d='M6 22V10l6 6 4-4 10 10H6z' fill='%2310b981' opacity='0.8'/%3E%3Cpath d='M6 18V10l6 6 4-4 10 6v4H6z' fill='%23ec4899' opacity='0.6'/%3E%3C/svg%3E">
+    <meta name="description" content="Apache ECharts data visualization demo showcasing interactive charts for TechEd Academy educational analytics.">
+
+    <!-- Open Graph / Social Sharing -->
+    <meta property="og:title" content="ECharts Data Visualization Demo - TechEd Academy">
+    <meta property="og:description" content="Interactive data visualization with Apache ECharts - enrollment trends, program distribution, progress tracking, and more.">
+    <meta property="og:type" content="website">
+    <meta name="twitter:card" content="summary_large_image">
+
+    <title>ECharts Data Visualization - TechEd Academy</title>
+
+    <!-- Performance hints -->
+    <link rel="preconnect" href="https://cdn.jsdelivr.net">
+
+    <style>
+        /* Reset */
+        *, *::before, *::after {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            /* Project standard colors */
+            --color-primary: #6366f1;
+            --color-primary-dark: #4f46e5;
+            --color-secondary: #ec4899;
+            --color-accent: #10b981;
+            --color-warning: #f59e0b;
+            --color-danger: #ef4444;
+            --bg-dark: #0f172a;
+            --bg-darker: #0a0a1a;
+            --text-primary: #ffffff;
+            --text-muted: rgba(255,255,255,0.75);
+
+            /* Chart-specific */
+            --chart-bg: rgba(15, 23, 42, 0.5);
+            --chart-border: rgba(99, 102, 241, 0.2);
+            --chart-grid: rgba(255, 255, 255, 0.1);
+        }
+
+        /* Focus indicators for keyboard accessibility */
+        :focus-visible {
+            outline: 2px solid var(--color-primary);
+            outline-offset: 2px;
+        }
+
+        :focus:not(:focus-visible) {
+            outline: none;
+        }
+
+        body {
+            font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: var(--bg-darker);
+            color: var(--text-primary);
+            min-height: 100vh;
+            line-height: 1.6;
+        }
+
+        /* Header */
+        .header {
+            background: linear-gradient(135deg, var(--color-primary), var(--color-secondary));
+            padding: 48px 24px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: clamp(1.75rem, 5vw, 2.5rem);
+            font-weight: 700;
+            margin-bottom: 12px;
+        }
+
+        .header p {
+            font-size: 1.1rem;
+            opacity: 0.9;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .header .badge {
+            display: inline-block;
+            background: rgba(255,255,255,0.2);
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            margin-top: 16px;
+        }
+
+        /* Container */
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 40px 24px 80px;
+        }
+
+        /* Section title */
+        .section-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-bottom: 24px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .section-title::before {
+            content: '';
+            width: 4px;
+            height: 24px;
+            background: linear-gradient(180deg, var(--color-primary), var(--color-secondary));
+            border-radius: 2px;
+        }
+
+        /* Charts grid */
+        .charts-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 24px;
+            margin-bottom: 24px;
+        }
+
+        .charts-grid.full-width {
+            grid-template-columns: 1fr;
+        }
+
+        /* Chart card */
+        .chart-card {
+            background: var(--chart-bg);
+            border: 1px solid var(--chart-border);
+            border-radius: 16px;
+            padding: 24px;
+            transition: border-color 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .chart-card:hover {
+            border-color: var(--color-primary);
+            box-shadow: 0 8px 32px rgba(99, 102, 241, 0.15);
+        }
+
+        .chart-card h3 {
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: var(--text-primary);
+        }
+
+        .chart-card .chart-description {
+            font-size: 0.9rem;
+            color: var(--text-muted);
+            margin-bottom: 16px;
+        }
+
+        /* Chart container */
+        .chart {
+            width: 100%;
+            height: 320px;
+            border-radius: 8px;
+        }
+
+        .chart-tall {
+            height: 400px;
+        }
+
+        /* Loading state */
+        .chart-loading {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 320px;
+            color: var(--text-muted);
+        }
+
+        .chart-loading::after {
+            content: 'Loading chart...';
+        }
+
+        /* Stats row */
+        .stats-row {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 16px;
+            margin-bottom: 32px;
+        }
+
+        .stat-card {
+            background: var(--chart-bg);
+            border: 1px solid var(--chart-border);
+            border-radius: 12px;
+            padding: 20px;
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--color-primary);
+        }
+
+        .stat-label {
+            font-size: 0.9rem;
+            color: var(--text-muted);
+            margin-top: 4px;
+        }
+
+        /* Footer */
+        .footer {
+            text-align: center;
+            padding: 24px;
+            color: var(--text-muted);
+            font-size: 0.9rem;
+            border-top: 1px solid var(--chart-border);
+            margin-top: 40px;
+        }
+
+        .footer a {
+            color: var(--color-primary);
+            text-decoration: none;
+        }
+
+        .footer a:hover {
+            text-decoration: underline;
+        }
+
+        /* Responsive */
+        @media (max-width: 900px) {
+            .charts-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 600px) {
+            .header {
+                padding: 32px 16px;
+            }
+
+            .container {
+                padding: 24px 16px 80px;
+            }
+
+            .chart {
+                height: 280px;
+            }
+
+            .chart-card {
+                padding: 16px;
+            }
+
+            .stats-row {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        /* Reduced motion */
+        @media (prefers-reduced-motion: reduce) {
+            * {
+                animation-duration: 0.01ms !important;
+                animation-iteration-count: 1 !important;
+                transition-duration: 0.01ms !important;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <h1>TechEd Academy Analytics</h1>
+        <p>Interactive data visualization powered by Apache ECharts</p>
+        <span class="badge">ECharts 5.x Demo</span>
+    </header>
+
+    <main class="container">
+        <!-- Stats Overview -->
+        <div class="stats-row">
+            <div class="stat-card">
+                <div class="stat-value">1,080</div>
+                <div class="stat-label">Total Students</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value">5</div>
+                <div class="stat-label">Programs</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value">73.5%</div>
+                <div class="stat-label">Completion Rate</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value">4.5/5</div>
+                <div class="stat-label">Satisfaction</div>
+            </div>
+        </div>
+
+        <h2 class="section-title">Enrollment &amp; Distribution</h2>
+        <div class="charts-grid">
+            <!-- Enrollment Bar Chart -->
+            <div class="chart-card">
+                <h3>Monthly Enrollment</h3>
+                <p class="chart-description">Student enrollment trends for H1 2026 vs targets</p>
+                <div id="chart-enrollment"
+                     class="chart"
+                     role="img"
+                     aria-label="Bar chart showing monthly student enrollment from January to June 2026. January: 120 students (target 100), February: 200 students (target 150), March: 150 students (target 180), April: 180 students (target 200), May: 220 students (target 220), June: 280 students (target 250)."
+                     tabindex="0">
+                </div>
+            </div>
+
+            <!-- Program Distribution Pie Chart -->
+            <div class="chart-card">
+                <h3>Program Distribution</h3>
+                <p class="chart-description">Student enrollment by program</p>
+                <div id="chart-programs"
+                     class="chart"
+                     role="img"
+                     aria-label="Donut chart showing program distribution. Web Development: 340 students (31.5%), Data Science: 280 students (25.9%), UX Design: 190 students (17.6%), Mobile Development: 150 students (13.9%), Cloud Computing: 120 students (11.1%)."
+                     tabindex="0">
+                </div>
+            </div>
+        </div>
+
+        <h2 class="section-title">Progress Tracking</h2>
+        <div class="charts-grid full-width">
+            <!-- Progress Line Chart with DataZoom -->
+            <div class="chart-card">
+                <h3>Course Progress &amp; Engagement</h3>
+                <p class="chart-description">Weekly completion percentage and engagement rate - use slider to zoom</p>
+                <div id="chart-progress"
+                     class="chart chart-tall"
+                     role="img"
+                     aria-label="Line chart showing course completion progress and engagement rate over 12 weeks. Completion starts at 5% in week 1 and reaches 85% by week 12. Engagement fluctuates between 75% and 95% throughout the course."
+                     tabindex="0">
+                </div>
+            </div>
+        </div>
+
+        <h2 class="section-title">Skills &amp; Performance</h2>
+        <div class="charts-grid">
+            <!-- Skill Assessment Radar Chart -->
+            <div class="chart-card">
+                <h3>Skill Assessment</h3>
+                <p class="chart-description">Cohort comparison across technical skills</p>
+                <div id="chart-skills"
+                     class="chart"
+                     role="img"
+                     aria-label="Radar chart comparing skill levels between 2025 and 2026 cohorts across six categories: HTML/CSS, JavaScript, React, Node.js, Databases, and DevOps. The 2026 cohort shows improvement in most areas, especially React and DevOps."
+                     tabindex="0">
+                </div>
+            </div>
+
+            <!-- Completion Rate Gauge -->
+            <div class="chart-card">
+                <h3>Overall Completion Rate</h3>
+                <p class="chart-description">Current course completion percentage</p>
+                <div id="chart-gauge"
+                     class="chart"
+                     role="img"
+                     aria-label="Gauge chart showing overall completion rate at 73.5%, which is above the target threshold of 70%."
+                     tabindex="0">
+                </div>
+            </div>
+        </div>
+
+        <h2 class="section-title">Satisfaction Analysis</h2>
+        <div class="charts-grid">
+            <!-- Satisfaction Bar Chart (Horizontal) -->
+            <div class="chart-card">
+                <h3>Student Satisfaction Scores</h3>
+                <p class="chart-description">Average ratings by category (out of 5)</p>
+                <div id="chart-satisfaction"
+                     class="chart"
+                     role="img"
+                     aria-label="Horizontal bar chart showing student satisfaction scores. Instructors: 4.8, Platform: 4.6, Course Content: 4.5, Career Services: 4.3, Support: 4.2. All scores are out of 5."
+                     tabindex="0">
+                </div>
+            </div>
+
+            <!-- Enrollment Trend Area Chart -->
+            <div class="chart-card">
+                <h3>Enrollment Growth Trend</h3>
+                <p class="chart-description">Cumulative enrollment over time</p>
+                <div id="chart-trend"
+                     class="chart"
+                     role="img"
+                     aria-label="Area chart showing cumulative enrollment growth from January to June 2026. Total enrollment grows from 120 students in January to 1,150 students by June."
+                     tabindex="0">
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <footer class="footer">
+        <p>Built with <a href="https://echarts.apache.org/" target="_blank" rel="noopener">Apache ECharts</a> |
+           Part of <a href="../dashboard/index.html">Interactive Documentation Showcase</a></p>
+    </footer>
+
+    <!-- ECharts Library (Simple Bundle) -->
+    <script src="https://cdn.jsdelivr.net/npm/echarts@5/dist/echarts.min.js"></script>
+
+    <!-- Fallback for CDN failure -->
+    <script>
+        if (typeof echarts === 'undefined') {
+            document.write('<script src="https://unpkg.com/echarts@5/dist/echarts.min.js"><\/script>');
+        }
+    </script>
+
+    <script>
+        (function() {
+            'use strict';
+
+            // =================================================================
+            // CONFIGURATION
+            // =================================================================
+
+            // Check for reduced motion preference
+            const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+            // Animation settings based on motion preference
+            const animationConfig = prefersReducedMotion ? {
+                animation: false
+            } : {
+                animation: true,
+                animationDuration: 1000,
+                animationEasing: 'cubicOut'
+            };
+
+            // =================================================================
+            // CUSTOM THEME REGISTRATION
+            // =================================================================
+
+            echarts.registerTheme('luno', {
+                color: [
+                    '#6366f1', // Primary
+                    '#ec4899', // Secondary
+                    '#10b981', // Accent
+                    '#f59e0b', // Warning
+                    '#3b82f6', // Info
+                    '#8b5cf6', // Purple
+                    '#14b8a6', // Teal
+                    '#f43f5e'  // Rose
+                ],
+                backgroundColor: 'transparent',
+                textStyle: {
+                    color: 'rgba(255, 255, 255, 0.75)',
+                    fontFamily: 'system-ui, -apple-system, BlinkMacSystemFont, sans-serif'
+                },
+                title: {
+                    textStyle: {
+                        color: '#ffffff',
+                        fontSize: 18,
+                        fontWeight: 600
+                    },
+                    subtextStyle: {
+                        color: 'rgba(255, 255, 255, 0.6)'
+                    }
+                },
+                legend: {
+                    textStyle: {
+                        color: 'rgba(255, 255, 255, 0.75)'
+                    }
+                },
+                tooltip: {
+                    backgroundColor: 'rgba(15, 23, 42, 0.95)',
+                    borderColor: 'rgba(99, 102, 241, 0.3)',
+                    borderWidth: 1,
+                    textStyle: {
+                        color: '#ffffff'
+                    }
+                },
+                categoryAxis: {
+                    axisLine: {
+                        lineStyle: { color: 'rgba(255, 255, 255, 0.2)' }
+                    },
+                    axisTick: {
+                        lineStyle: { color: 'rgba(255, 255, 255, 0.2)' }
+                    },
+                    axisLabel: {
+                        color: 'rgba(255, 255, 255, 0.6)'
+                    },
+                    splitLine: {
+                        lineStyle: { color: 'rgba(255, 255, 255, 0.05)' }
+                    }
+                },
+                valueAxis: {
+                    axisLine: {
+                        lineStyle: { color: 'rgba(255, 255, 255, 0.2)' }
+                    },
+                    axisTick: {
+                        lineStyle: { color: 'rgba(255, 255, 255, 0.2)' }
+                    },
+                    axisLabel: {
+                        color: 'rgba(255, 255, 255, 0.6)'
+                    },
+                    splitLine: {
+                        lineStyle: { color: 'rgba(255, 255, 255, 0.1)' }
+                    }
+                }
+            });
+
+            // =================================================================
+            // SAMPLE DATA (TechEd Academy)
+            // =================================================================
+
+            const techEdData = {
+                // Enrollment trends (bar chart)
+                enrollment: {
+                    months: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
+                    students: [120, 200, 150, 180, 220, 280],
+                    target: [100, 150, 180, 200, 220, 250]
+                },
+
+                // Program distribution (pie chart)
+                programs: [
+                    { name: 'Web Development', value: 340 },
+                    { name: 'Data Science', value: 280 },
+                    { name: 'UX Design', value: 190 },
+                    { name: 'Mobile Development', value: 150 },
+                    { name: 'Cloud Computing', value: 120 }
+                ],
+
+                // Progress tracking (line chart)
+                progress: {
+                    weeks: ['W1', 'W2', 'W3', 'W4', 'W5', 'W6', 'W7', 'W8', 'W9', 'W10', 'W11', 'W12'],
+                    completion: [5, 12, 18, 28, 35, 42, 48, 55, 62, 70, 78, 85],
+                    engagement: [80, 75, 82, 78, 85, 88, 82, 90, 85, 88, 92, 95]
+                },
+
+                // Skill assessment (radar chart)
+                skills: {
+                    categories: ['HTML/CSS', 'JavaScript', 'React', 'Node.js', 'Databases', 'DevOps'],
+                    cohort2025: [90, 85, 75, 70, 65, 55],
+                    cohort2026: [85, 90, 85, 80, 75, 70]
+                },
+
+                // Completion rate (gauge)
+                completionRate: 73.5,
+
+                // Student satisfaction
+                satisfaction: {
+                    categories: ['Course Content', 'Instructors', 'Support', 'Platform', 'Career Services'],
+                    scores: [4.5, 4.8, 4.2, 4.6, 4.3]
+                }
+            };
+
+            // =================================================================
+            // CHART INSTANCES STORAGE
+            // =================================================================
+
+            const charts = {};
+
+            // =================================================================
+            // UTILITY FUNCTIONS
+            // =================================================================
+
+            function initChart(containerId) {
+                const container = document.getElementById(containerId);
+                if (!container) {
+                    console.warn(`Chart container not found: ${containerId}`);
+                    return null;
+                }
+
+                try {
+                    const chart = echarts.init(container, 'luno');
+                    charts[containerId] = chart;
+                    return chart;
+                } catch (error) {
+                    console.error(`Failed to initialize chart: ${containerId}`, error);
+                    return null;
+                }
+            }
+
+            function handleResize() {
+                Object.values(charts).forEach(chart => {
+                    if (chart && typeof chart.resize === 'function') {
+                        chart.resize();
+                    }
+                });
+            }
+
+            // Debounce function for resize
+            function debounce(func, wait) {
+                let timeout;
+                return function executedFunction(...args) {
+                    const later = () => {
+                        clearTimeout(timeout);
+                        func(...args);
+                    };
+                    clearTimeout(timeout);
+                    timeout = setTimeout(later, wait);
+                };
+            }
+
+            // =================================================================
+            // CHART 1: ENROLLMENT BAR CHART
+            // =================================================================
+
+            function createEnrollmentChart() {
+                const chart = initChart('chart-enrollment');
+                if (!chart) return;
+
+                const option = {
+                    ...animationConfig,
+                    tooltip: {
+                        trigger: 'axis',
+                        axisPointer: {
+                            type: 'shadow'
+                        }
+                    },
+                    legend: {
+                        data: ['Actual', 'Target'],
+                        bottom: 0
+                    },
+                    grid: {
+                        left: '3%',
+                        right: '4%',
+                        bottom: '15%',
+                        top: '8%',
+                        containLabel: true
+                    },
+                    xAxis: {
+                        type: 'category',
+                        data: techEdData.enrollment.months
+                    },
+                    yAxis: {
+                        type: 'value',
+                        name: 'Students',
+                        nameTextStyle: {
+                            color: 'rgba(255, 255, 255, 0.6)'
+                        }
+                    },
+                    series: [
+                        {
+                            name: 'Actual',
+                            type: 'bar',
+                            data: techEdData.enrollment.students,
+                            itemStyle: {
+                                borderRadius: [4, 4, 0, 0]
+                            },
+                            emphasis: {
+                                itemStyle: {
+                                    shadowBlur: 10,
+                                    shadowColor: 'rgba(99, 102, 241, 0.5)'
+                                }
+                            }
+                        },
+                        {
+                            name: 'Target',
+                            type: 'bar',
+                            data: techEdData.enrollment.target,
+                            itemStyle: {
+                                borderRadius: [4, 4, 0, 0],
+                                opacity: 0.6
+                            }
+                        }
+                    ]
+                };
+
+                chart.setOption(option);
+            }
+
+            // =================================================================
+            // CHART 2: PROGRAM DISTRIBUTION PIE/DONUT CHART
+            // =================================================================
+
+            function createProgramsChart() {
+                const chart = initChart('chart-programs');
+                if (!chart) return;
+
+                const option = {
+                    ...animationConfig,
+                    tooltip: {
+                        trigger: 'item',
+                        formatter: '{b}: {c} students ({d}%)'
+                    },
+                    legend: {
+                        orient: 'vertical',
+                        right: '5%',
+                        top: 'center',
+                        itemGap: 12
+                    },
+                    series: [
+                        {
+                            name: 'Programs',
+                            type: 'pie',
+                            radius: ['40%', '70%'],
+                            center: ['35%', '50%'],
+                            avoidLabelOverlap: true,
+                            itemStyle: {
+                                borderRadius: 6,
+                                borderColor: 'rgba(15, 23, 42, 0.8)',
+                                borderWidth: 2
+                            },
+                            label: {
+                                show: false
+                            },
+                            emphasis: {
+                                label: {
+                                    show: true,
+                                    fontSize: 14,
+                                    fontWeight: 'bold'
+                                },
+                                itemStyle: {
+                                    shadowBlur: 10,
+                                    shadowOffsetX: 0,
+                                    shadowColor: 'rgba(0, 0, 0, 0.5)'
+                                }
+                            },
+                            data: techEdData.programs
+                        }
+                    ]
+                };
+
+                chart.setOption(option);
+            }
+
+            // =================================================================
+            // CHART 3: PROGRESS LINE CHART WITH DATAZOOM
+            // =================================================================
+
+            function createProgressChart() {
+                const chart = initChart('chart-progress');
+                if (!chart) return;
+
+                const option = {
+                    ...animationConfig,
+                    tooltip: {
+                        trigger: 'axis'
+                    },
+                    legend: {
+                        data: ['Completion %', 'Engagement %'],
+                        bottom: 40
+                    },
+                    grid: {
+                        left: '3%',
+                        right: '4%',
+                        bottom: '20%',
+                        top: '8%',
+                        containLabel: true
+                    },
+                    xAxis: {
+                        type: 'category',
+                        boundaryGap: false,
+                        data: techEdData.progress.weeks
+                    },
+                    yAxis: {
+                        type: 'value',
+                        name: 'Percentage',
+                        min: 0,
+                        max: 100,
+                        nameTextStyle: {
+                            color: 'rgba(255, 255, 255, 0.6)'
+                        }
+                    },
+                    dataZoom: [
+                        {
+                            type: 'slider',
+                            start: 0,
+                            end: 100,
+                            height: 20,
+                            bottom: 10,
+                            borderColor: 'rgba(255, 255, 255, 0.1)',
+                            fillerColor: 'rgba(99, 102, 241, 0.2)',
+                            handleStyle: {
+                                color: '#6366f1'
+                            },
+                            textStyle: {
+                                color: 'rgba(255, 255, 255, 0.6)'
+                            }
+                        },
+                        {
+                            type: 'inside',
+                            start: 0,
+                            end: 100
+                        }
+                    ],
+                    series: [
+                        {
+                            name: 'Completion %',
+                            type: 'line',
+                            smooth: true,
+                            data: techEdData.progress.completion,
+                            areaStyle: {
+                                opacity: 0.3
+                            },
+                            emphasis: {
+                                focus: 'series'
+                            }
+                        },
+                        {
+                            name: 'Engagement %',
+                            type: 'line',
+                            smooth: true,
+                            data: techEdData.progress.engagement,
+                            areaStyle: {
+                                opacity: 0.3
+                            },
+                            emphasis: {
+                                focus: 'series'
+                            }
+                        }
+                    ]
+                };
+
+                chart.setOption(option);
+            }
+
+            // =================================================================
+            // CHART 4: SKILL ASSESSMENT RADAR CHART
+            // =================================================================
+
+            function createSkillsChart() {
+                const chart = initChart('chart-skills');
+                if (!chart) return;
+
+                const option = {
+                    ...animationConfig,
+                    tooltip: {
+                        trigger: 'item'
+                    },
+                    legend: {
+                        data: ['Cohort 2025', 'Cohort 2026'],
+                        bottom: 0
+                    },
+                    radar: {
+                        indicator: techEdData.skills.categories.map(name => ({
+                            name: name,
+                            max: 100
+                        })),
+                        shape: 'polygon',
+                        splitNumber: 4,
+                        axisName: {
+                            color: 'rgba(255, 255, 255, 0.6)',
+                            fontSize: 11
+                        },
+                        splitLine: {
+                            lineStyle: {
+                                color: 'rgba(255, 255, 255, 0.1)'
+                            }
+                        },
+                        splitArea: {
+                            areaStyle: {
+                                color: ['rgba(99, 102, 241, 0.05)', 'rgba(99, 102, 241, 0.1)']
+                            }
+                        },
+                        axisLine: {
+                            lineStyle: {
+                                color: 'rgba(255, 255, 255, 0.15)'
+                            }
+                        }
+                    },
+                    series: [
+                        {
+                            name: 'Skill Comparison',
+                            type: 'radar',
+                            data: [
+                                {
+                                    value: techEdData.skills.cohort2025,
+                                    name: 'Cohort 2025',
+                                    areaStyle: {
+                                        opacity: 0.2
+                                    },
+                                    lineStyle: {
+                                        width: 2
+                                    }
+                                },
+                                {
+                                    value: techEdData.skills.cohort2026,
+                                    name: 'Cohort 2026',
+                                    areaStyle: {
+                                        opacity: 0.2
+                                    },
+                                    lineStyle: {
+                                        width: 2
+                                    }
+                                }
+                            ]
+                        }
+                    ]
+                };
+
+                chart.setOption(option);
+            }
+
+            // =================================================================
+            // CHART 5: COMPLETION RATE GAUGE
+            // =================================================================
+
+            function createGaugeChart() {
+                const chart = initChart('chart-gauge');
+                if (!chart) return;
+
+                const option = {
+                    ...animationConfig,
+                    series: [
+                        {
+                            name: 'Completion',
+                            type: 'gauge',
+                            startAngle: 200,
+                            endAngle: -20,
+                            min: 0,
+                            max: 100,
+                            splitNumber: 10,
+                            radius: '85%',
+                            center: ['50%', '55%'],
+                            axisLine: {
+                                lineStyle: {
+                                    width: 20,
+                                    color: [
+                                        [0.3, '#ef4444'],
+                                        [0.7, '#f59e0b'],
+                                        [1, '#10b981']
+                                    ]
+                                }
+                            },
+                            pointer: {
+                                itemStyle: {
+                                    color: '#6366f1'
+                                },
+                                width: 5,
+                                length: '60%'
+                            },
+                            axisTick: {
+                                distance: -25,
+                                length: 8,
+                                lineStyle: {
+                                    color: 'rgba(255, 255, 255, 0.3)',
+                                    width: 1
+                                }
+                            },
+                            splitLine: {
+                                distance: -30,
+                                length: 15,
+                                lineStyle: {
+                                    color: 'rgba(255, 255, 255, 0.4)',
+                                    width: 2
+                                }
+                            },
+                            axisLabel: {
+                                color: 'rgba(255, 255, 255, 0.6)',
+                                distance: 35,
+                                fontSize: 11
+                            },
+                            detail: {
+                                valueAnimation: !prefersReducedMotion,
+                                formatter: '{value}%',
+                                color: '#ffffff',
+                                fontSize: 28,
+                                fontWeight: 'bold',
+                                offsetCenter: [0, '40%']
+                            },
+                            title: {
+                                offsetCenter: [0, '70%'],
+                                fontSize: 14,
+                                color: 'rgba(255, 255, 255, 0.6)'
+                            },
+                            data: [
+                                {
+                                    value: techEdData.completionRate,
+                                    name: 'Completion Rate'
+                                }
+                            ]
+                        }
+                    ]
+                };
+
+                chart.setOption(option);
+            }
+
+            // =================================================================
+            // CHART 6: SATISFACTION HORIZONTAL BAR CHART
+            // =================================================================
+
+            function createSatisfactionChart() {
+                const chart = initChart('chart-satisfaction');
+                if (!chart) return;
+
+                // Sort by score for better visualization
+                const sortedData = techEdData.satisfaction.categories
+                    .map((cat, i) => ({ name: cat, value: techEdData.satisfaction.scores[i] }))
+                    .sort((a, b) => b.value - a.value);
+
+                const option = {
+                    ...animationConfig,
+                    tooltip: {
+                        trigger: 'axis',
+                        axisPointer: {
+                            type: 'shadow'
+                        },
+                        formatter: '{b}: {c}/5'
+                    },
+                    grid: {
+                        left: '3%',
+                        right: '15%',
+                        bottom: '3%',
+                        top: '3%',
+                        containLabel: true
+                    },
+                    xAxis: {
+                        type: 'value',
+                        min: 0,
+                        max: 5,
+                        splitNumber: 5
+                    },
+                    yAxis: {
+                        type: 'category',
+                        data: sortedData.map(d => d.name),
+                        axisLabel: {
+                            fontSize: 11
+                        }
+                    },
+                    series: [
+                        {
+                            name: 'Satisfaction',
+                            type: 'bar',
+                            data: sortedData.map(d => d.value),
+                            itemStyle: {
+                                borderRadius: [0, 4, 4, 0],
+                                color: function(params) {
+                                    const colors = ['#6366f1', '#8b5cf6', '#a78bfa', '#c4b5fd', '#ddd6fe'];
+                                    return colors[params.dataIndex] || '#6366f1';
+                                }
+                            },
+                            label: {
+                                show: true,
+                                position: 'right',
+                                formatter: '{c}',
+                                color: 'rgba(255, 255, 255, 0.8)'
+                            },
+                            emphasis: {
+                                itemStyle: {
+                                    shadowBlur: 10,
+                                    shadowColor: 'rgba(99, 102, 241, 0.5)'
+                                }
+                            }
+                        }
+                    ]
+                };
+
+                chart.setOption(option);
+            }
+
+            // =================================================================
+            // CHART 7 (BONUS): ENROLLMENT TREND AREA CHART
+            // =================================================================
+
+            function createTrendChart() {
+                const chart = initChart('chart-trend');
+                if (!chart) return;
+
+                // Calculate cumulative enrollment
+                const cumulative = techEdData.enrollment.students.reduce((acc, val, i) => {
+                    acc.push((acc[i - 1] || 0) + val);
+                    return acc;
+                }, []);
+
+                const option = {
+                    ...animationConfig,
+                    tooltip: {
+                        trigger: 'axis',
+                        formatter: function(params) {
+                            const month = params[0].name;
+                            const total = params[0].value;
+                            return `${month}: ${total} total students`;
+                        }
+                    },
+                    grid: {
+                        left: '3%',
+                        right: '4%',
+                        bottom: '3%',
+                        top: '8%',
+                        containLabel: true
+                    },
+                    xAxis: {
+                        type: 'category',
+                        boundaryGap: false,
+                        data: techEdData.enrollment.months
+                    },
+                    yAxis: {
+                        type: 'value',
+                        name: 'Total Students',
+                        nameTextStyle: {
+                            color: 'rgba(255, 255, 255, 0.6)'
+                        }
+                    },
+                    series: [
+                        {
+                            name: 'Cumulative Enrollment',
+                            type: 'line',
+                            smooth: true,
+                            symbol: 'circle',
+                            symbolSize: 8,
+                            data: cumulative,
+                            areaStyle: {
+                                opacity: 0.4,
+                                color: {
+                                    type: 'linear',
+                                    x: 0,
+                                    y: 0,
+                                    x2: 0,
+                                    y2: 1,
+                                    colorStops: [
+                                        { offset: 0, color: '#6366f1' },
+                                        { offset: 1, color: 'rgba(99, 102, 241, 0.1)' }
+                                    ]
+                                }
+                            },
+                            lineStyle: {
+                                width: 3
+                            },
+                            emphasis: {
+                                focus: 'series'
+                            }
+                        }
+                    ]
+                };
+
+                chart.setOption(option);
+            }
+
+            // =================================================================
+            // INITIALIZATION
+            // =================================================================
+
+            function initAllCharts() {
+                // Check if ECharts is loaded
+                if (typeof echarts === 'undefined') {
+                    console.error('ECharts library not loaded');
+                    document.querySelectorAll('.chart').forEach(el => {
+                        el.innerHTML = '<p style="color: #ef4444; text-align: center; padding: 20px;">Failed to load chart library. Please check your internet connection.</p>';
+                    });
+                    return;
+                }
+
+                console.log('Initializing ECharts with luno theme...');
+
+                // Create all charts
+                createEnrollmentChart();
+                createProgramsChart();
+                createProgressChart();
+                createSkillsChart();
+                createGaugeChart();
+                createSatisfactionChart();
+                createTrendChart();
+
+                console.log('All charts initialized successfully');
+            }
+
+            // =================================================================
+            // EVENT LISTENERS
+            // =================================================================
+
+            // Initialize on DOM ready
+            if (document.readyState === 'loading') {
+                document.addEventListener('DOMContentLoaded', initAllCharts);
+            } else {
+                initAllCharts();
+            }
+
+            // Handle window resize with debounce
+            window.addEventListener('resize', debounce(handleResize, 250));
+
+            // Handle visibility change (re-render when tab becomes visible)
+            document.addEventListener('visibilitychange', function() {
+                if (document.visibilityState === 'visible') {
+                    handleResize();
+                }
+            });
+
+        })();
+    </script>
+
+    <!-- Shared Navigation Component -->
+    <script src="../shared/nav-component.js"></script>
+</body>
+</html>

@@ -1,0 +1,1614 @@
+<!--
+==============================================================================
+FILE METADATA
+==============================================================================
+filename:       index.html
+created:        2026-01-27
+updated:        2026-01-27
+version:        1.0.0
+status:         active
+rating:         ★★★★★
+author:         Joel + Claude
+related_docs:   [docs/frameworks/gsap-scrolltrigger/prd-gsap-scrolltrigger.md, docs/frameworks/gsap-scrolltrigger/integration-plan.md]
+description:    GSAP ScrollTrigger + Lenis advanced scroll animation demo for TechEd Academy
+==============================================================================
+-->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="TechEd Academy - Experience cutting-edge scroll animations powered by GSAP ScrollTrigger and Lenis smooth scrolling. Discover our tech education programs through an immersive interactive journey.">
+
+    <!-- Open Graph / Social Sharing -->
+    <meta property="og:title" content="TechEd Academy | GSAP ScrollTrigger + Lenis Demo">
+    <meta property="og:description" content="Advanced scroll animations showcasing tech education programs with GSAP ScrollTrigger and Lenis smooth scrolling.">
+    <meta property="og:type" content="website">
+    <meta name="twitter:card" content="summary_large_image">
+
+    <title>TechEd Academy | GSAP ScrollTrigger + Lenis Demo</title>
+
+    <!-- Favicon -->
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='6' fill='%236366f1'/%3E%3Cpath d='M8 10h16v2H8zm0 5h12v2H8zm0 5h14v2H8z' fill='white'/%3E%3C/svg%3E">
+
+    <!-- Performance hints -->
+    <link rel="preconnect" href="https://cdn.jsdelivr.net">
+    <link rel="preconnect" href="https://images.unsplash.com">
+
+    <style>
+        /*
+        ==============================================================================
+        CSS - GSAP ScrollTrigger + Lenis Demo
+        ==============================================================================
+        */
+
+        /* ========== CSS VARIABLES ========== */
+        :root {
+            /* Project standard colors */
+            --color-primary: #6366f1;
+            --color-primary-dark: #4f46e5;
+            --color-secondary: #ec4899;
+            --color-accent: #10b981;
+            --color-warning: #f59e0b;
+            --color-danger: #ef4444;
+            --bg-dark: #0f172a;
+            --bg-darker: #0a0a1a;
+            --text-primary: #ffffff;
+            --text-muted: rgba(255,255,255,0.75);
+
+            /* Spacing */
+            --spacing-xs: 0.5rem;
+            --spacing-sm: 1rem;
+            --spacing-md: 2rem;
+            --spacing-lg: 4rem;
+            --spacing-xl: 8rem;
+
+            /* Typography */
+            --font-sans: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            --font-mono: 'Fira Code', 'Cascadia Code', monospace;
+
+            /* Borders & Shadows */
+            --border-radius: 12px;
+            --shadow-lg: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+
+            /* ScrollTrigger specific */
+            --scroll-progress-height: 4px;
+            --scroll-progress-color: var(--color-primary);
+        }
+
+        /* ========== LENIS SMOOTH SCROLL ========== */
+        html.lenis,
+        html.lenis body {
+            height: auto;
+        }
+
+        .lenis.lenis-smooth {
+            scroll-behavior: auto !important;
+        }
+
+        .lenis.lenis-smooth [data-lenis-prevent] {
+            overscroll-behavior: contain;
+        }
+
+        .lenis.lenis-stopped {
+            overflow: hidden;
+        }
+
+        .lenis.lenis-scrolling iframe {
+            pointer-events: none;
+        }
+
+        /* ========== RESET & BASE ========== */
+        *,
+        *::before,
+        *::after {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: var(--font-sans);
+            background: var(--bg-dark);
+            color: var(--text-primary);
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        /* ========== ACCESSIBILITY ========== */
+        .skip-link {
+            position: absolute;
+            top: -50px;
+            left: 0;
+            padding: 12px 24px;
+            background: var(--color-primary);
+            color: white;
+            text-decoration: none;
+            font-weight: 600;
+            z-index: 10000;
+            transition: top 0.3s ease;
+            border-radius: 0 0 8px 0;
+        }
+
+        .skip-link:focus {
+            top: 0;
+        }
+
+        :focus-visible {
+            outline: 2px solid var(--color-primary);
+            outline-offset: 2px;
+        }
+
+        :focus:not(:focus-visible) {
+            outline: none;
+        }
+
+        /* Reduced motion - instant animations */
+        @media (prefers-reduced-motion: reduce) {
+            *,
+            *::before,
+            *::after {
+                animation-duration: 0.01ms !important;
+                animation-iteration-count: 1 !important;
+                transition-duration: 0.01ms !important;
+            }
+
+            html {
+                scroll-behavior: auto;
+            }
+        }
+
+        /* ========== SCROLL PROGRESS BAR ========== */
+        .scroll-progress {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: var(--scroll-progress-height);
+            background: rgba(255, 255, 255, 0.1);
+            z-index: 9999;
+        }
+
+        .scroll-progress__bar {
+            height: 100%;
+            width: 0%;
+            background: linear-gradient(90deg, var(--color-primary), var(--color-secondary));
+            transform-origin: left;
+        }
+
+        /* ========== SECTIONS BASE ========== */
+        .section {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: var(--spacing-lg) var(--spacing-md);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .section__container {
+            max-width: 1200px;
+            width: 100%;
+            margin: 0 auto;
+        }
+
+        .section__title {
+            font-size: clamp(2rem, 5vw, 3.5rem);
+            font-weight: 700;
+            margin-bottom: var(--spacing-sm);
+            line-height: 1.2;
+        }
+
+        .section__subtitle {
+            font-size: clamp(1rem, 2vw, 1.25rem);
+            color: var(--text-muted);
+            margin-bottom: var(--spacing-md);
+        }
+
+        /* ========== SECTION 1: HERO ========== */
+        .hero {
+            background: linear-gradient(135deg, var(--bg-dark) 0%, #1e1b4b 50%, var(--bg-darker) 100%);
+            min-height: 100vh;
+            position: relative;
+        }
+
+        .hero__background {
+            position: absolute;
+            inset: 0;
+            background:
+                radial-gradient(ellipse at 20% 80%, rgba(99, 102, 241, 0.15) 0%, transparent 50%),
+                radial-gradient(ellipse at 80% 20%, rgba(236, 72, 153, 0.1) 0%, transparent 50%),
+                radial-gradient(ellipse at 50% 50%, rgba(16, 185, 129, 0.05) 0%, transparent 70%);
+            will-change: transform;
+        }
+
+        .hero__shapes {
+            position: absolute;
+            inset: 0;
+            pointer-events: none;
+            overflow: hidden;
+        }
+
+        .hero__shape {
+            position: absolute;
+            border-radius: 50%;
+            opacity: 0.08;
+            filter: blur(60px);
+        }
+
+        .hero__shape--1 {
+            width: 500px;
+            height: 500px;
+            background: var(--color-primary);
+            top: -150px;
+            right: -100px;
+        }
+
+        .hero__shape--2 {
+            width: 400px;
+            height: 400px;
+            background: var(--color-secondary);
+            bottom: -100px;
+            left: -100px;
+        }
+
+        .hero__shape--3 {
+            width: 300px;
+            height: 300px;
+            background: var(--color-accent);
+            top: 40%;
+            left: 30%;
+        }
+
+        .hero__content {
+            text-align: center;
+            max-width: 900px;
+            z-index: 2;
+            position: relative;
+        }
+
+        .hero__badge {
+            display: inline-block;
+            padding: 8px 20px;
+            background: rgba(99, 102, 241, 0.2);
+            border: 1px solid rgba(99, 102, 241, 0.3);
+            border-radius: 100px;
+            font-size: 0.875rem;
+            color: var(--color-primary);
+            margin-bottom: var(--spacing-md);
+            opacity: 0;
+        }
+
+        .hero__title {
+            font-size: clamp(2.5rem, 8vw, 6rem);
+            font-weight: 800;
+            line-height: 1.05;
+            margin-bottom: var(--spacing-md);
+            opacity: 0;
+        }
+
+        .hero__title-gradient {
+            background: linear-gradient(135deg, var(--color-primary), var(--color-secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .hero__description {
+            font-size: clamp(1rem, 2vw, 1.35rem);
+            color: var(--text-muted);
+            max-width: 600px;
+            margin: 0 auto var(--spacing-lg);
+            opacity: 0;
+        }
+
+        .hero__cta {
+            display: inline-flex;
+            align-items: center;
+            gap: 12px;
+            padding: 16px 32px;
+            background: var(--color-primary);
+            color: white;
+            text-decoration: none;
+            border-radius: 100px;
+            font-weight: 600;
+            font-size: 1.1rem;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            opacity: 0;
+        }
+
+        .hero__cta:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 20px 40px rgba(99, 102, 241, 0.3);
+        }
+
+        .hero__scroll-hint {
+            position: absolute;
+            bottom: 40px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 8px;
+            color: var(--text-muted);
+            font-size: 0.875rem;
+            opacity: 0;
+        }
+
+        .hero__scroll-icon {
+            width: 24px;
+            height: 40px;
+            border: 2px solid var(--text-muted);
+            border-radius: 12px;
+            position: relative;
+        }
+
+        .hero__scroll-dot {
+            width: 4px;
+            height: 8px;
+            background: var(--text-muted);
+            border-radius: 2px;
+            position: absolute;
+            top: 8px;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+
+        /* ========== SECTION 2: MISSION ========== */
+        .mission {
+            background: var(--bg-darker);
+        }
+
+        .mission__header {
+            text-align: center;
+            margin-bottom: var(--spacing-xl);
+        }
+
+        .mission__cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: var(--spacing-md);
+        }
+
+        .mission__card {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: var(--border-radius);
+            padding: var(--spacing-lg);
+            opacity: 0;
+            transform: translateY(100px);
+            transition: border-color 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .mission__card:hover {
+            border-color: rgba(99, 102, 241, 0.3);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+        }
+
+        .mission__icon {
+            width: 64px;
+            height: 64px;
+            background: linear-gradient(135deg, var(--color-primary), var(--color-secondary));
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.75rem;
+            margin-bottom: var(--spacing-md);
+        }
+
+        .mission__card-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: var(--spacing-sm);
+        }
+
+        .mission__card-text {
+            color: var(--text-muted);
+            line-height: 1.7;
+        }
+
+        /* ========== SECTION 3: PROGRAMS (HORIZONTAL SCROLL) ========== */
+        .programs {
+            padding: 0;
+            min-height: auto;
+            overflow: visible;
+        }
+
+        .programs__wrapper {
+            position: relative;
+            width: 100%;
+        }
+
+        .programs__header {
+            text-align: center;
+            padding: var(--spacing-xl) var(--spacing-md) var(--spacing-lg);
+            background: var(--bg-dark);
+        }
+
+        .programs__track-container {
+            position: relative;
+            overflow: hidden;
+            background: linear-gradient(180deg, var(--bg-dark) 0%, var(--bg-darker) 100%);
+        }
+
+        .programs__track {
+            display: flex;
+            width: fit-content;
+            will-change: transform;
+        }
+
+        .programs__panel {
+            width: 100vw;
+            height: 100vh;
+            flex-shrink: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: var(--spacing-lg);
+        }
+
+        .programs__card {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: var(--spacing-xl);
+            max-width: 1100px;
+            width: 100%;
+            align-items: center;
+        }
+
+        .programs__image-wrapper {
+            position: relative;
+            border-radius: 24px;
+            overflow: hidden;
+            aspect-ratio: 4/3;
+            box-shadow: var(--shadow-lg);
+        }
+
+        .programs__image {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.5s ease;
+        }
+
+        .programs__card:hover .programs__image {
+            transform: scale(1.05);
+        }
+
+        .programs__content {
+            display: flex;
+            flex-direction: column;
+            gap: var(--spacing-md);
+        }
+
+        .programs__number {
+            font-size: 5rem;
+            font-weight: 800;
+            line-height: 1;
+            background: linear-gradient(135deg, var(--color-primary), var(--color-secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            opacity: 0.3;
+        }
+
+        .programs__title {
+            font-size: clamp(2rem, 4vw, 3rem);
+            font-weight: 700;
+        }
+
+        .programs__description {
+            font-size: 1.1rem;
+            color: var(--text-muted);
+            line-height: 1.8;
+        }
+
+        .programs__tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .programs__tag {
+            padding: 8px 16px;
+            background: rgba(255, 255, 255, 0.08);
+            border-radius: 100px;
+            font-size: 0.875rem;
+            color: var(--text-muted);
+        }
+
+        .programs__progress {
+            position: fixed;
+            bottom: 40px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 200px;
+            height: 4px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 4px;
+            overflow: hidden;
+            opacity: 0;
+            z-index: 100;
+            transition: opacity 0.3s ease;
+        }
+
+        .programs__progress.visible {
+            opacity: 1;
+        }
+
+        .programs__progress-bar {
+            height: 100%;
+            width: 0%;
+            background: linear-gradient(90deg, var(--color-primary), var(--color-secondary));
+            transform-origin: left;
+        }
+
+        .programs__dots {
+            position: fixed;
+            bottom: 60px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 12px;
+            opacity: 0;
+            z-index: 100;
+            transition: opacity 0.3s ease;
+        }
+
+        .programs__dots.visible {
+            opacity: 1;
+        }
+
+        .programs__dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.3);
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .programs__dot.active {
+            background: var(--color-primary);
+            transform: scale(1.3);
+        }
+
+        /* ========== SECTION 4: TIMELINE ========== */
+        .timeline {
+            background: linear-gradient(180deg, var(--bg-darker) 0%, var(--bg-dark) 100%);
+            padding: var(--spacing-xl) var(--spacing-md);
+        }
+
+        .timeline__header {
+            text-align: center;
+            margin-bottom: var(--spacing-xl);
+        }
+
+        .timeline__container {
+            max-width: 800px;
+            margin: 0 auto;
+            position: relative;
+        }
+
+        .timeline__line {
+            position: absolute;
+            left: 50%;
+            top: 0;
+            bottom: 0;
+            width: 4px;
+            background: rgba(255, 255, 255, 0.1);
+            transform: translateX(-50%);
+            border-radius: 2px;
+        }
+
+        .timeline__line-fill {
+            position: absolute;
+            left: 50%;
+            top: 0;
+            width: 4px;
+            height: 0%;
+            background: linear-gradient(180deg, var(--color-primary), var(--color-secondary));
+            transform: translateX(-50%);
+            border-radius: 2px;
+        }
+
+        .timeline__item {
+            display: flex;
+            margin-bottom: 80px;
+            position: relative;
+        }
+
+        .timeline__item:last-child {
+            margin-bottom: 0;
+        }
+
+        .timeline__item:nth-child(odd) {
+            justify-content: flex-start;
+            padding-right: calc(50% + 40px);
+            text-align: right;
+        }
+
+        .timeline__item:nth-child(even) {
+            justify-content: flex-end;
+            padding-left: calc(50% + 40px);
+            text-align: left;
+        }
+
+        .timeline__marker {
+            position: absolute;
+            left: 50%;
+            top: 0;
+            width: 60px;
+            height: 60px;
+            background: var(--bg-dark);
+            border: 4px solid var(--color-primary);
+            border-radius: 50%;
+            transform: translateX(-50%) scale(0);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            z-index: 2;
+            opacity: 0;
+        }
+
+        .timeline__content {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: var(--border-radius);
+            padding: var(--spacing-md);
+            opacity: 0;
+            transform: translateX(-20px);
+        }
+
+        .timeline__item:nth-child(even) .timeline__content {
+            transform: translateX(20px);
+        }
+
+        .timeline__year {
+            font-size: 0.875rem;
+            color: var(--color-primary);
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+
+        .timeline__title {
+            font-size: 1.25rem;
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+
+        .timeline__text {
+            color: var(--text-muted);
+            font-size: 0.95rem;
+            line-height: 1.6;
+        }
+
+        /* ========== SECTION 5: STATS ========== */
+        .stats {
+            background: var(--text-primary);
+            color: var(--bg-dark);
+        }
+
+        .stats__header {
+            text-align: center;
+            margin-bottom: var(--spacing-xl);
+        }
+
+        .stats__title {
+            color: var(--bg-dark);
+        }
+
+        .stats__subtitle {
+            color: rgba(15, 23, 42, 0.7);
+        }
+
+        .stats__grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: var(--spacing-lg);
+        }
+
+        .stats__card {
+            text-align: center;
+            padding: var(--spacing-md);
+            opacity: 0;
+            transform: translateY(50px);
+        }
+
+        .stats__number {
+            font-size: clamp(3rem, 8vw, 5rem);
+            font-weight: 800;
+            line-height: 1;
+            background: linear-gradient(135deg, var(--color-primary), var(--color-secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: var(--spacing-xs);
+        }
+
+        .stats__label {
+            font-size: 1rem;
+            color: rgba(15, 23, 42, 0.6);
+            font-weight: 500;
+        }
+
+        .stats__glow {
+            position: absolute;
+            inset: 0;
+            border-radius: var(--border-radius);
+            opacity: 0;
+            transition: opacity 0.5s ease;
+            box-shadow: 0 0 40px rgba(99, 102, 241, 0.3);
+            pointer-events: none;
+        }
+
+        /* ========== SECTION 6: CTA ========== */
+        .cta {
+            position: relative;
+            overflow: hidden;
+            background: linear-gradient(135deg, var(--color-primary), var(--color-secondary));
+        }
+
+        .cta__background {
+            position: absolute;
+            inset: -50px;
+            background:
+                radial-gradient(ellipse at 30% 70%, rgba(255, 255, 255, 0.1) 0%, transparent 50%),
+                radial-gradient(ellipse at 70% 30%, rgba(0, 0, 0, 0.1) 0%, transparent 50%);
+            will-change: transform;
+        }
+
+        .cta__content {
+            text-align: center;
+            position: relative;
+            z-index: 2;
+            opacity: 0;
+            transform: translateY(30px);
+        }
+
+        .cta__title {
+            font-size: clamp(2.5rem, 6vw, 4.5rem);
+            font-weight: 800;
+            margin-bottom: var(--spacing-md);
+            line-height: 1.1;
+        }
+
+        .cta__text {
+            font-size: 1.25rem;
+            opacity: 0.9;
+            max-width: 600px;
+            margin: 0 auto var(--spacing-lg);
+        }
+
+        .cta__button {
+            display: inline-block;
+            padding: 20px 48px;
+            background: white;
+            color: var(--color-primary);
+            text-decoration: none;
+            border-radius: 100px;
+            font-weight: 700;
+            font-size: 1.2rem;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            animation: pulse 2s ease-in-out infinite;
+        }
+
+        .cta__button:hover {
+            transform: scale(1.05);
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.3);
+        }
+
+        @keyframes pulse {
+            0%, 100% {
+                box-shadow: 0 0 0 0 rgba(255, 255, 255, 0.4);
+            }
+            50% {
+                box-shadow: 0 0 0 20px rgba(255, 255, 255, 0);
+            }
+        }
+
+        /* Reduced motion */
+        @media (prefers-reduced-motion: reduce) {
+            .cta__button {
+                animation: none;
+            }
+        }
+
+        /* ========== FOOTER ========== */
+        .footer {
+            background: var(--bg-darker);
+            padding: var(--spacing-md);
+            text-align: center;
+            color: var(--text-muted);
+            font-size: 0.875rem;
+        }
+
+        .footer a {
+            color: var(--color-primary);
+            text-decoration: none;
+        }
+
+        .footer a:hover {
+            text-decoration: underline;
+        }
+
+        /* ========== RESPONSIVE ========== */
+        @media (max-width: 1024px) {
+            .programs__card {
+                grid-template-columns: 1fr;
+                text-align: center;
+            }
+
+            .programs__image-wrapper {
+                max-width: 500px;
+                margin: 0 auto;
+            }
+
+            .programs__content {
+                align-items: center;
+            }
+
+            .programs__tags {
+                justify-content: center;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .timeline__item {
+                padding: 0 0 0 80px !important;
+                justify-content: flex-start !important;
+                text-align: left !important;
+            }
+
+            .timeline__line,
+            .timeline__line-fill {
+                left: 30px;
+            }
+
+            .timeline__marker {
+                left: 30px;
+                width: 50px;
+                height: 50px;
+                font-size: 1.25rem;
+            }
+
+            .timeline__item:nth-child(even) .timeline__content {
+                transform: translateX(-20px);
+            }
+
+            .hero__scroll-hint {
+                display: none;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .section {
+                padding: var(--spacing-md) var(--spacing-sm);
+            }
+
+            .mission__cards {
+                grid-template-columns: 1fr;
+            }
+
+            .programs__panel {
+                padding: var(--spacing-md);
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Skip Link for Accessibility -->
+    <a href="#main-content" class="skip-link">Skip to main content</a>
+
+    <!-- Scroll Progress Bar -->
+    <div class="scroll-progress" role="progressbar" aria-label="Page scroll progress" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100">
+        <div class="scroll-progress__bar" id="scrollProgressBar"></div>
+    </div>
+
+    <!-- Main Content -->
+    <main id="main-content" role="main">
+
+        <!-- Section 1: Hero with Parallax -->
+        <section class="section hero" id="hero" aria-label="Welcome to TechEd Academy">
+            <div class="hero__background" id="heroBackground"></div>
+            <div class="hero__shapes" aria-hidden="true">
+                <div class="hero__shape hero__shape--1"></div>
+                <div class="hero__shape hero__shape--2"></div>
+                <div class="hero__shape hero__shape--3"></div>
+            </div>
+            <div class="hero__content">
+                <span class="hero__badge" id="heroBadge">GSAP + Lenis Demo</span>
+                <h1 class="hero__title" id="heroTitle">
+                    The Future of<br>
+                    <span class="hero__title-gradient">Tech Education</span>
+                </h1>
+                <p class="hero__description" id="heroDescription">
+                    Experience cutting-edge scroll animations powered by GSAP ScrollTrigger and Lenis smooth scrolling. Discover our programs through an immersive journey.
+                </p>
+                <a href="#programs" class="hero__cta" id="heroCta">
+                    Explore Programs
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                        <path d="M5 12h14M12 5l7 7-7 7"/>
+                    </svg>
+                </a>
+            </div>
+            <div class="hero__scroll-hint" id="heroScrollHint" aria-hidden="true">
+                <div class="hero__scroll-icon">
+                    <div class="hero__scroll-dot" id="scrollDot"></div>
+                </div>
+                <span>Scroll to explore</span>
+            </div>
+        </section>
+
+        <!-- Section 2: Mission with Staggered Cards -->
+        <section class="section mission" id="mission" aria-labelledby="mission-title">
+            <div class="section__container">
+                <header class="mission__header">
+                    <h2 class="section__title" id="mission-title">Our Mission</h2>
+                    <p class="section__subtitle">Transforming careers through hands-on tech education</p>
+                </header>
+                <div class="mission__cards">
+                    <article class="mission__card" id="missionCard1">
+                        <div class="mission__icon" aria-hidden="true">&#x1F4BB;</div>
+                        <h3 class="mission__card-title">Learn by Building</h3>
+                        <p class="mission__card-text">80% of learning happens through real projects, not lectures. Build your portfolio from day one with production-ready code.</p>
+                    </article>
+                    <article class="mission__card" id="missionCard2">
+                        <div class="mission__icon" aria-hidden="true">&#x1F91D;</div>
+                        <h3 class="mission__card-title">Industry Mentors</h3>
+                        <p class="mission__card-text">Learn from engineers at top tech companies. Get personalized feedback and career guidance from industry experts.</p>
+                    </article>
+                    <article class="mission__card" id="missionCard3">
+                        <div class="mission__icon" aria-hidden="true">&#x1F680;</div>
+                        <h3 class="mission__card-title">Career Launch</h3>
+                        <p class="mission__card-text">94% job placement rate within 6 months. Our career services team works with you until you land your dream role.</p>
+                    </article>
+                </div>
+            </div>
+        </section>
+
+        <!-- Section 3: Programs with Horizontal Scroll (PINNED) -->
+        <section class="programs" id="programs" aria-labelledby="programs-title">
+            <div class="programs__wrapper">
+                <header class="programs__header">
+                    <h2 class="section__title" id="programs-title">Our Programs</h2>
+                    <p class="section__subtitle">Scroll horizontally to explore our learning tracks</p>
+                </header>
+                <div class="programs__track-container" id="programsContainer">
+                    <div class="programs__track" id="programsTrack">
+                        <!-- Panel 1: Web Development -->
+                        <div class="programs__panel" data-panel="1">
+                            <article class="programs__card">
+                                <div class="programs__image-wrapper">
+                                    <img class="programs__image" src="https://images.unsplash.com/photo-1627398242454-45a1465c2479?w=800&h=600&fit=crop" alt="Students learning web development with code displayed on screen" loading="lazy">
+                                </div>
+                                <div class="programs__content">
+                                    <span class="programs__number">01</span>
+                                    <h3 class="programs__title">Web Development</h3>
+                                    <p class="programs__description">Master modern web technologies from fundamentals to full-stack deployment. Build real projects with React, Node.js, and cloud platforms.</p>
+                                    <div class="programs__tags">
+                                        <span class="programs__tag">React</span>
+                                        <span class="programs__tag">Node.js</span>
+                                        <span class="programs__tag">TypeScript</span>
+                                        <span class="programs__tag">AWS</span>
+                                    </div>
+                                </div>
+                            </article>
+                        </div>
+                        <!-- Panel 2: AI & Machine Learning -->
+                        <div class="programs__panel" data-panel="2">
+                            <article class="programs__card">
+                                <div class="programs__image-wrapper">
+                                    <img class="programs__image" src="https://images.unsplash.com/photo-1677442136019-21780ecad995?w=800&h=600&fit=crop" alt="AI visualization with neural network patterns" loading="lazy">
+                                </div>
+                                <div class="programs__content">
+                                    <span class="programs__number">02</span>
+                                    <h3 class="programs__title">AI & Machine Learning</h3>
+                                    <p class="programs__description">From Python fundamentals to deploying production ML models. Work with transformers, LLMs, and cutting-edge AI tools.</p>
+                                    <div class="programs__tags">
+                                        <span class="programs__tag">Python</span>
+                                        <span class="programs__tag">PyTorch</span>
+                                        <span class="programs__tag">LLMs</span>
+                                        <span class="programs__tag">MLOps</span>
+                                    </div>
+                                </div>
+                            </article>
+                        </div>
+                        <!-- Panel 3: Cloud & DevOps -->
+                        <div class="programs__panel" data-panel="3">
+                            <article class="programs__card">
+                                <div class="programs__image-wrapper">
+                                    <img class="programs__image" src="https://images.unsplash.com/photo-1451187580459-43490279c0fa?w=800&h=600&fit=crop" alt="Cloud infrastructure visualization with global network" loading="lazy">
+                                </div>
+                                <div class="programs__content">
+                                    <span class="programs__number">03</span>
+                                    <h3 class="programs__title">Cloud & DevOps</h3>
+                                    <p class="programs__description">Learn to build and manage scalable infrastructure. Master Kubernetes, CI/CD pipelines, and infrastructure as code.</p>
+                                    <div class="programs__tags">
+                                        <span class="programs__tag">AWS</span>
+                                        <span class="programs__tag">Kubernetes</span>
+                                        <span class="programs__tag">Docker</span>
+                                        <span class="programs__tag">Terraform</span>
+                                    </div>
+                                </div>
+                            </article>
+                        </div>
+                        <!-- Panel 4: Cybersecurity -->
+                        <div class="programs__panel" data-panel="4">
+                            <article class="programs__card">
+                                <div class="programs__image-wrapper">
+                                    <img class="programs__image" src="https://images.unsplash.com/photo-1550751827-4bd374c3f58b?w=800&h=600&fit=crop" alt="Cybersecurity operations center with multiple monitors" loading="lazy">
+                                </div>
+                                <div class="programs__content">
+                                    <span class="programs__number">04</span>
+                                    <h3 class="programs__title">Cybersecurity</h3>
+                                    <p class="programs__description">Learn ethical hacking, penetration testing, and security operations. Prepare for industry certifications and protect digital assets.</p>
+                                    <div class="programs__tags">
+                                        <span class="programs__tag">Pen Testing</span>
+                                        <span class="programs__tag">SOC Ops</span>
+                                        <span class="programs__tag">CompTIA</span>
+                                        <span class="programs__tag">CEH</span>
+                                    </div>
+                                </div>
+                            </article>
+                        </div>
+                        <!-- Panel 5: Mobile Development -->
+                        <div class="programs__panel" data-panel="5">
+                            <article class="programs__card">
+                                <div class="programs__image-wrapper">
+                                    <img class="programs__image" src="https://images.unsplash.com/photo-1512941937669-90a1b58e7e9c?w=800&h=600&fit=crop" alt="Mobile app development with devices showing app interfaces" loading="lazy">
+                                </div>
+                                <div class="programs__content">
+                                    <span class="programs__number">05</span>
+                                    <h3 class="programs__title">Mobile Development</h3>
+                                    <p class="programs__description">Build native and cross-platform mobile applications. Master React Native, Flutter, and publish to app stores.</p>
+                                    <div class="programs__tags">
+                                        <span class="programs__tag">React Native</span>
+                                        <span class="programs__tag">Flutter</span>
+                                        <span class="programs__tag">iOS</span>
+                                        <span class="programs__tag">Android</span>
+                                    </div>
+                                </div>
+                            </article>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- Progress indicators (shown when pinned) -->
+            <div class="programs__progress" id="programsProgress" aria-hidden="true">
+                <div class="programs__progress-bar" id="programsProgressBar"></div>
+            </div>
+            <div class="programs__dots" id="programsDots" role="tablist" aria-label="Program panels">
+                <button class="programs__dot active" role="tab" aria-selected="true" aria-label="Panel 1: Web Development" data-panel="1"></button>
+                <button class="programs__dot" role="tab" aria-selected="false" aria-label="Panel 2: AI & Machine Learning" data-panel="2"></button>
+                <button class="programs__dot" role="tab" aria-selected="false" aria-label="Panel 3: Cloud & DevOps" data-panel="3"></button>
+                <button class="programs__dot" role="tab" aria-selected="false" aria-label="Panel 4: Cybersecurity" data-panel="4"></button>
+                <button class="programs__dot" role="tab" aria-selected="false" aria-label="Panel 5: Mobile Development" data-panel="5"></button>
+            </div>
+        </section>
+
+        <!-- Section 4: Timeline with SVG Path Drawing -->
+        <section class="section timeline" id="timeline" aria-labelledby="timeline-title">
+            <div class="section__container">
+                <header class="timeline__header">
+                    <h2 class="section__title" id="timeline-title">Your Journey</h2>
+                    <p class="section__subtitle">From beginner to job-ready professional in 12 months</p>
+                </header>
+                <div class="timeline__container">
+                    <div class="timeline__line" aria-hidden="true"></div>
+                    <div class="timeline__line-fill" id="timelineFill" aria-hidden="true"></div>
+
+                    <article class="timeline__item">
+                        <div class="timeline__marker" aria-hidden="true">&#x1F680;</div>
+                        <div class="timeline__content">
+                            <span class="timeline__year">Month 1-3</span>
+                            <h3 class="timeline__title">Foundation Sprint</h3>
+                            <p class="timeline__text">Core fundamentals, team formation, and your first collaborative project shipped to production.</p>
+                        </div>
+                    </article>
+
+                    <article class="timeline__item">
+                        <div class="timeline__marker" aria-hidden="true">&#x1F4BB;</div>
+                        <div class="timeline__content">
+                            <span class="timeline__year">Month 4-6</span>
+                            <h3 class="timeline__title">Project Season</h3>
+                            <p class="timeline__text">Real client projects, hackathon competitions, and portfolio building with industry mentors.</p>
+                        </div>
+                    </article>
+
+                    <article class="timeline__item">
+                        <div class="timeline__marker" aria-hidden="true">&#x1F4A1;</div>
+                        <div class="timeline__content">
+                            <span class="timeline__year">Month 7-9</span>
+                            <h3 class="timeline__title">Summer Labs</h3>
+                            <p class="timeline__text">Industry internships, research projects, and intensive specialist workshops.</p>
+                        </div>
+                    </article>
+
+                    <article class="timeline__item">
+                        <div class="timeline__marker" aria-hidden="true">&#x1F3AF;</div>
+                        <div class="timeline__content">
+                            <span class="timeline__year">Month 10-12</span>
+                            <h3 class="timeline__title">Launch Ready</h3>
+                            <p class="timeline__text">Portfolio polish, interview preparation, and job placement support until you land your role.</p>
+                        </div>
+                    </article>
+                </div>
+            </div>
+        </section>
+
+        <!-- Section 5: Stats with Counter Animation -->
+        <section class="section stats" id="stats" aria-labelledby="stats-title">
+            <div class="section__container">
+                <header class="stats__header">
+                    <h2 class="section__title stats__title" id="stats-title">Numbers That Matter</h2>
+                    <p class="section__subtitle stats__subtitle">Our track record speaks for itself</p>
+                </header>
+                <div class="stats__grid">
+                    <article class="stats__card" id="stat1">
+                        <div class="stats__number" data-target="94">0</div>
+                        <div class="stats__label">% Job Placement Rate</div>
+                    </article>
+                    <article class="stats__card" id="stat2">
+                        <div class="stats__number" data-target="12">0</div>
+                        <div class="stats__label">Learning Tracks</div>
+                    </article>
+                    <article class="stats__card" id="stat3">
+                        <div class="stats__number" data-target="50">0</div>
+                        <div class="stats__label">+ Industry Partners</div>
+                    </article>
+                    <article class="stats__card" id="stat4">
+                        <div class="stats__number" data-target="2500">0</div>
+                        <div class="stats__label">+ Alumni Network</div>
+                    </article>
+                </div>
+            </div>
+        </section>
+
+        <!-- Section 6: CTA with Background Zoom -->
+        <section class="section cta" id="cta" aria-labelledby="cta-title">
+            <div class="cta__background" id="ctaBackground" aria-hidden="true"></div>
+            <div class="cta__content" id="ctaContent">
+                <h2 class="cta__title" id="cta-title">Ready to Start<br>Your Journey?</h2>
+                <p class="cta__text">Join thousands who've transformed their careers with TechEd Academy</p>
+                <a href="mailto:hello@techedacademy.com" class="cta__button">Schedule a Meeting</a>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer" role="contentinfo">
+        <p>&copy; 2026 TechEd Academy. All rights reserved. |
+            <a href="https://gsap.com" target="_blank" rel="noopener noreferrer">Powered by GSAP</a> +
+            <a href="https://lenis.darkroom.engineering" target="_blank" rel="noopener noreferrer">Lenis</a>
+        </p>
+    </footer>
+
+    <!-- GSAP Core -->
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.12/dist/gsap.min.js"></script>
+    <!-- ScrollTrigger Plugin -->
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.12/dist/ScrollTrigger.min.js"></script>
+    <!-- Lenis Smooth Scroll -->
+    <script src="https://cdn.jsdelivr.net/npm/lenis@1/dist/lenis.min.js"></script>
+
+    <script>
+        /*
+        ==============================================================================
+        GSAP ScrollTrigger + Lenis Integration
+        ==============================================================================
+        */
+        (function() {
+            'use strict';
+
+            // Register ScrollTrigger plugin
+            gsap.registerPlugin(ScrollTrigger);
+
+            // Check for reduced motion preference
+            const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+            // Animation duration multiplier (0 for reduced motion)
+            const durationMultiplier = prefersReducedMotion ? 0 : 1;
+
+            // ========== LENIS INITIALIZATION ==========
+            let lenis = null;
+
+            if (!prefersReducedMotion) {
+                try {
+                    lenis = new Lenis({
+                        duration: 1.2,
+                        easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
+                        smoothWheel: true,
+                        wheelMultiplier: 1,
+                        touchMultiplier: 2
+                    });
+
+                    // Connect Lenis to ScrollTrigger
+                    lenis.on('scroll', ScrollTrigger.update);
+
+                    // Sync Lenis with GSAP ticker
+                    gsap.ticker.add((time) => {
+                        lenis.raf(time * 1000);
+                    });
+
+                    // Disable GSAP lag smoothing for Lenis compatibility
+                    gsap.ticker.lagSmoothing(0);
+
+                    console.log('Lenis smooth scroll initialized');
+                } catch (error) {
+                    console.warn('Lenis initialization failed:', error);
+                }
+            } else {
+                console.log('Reduced motion enabled - Lenis disabled');
+            }
+
+            // ========== SCROLL PROGRESS BAR ==========
+            const scrollProgressBar = document.getElementById('scrollProgressBar');
+            if (scrollProgressBar) {
+                gsap.to(scrollProgressBar, {
+                    scaleX: 1,
+                    ease: 'none',
+                    scrollTrigger: {
+                        trigger: document.body,
+                        start: 'top top',
+                        end: 'bottom bottom',
+                        scrub: 0.3
+                    }
+                });
+            }
+
+            // ========== SECTION 1: HERO ANIMATIONS ==========
+            const heroElements = {
+                background: document.getElementById('heroBackground'),
+                badge: document.getElementById('heroBadge'),
+                title: document.getElementById('heroTitle'),
+                description: document.getElementById('heroDescription'),
+                cta: document.getElementById('heroCta'),
+                scrollHint: document.getElementById('heroScrollHint'),
+                scrollDot: document.getElementById('scrollDot')
+            };
+
+            // Hero entrance animations (on load)
+            const heroTimeline = gsap.timeline({ defaults: { ease: 'power2.out' } });
+
+            heroTimeline
+                .to(heroElements.badge, {
+                    opacity: 1,
+                    y: 0,
+                    duration: 0.6 * durationMultiplier,
+                    delay: 0.2
+                })
+                .to(heroElements.title, {
+                    opacity: 1,
+                    y: 0,
+                    duration: 1 * durationMultiplier
+                }, '-=0.3')
+                .to(heroElements.description, {
+                    opacity: 1,
+                    y: 0,
+                    duration: 0.8 * durationMultiplier
+                }, '-=0.5')
+                .to(heroElements.cta, {
+                    opacity: 1,
+                    y: 0,
+                    duration: 0.6 * durationMultiplier
+                }, '-=0.3')
+                .to(heroElements.scrollHint, {
+                    opacity: 1,
+                    duration: 0.6 * durationMultiplier
+                }, '-=0.2');
+
+            // Hero parallax background (scrub on scroll)
+            if (heroElements.background && !prefersReducedMotion) {
+                gsap.to(heroElements.background, {
+                    y: '-30%',
+                    ease: 'none',
+                    scrollTrigger: {
+                        trigger: '#hero',
+                        start: 'top top',
+                        end: 'bottom top',
+                        scrub: true
+                    }
+                });
+            }
+
+            // Scroll hint bouncing animation
+            if (heroElements.scrollDot && !prefersReducedMotion) {
+                gsap.to(heroElements.scrollDot, {
+                    y: 16,
+                    duration: 1.5,
+                    ease: 'power1.inOut',
+                    repeat: -1,
+                    yoyo: true
+                });
+            }
+
+            // ========== SECTION 2: MISSION CARDS (STAGGERED REVEAL) ==========
+            const missionCards = document.querySelectorAll('.mission__card');
+
+            if (missionCards.length > 0) {
+                gsap.to(missionCards, {
+                    opacity: 1,
+                    y: 0,
+                    duration: 0.8 * durationMultiplier,
+                    stagger: 0.2,
+                    ease: 'power2.out',
+                    scrollTrigger: {
+                        trigger: '#mission',
+                        start: 'top 80%',
+                        toggleActions: 'play none none reverse'
+                    }
+                });
+            }
+
+            // ========== SECTION 3: PROGRAMS HORIZONTAL SCROLL (PINNED) ==========
+            const programsContainer = document.getElementById('programsContainer');
+            const programsTrack = document.getElementById('programsTrack');
+            const programsPanels = document.querySelectorAll('.programs__panel');
+            const programsProgress = document.getElementById('programsProgress');
+            const programsProgressBar = document.getElementById('programsProgressBar');
+            const programsDots = document.getElementById('programsDots');
+            const programDotButtons = document.querySelectorAll('.programs__dot');
+
+            if (programsTrack && programsPanels.length > 0 && !prefersReducedMotion) {
+                const numPanels = programsPanels.length;
+
+                // Create horizontal scroll animation with pinning
+                const horizontalScroll = gsap.to(programsTrack, {
+                    xPercent: -100 * (numPanels - 1) / numPanels,
+                    ease: 'none',
+                    scrollTrigger: {
+                        trigger: programsContainer,
+                        pin: true,
+                        scrub: 1,
+                        snap: {
+                            snapTo: 1 / (numPanels - 1),
+                            duration: { min: 0.2, max: 0.5 },
+                            ease: 'power1.inOut'
+                        },
+                        end: () => '+=' + (programsContainer.offsetWidth * (numPanels - 1)),
+                        onEnter: () => {
+                            if (programsProgress) programsProgress.classList.add('visible');
+                            if (programsDots) programsDots.classList.add('visible');
+                        },
+                        onLeave: () => {
+                            if (programsProgress) programsProgress.classList.remove('visible');
+                            if (programsDots) programsDots.classList.remove('visible');
+                        },
+                        onEnterBack: () => {
+                            if (programsProgress) programsProgress.classList.add('visible');
+                            if (programsDots) programsDots.classList.add('visible');
+                        },
+                        onLeaveBack: () => {
+                            if (programsProgress) programsProgress.classList.remove('visible');
+                            if (programsDots) programsDots.classList.remove('visible');
+                        },
+                        onUpdate: (self) => {
+                            // Update progress bar
+                            if (programsProgressBar) {
+                                programsProgressBar.style.width = (self.progress * 100) + '%';
+                            }
+
+                            // Update active dot
+                            const activeIndex = Math.round(self.progress * (numPanels - 1));
+                            programDotButtons.forEach((dot, i) => {
+                                dot.classList.toggle('active', i === activeIndex);
+                                dot.setAttribute('aria-selected', i === activeIndex);
+                            });
+                        }
+                    }
+                });
+
+                // Dot navigation click handlers
+                programDotButtons.forEach((dot, index) => {
+                    dot.addEventListener('click', () => {
+                        const scrollTriggerInstance = horizontalScroll.scrollTrigger;
+                        if (scrollTriggerInstance) {
+                            const targetProgress = index / (numPanels - 1);
+                            const targetScroll = scrollTriggerInstance.start + (scrollTriggerInstance.end - scrollTriggerInstance.start) * targetProgress;
+
+                            if (lenis) {
+                                lenis.scrollTo(targetScroll, { duration: 1 });
+                            } else {
+                                window.scrollTo({ top: targetScroll, behavior: 'smooth' });
+                            }
+                        }
+                    });
+                });
+            } else if (programsTrack && prefersReducedMotion) {
+                // For reduced motion: show all panels vertically
+                programsTrack.style.flexDirection = 'column';
+                programsTrack.style.width = '100%';
+                programsPanels.forEach(panel => {
+                    panel.style.width = '100%';
+                    panel.style.height = 'auto';
+                    panel.style.minHeight = '100vh';
+                });
+            }
+
+            // ========== SECTION 4: TIMELINE PATH DRAWING ==========
+            const timelineFill = document.getElementById('timelineFill');
+            const timelineItems = document.querySelectorAll('.timeline__item');
+            const timelineMarkers = document.querySelectorAll('.timeline__marker');
+            const timelineContents = document.querySelectorAll('.timeline__content');
+
+            if (timelineFill) {
+                // Animate the timeline fill line
+                gsap.to(timelineFill, {
+                    height: '100%',
+                    ease: 'none',
+                    scrollTrigger: {
+                        trigger: '#timeline',
+                        start: 'top 60%',
+                        end: 'bottom 80%',
+                        scrub: true
+                    }
+                });
+            }
+
+            // Animate each timeline item
+            timelineItems.forEach((item, index) => {
+                const marker = item.querySelector('.timeline__marker');
+                const content = item.querySelector('.timeline__content');
+
+                if (marker && content) {
+                    const tl = gsap.timeline({
+                        scrollTrigger: {
+                            trigger: item,
+                            start: 'top 75%',
+                            toggleActions: 'play none none reverse'
+                        }
+                    });
+
+                    tl.to(marker, {
+                        scale: 1,
+                        opacity: 1,
+                        duration: 0.5 * durationMultiplier,
+                        ease: 'back.out(1.7)'
+                    })
+                    .to(content, {
+                        opacity: 1,
+                        x: 0,
+                        duration: 0.3 * durationMultiplier,
+                        ease: 'power2.out'
+                    }, '-=0.2');
+                }
+            });
+
+            // ========== SECTION 5: STATS COUNTER ANIMATION ==========
+            const statsCards = document.querySelectorAll('.stats__card');
+
+            statsCards.forEach((card, index) => {
+                const numberEl = card.querySelector('.stats__number');
+                const target = parseInt(numberEl.getAttribute('data-target'), 10);
+
+                // Card reveal animation
+                gsap.to(card, {
+                    opacity: 1,
+                    y: 0,
+                    duration: 0.6 * durationMultiplier,
+                    delay: index * 0.1,
+                    ease: 'power2.out',
+                    scrollTrigger: {
+                        trigger: '#stats',
+                        start: 'top 70%',
+                        toggleActions: 'play none none reverse'
+                    }
+                });
+
+                // Counter animation
+                if (numberEl && target) {
+                    const counter = { value: 0 };
+
+                    gsap.to(counter, {
+                        value: target,
+                        duration: 2 * durationMultiplier,
+                        ease: 'power1.out',
+                        scrollTrigger: {
+                            trigger: card,
+                            start: 'top 80%',
+                            toggleActions: 'play none none none',
+                            once: true
+                        },
+                        onUpdate: () => {
+                            numberEl.textContent = Math.round(counter.value);
+                        }
+                    });
+                }
+            });
+
+            // ========== SECTION 6: CTA BACKGROUND ZOOM ==========
+            const ctaBackground = document.getElementById('ctaBackground');
+            const ctaContent = document.getElementById('ctaContent');
+
+            if (ctaBackground && !prefersReducedMotion) {
+                gsap.to(ctaBackground, {
+                    scale: 1.1,
+                    ease: 'none',
+                    scrollTrigger: {
+                        trigger: '#cta',
+                        start: 'top bottom',
+                        end: 'bottom top',
+                        scrub: true
+                    }
+                });
+            }
+
+            if (ctaContent) {
+                gsap.to(ctaContent, {
+                    opacity: 1,
+                    y: 0,
+                    duration: 1 * durationMultiplier,
+                    ease: 'power2.out',
+                    scrollTrigger: {
+                        trigger: '#cta',
+                        start: 'top 60%',
+                        toggleActions: 'play none none reverse'
+                    }
+                });
+            }
+
+            // ========== KEYBOARD NAVIGATION FOR HORIZONTAL SCROLL ==========
+            document.addEventListener('keydown', (e) => {
+                // Only handle when programs section is in view
+                const programsSection = document.getElementById('programs');
+                if (!programsSection) return;
+
+                const rect = programsSection.getBoundingClientRect();
+                const isInView = rect.top <= 100 && rect.bottom >= window.innerHeight - 100;
+
+                if (!isInView) return;
+
+                if (e.key === 'ArrowRight' || e.key === 'ArrowDown') {
+                    e.preventDefault();
+                    const activeDot = document.querySelector('.programs__dot.active');
+                    const nextDot = activeDot?.nextElementSibling;
+                    if (nextDot) nextDot.click();
+                } else if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') {
+                    e.preventDefault();
+                    const activeDot = document.querySelector('.programs__dot.active');
+                    const prevDot = activeDot?.previousElementSibling;
+                    if (prevDot) prevDot.click();
+                }
+            });
+
+            // ========== SCROLL PROGRESS ARIA UPDATE ==========
+            const scrollProgressContainer = document.querySelector('.scroll-progress');
+            if (scrollProgressContainer) {
+                ScrollTrigger.create({
+                    trigger: document.body,
+                    start: 'top top',
+                    end: 'bottom bottom',
+                    onUpdate: (self) => {
+                        const progress = Math.round(self.progress * 100);
+                        scrollProgressContainer.setAttribute('aria-valuenow', progress);
+                    }
+                });
+            }
+
+            // ========== CLEANUP ON PAGE UNLOAD ==========
+            window.addEventListener('beforeunload', () => {
+                if (lenis) {
+                    lenis.destroy();
+                }
+                ScrollTrigger.getAll().forEach(trigger => trigger.kill());
+            });
+
+            console.log('GSAP ScrollTrigger + Lenis demo initialized');
+            console.log('Reduced motion:', prefersReducedMotion);
+
+        })();
+    </script>
+
+    <!-- Shared Navigation Component -->
+    <script src="../../shared/nav-component.js"></script>
+</body>
+</html>
