@@ -4,8 +4,8 @@ FILE METADATA
 ==============================================================================
 filename:       CLAUDE.md
 created:        2026-01-16
-updated:        2026-01-16
-version:        1.0.0
+updated:        2026-01-27
+version:        1.1.0
 status:         active
 rating:         ★★★★★ (critical project file)
 author:         Joel + Claude
@@ -29,11 +29,13 @@ This repository showcases multiple interactive documentation formats for LunoLab
 ### Tech Stack
 - Pure HTML5/CSS3/JavaScript (no build tools)
 - External: Chart.js, Lottie Player, Reveal.js
+- **Animation Frameworks:** Remotion (React), Manim (Python), Three.js
 - Design: Dark theme, CSS custom properties
 
 ### Directory Structure
 ```
 /dashboard/          → Main hub
+/animation-lab/      → Animation framework testing (Remotion, Manim, Three.js)
 /enhanced/           → Optimized versions (4 formats)
 /offerte/            → Professional offers (German)
 /framer-guide/       → Framer showcase
@@ -238,6 +240,43 @@ Maintain `/docs/ROADMAP.md` with:
 | `/sc:analyze` | Run code analysis |
 | `/sc:build` | Implementation mode |
 | `/sc:test` | Run tests |
+| `/remotion` | Remotion video creation skill |
+
+---
+
+## Skills (Auto-Activation)
+
+Skills provide domain-specific knowledge. Agents should automatically use these when context matches.
+
+### Available Skills
+
+| Skill | Trigger Context | Use For |
+|-------|-----------------|---------|
+| `remotion` | Working in `/animation-lab/remotion/`, `.tsx` files with Remotion imports, video composition tasks | React-based video creation, animations, compositions, captions |
+| `confidence-check` | Before implementing features | Pre-implementation validation |
+| `security` | Auth flows, API endpoints, user input | Security reviews, OWASP checks |
+
+### Remotion Skill (Primary for this project)
+
+**Auto-activate when:**
+- Working in `animation-lab/remotion/` directory
+- Creating video compositions or animations
+- User mentions: video, animation, Remotion, composition, timeline, interpolate, spring
+
+**Key rules to read:**
+- `~/.claude/skills/remotion/rules/animations.md` - Core animation patterns
+- `~/.claude/skills/remotion/rules/compositions.md` - Composition setup
+- `~/.claude/skills/remotion/rules/timing.md` - Interpolation and springs
+- `~/.claude/skills/remotion/rules/charts.md` - Data visualization
+- `~/.claude/skills/remotion/rules/3d.md` - Three.js integration
+
+**Example activation:**
+```
+User: "Create an animated bar chart in Remotion"
+Agent: [Reads ~/.claude/skills/remotion/rules/charts.md]
+Agent: [Reads ~/.claude/skills/remotion/rules/animations.md]
+Agent: [Implements using skill patterns]
+```
 
 ### Key Files to Check
 
@@ -272,4 +311,4 @@ Maintain `/docs/ROADMAP.md` with:
 
 ---
 
-*Last updated: 2026-01-16 | Version 1.0.0*
+*Last updated: 2026-01-27 | Version 1.1.0*
