@@ -1,0 +1,535 @@
+<!--
+==============================================================================
+FILE METADATA
+==============================================================================
+filename:       index.html
+created:        2026-01-27
+updated:        2026-01-27
+version:        1.1.0
+status:         active
+rating:         ★★★★★
+author:         Joel + Claude
+related_docs:   [dashboard/index.html, README.md]
+description:    Animation Framework Lab - Hub for testing Remotion, Manim, Three.js
+==============================================================================
+-->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Animation Framework Lab - Test and compare Remotion, Manim, and Three.js for various animation use cases">
+    <title>Animation Framework Lab - LunoLabs</title>
+    <style>
+        :root {
+            --color-primary: #6366f1;
+            --color-secondary: #ec4899;
+            --color-accent: #10b981;
+            --color-warning: #f59e0b;
+            --color-remotion: #0b84f3;
+            --color-manim: #e91e63;
+            --color-threejs: #049ef4;
+            --bg-darker: #0a0a1a;
+            --bg-dark: #0f172a;
+            --bg-card: rgba(255,255,255,0.05);
+            --text-primary: #ffffff;
+            --text-muted: rgba(255,255,255,0.75);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Segoe UI', system-ui, sans-serif;
+            background: var(--bg-darker);
+            color: var(--text-primary);
+            min-height: 100vh;
+            line-height: 1.6;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #0b84f3, #e91e63, #049ef4);
+            padding: 60px 40px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 2.8em;
+            font-weight: 700;
+            margin-bottom: 15px;
+        }
+
+        .header p {
+            font-size: 1.2em;
+            opacity: 0.9;
+            max-width: 700px;
+            margin: 0 auto;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 60px 40px;
+        }
+
+        .section-title {
+            font-size: 1.8em;
+            font-weight: 600;
+            margin-bottom: 30px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .section-title::before {
+            content: '';
+            width: 4px;
+            height: 30px;
+            background: linear-gradient(180deg, var(--color-remotion), var(--color-manim));
+            border-radius: 4px;
+        }
+
+        /* Use Case Matrix */
+        .matrix-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 50px;
+            background: var(--bg-card);
+            border-radius: 16px;
+            overflow: hidden;
+        }
+
+        .matrix-table th,
+        .matrix-table td {
+            padding: 18px 20px;
+            text-align: left;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .matrix-table th {
+            background: rgba(255,255,255,0.08);
+            font-weight: 600;
+            font-size: 0.9em;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .matrix-table tr:hover {
+            background: rgba(255,255,255,0.03);
+        }
+
+        .use-case {
+            font-weight: 600;
+            color: var(--color-accent);
+        }
+
+        .framework-badge {
+            display: inline-block;
+            padding: 6px 14px;
+            border-radius: 100px;
+            font-size: 0.85em;
+            font-weight: 600;
+        }
+
+        .badge-remotion { background: rgba(11, 132, 243, 0.2); color: #0b84f3; }
+        .badge-manim { background: rgba(233, 30, 99, 0.2); color: #e91e63; }
+        .badge-threejs { background: rgba(4, 158, 244, 0.2); color: #049ef4; }
+        .badge-d3 { background: rgba(245, 158, 11, 0.2); color: #f59e0b; }
+
+        /* Framework Cards */
+        .frameworks-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(380px, 1fr));
+            gap: 30px;
+            margin-bottom: 50px;
+        }
+
+        .framework-card {
+            background: var(--bg-card);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 20px;
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .framework-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+        }
+
+        .framework-card.remotion { border-top: 4px solid #0b84f3; }
+        .framework-card.manim { border-top: 4px solid #e91e63; }
+        .framework-card.threejs { border-top: 4px solid #049ef4; }
+
+        .card-header {
+            padding: 30px;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .card-header h3 {
+            font-size: 1.5em;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .card-header p {
+            color: var(--text-muted);
+            font-size: 0.95em;
+        }
+
+        .card-body {
+            padding: 30px;
+        }
+
+        .tech-stack {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .tech-tag {
+            padding: 6px 12px;
+            background: rgba(255,255,255,0.1);
+            border-radius: 8px;
+            font-size: 0.85em;
+        }
+
+        .status-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 16px;
+            border-radius: 100px;
+            font-size: 0.85em;
+            font-weight: 500;
+        }
+
+        .status-ready { background: rgba(16, 185, 129, 0.2); color: #10b981; }
+        .status-setup { background: rgba(245, 158, 11, 0.2); color: #f59e0b; }
+
+        .card-actions {
+            padding: 20px 30px;
+            background: rgba(0,0,0,0.2);
+            display: flex;
+            gap: 12px;
+        }
+
+        .btn {
+            flex: 1;
+            padding: 14px 20px;
+            border: none;
+            border-radius: 12px;
+            font-size: 0.95em;
+            font-weight: 600;
+            cursor: pointer;
+            text-decoration: none;
+            text-align: center;
+            transition: all 0.3s;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--color-primary), var(--color-secondary));
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: scale(1.02);
+            box-shadow: 0 10px 30px rgba(99, 102, 241, 0.3);
+        }
+
+        .btn-secondary {
+            background: rgba(255,255,255,0.1);
+            color: white;
+            border: 1px solid rgba(255,255,255,0.2);
+        }
+
+        .btn-secondary:hover {
+            background: rgba(255,255,255,0.15);
+        }
+
+        /* Setup Instructions */
+        .setup-section {
+            background: var(--bg-card);
+            border-radius: 16px;
+            padding: 30px;
+            margin-bottom: 30px;
+        }
+
+        .setup-section h4 {
+            margin-bottom: 15px;
+            color: var(--color-accent);
+        }
+
+        .code-block {
+            background: #1a1a2e;
+            border-radius: 12px;
+            padding: 20px;
+            font-family: 'Consolas', 'Monaco', monospace;
+            font-size: 0.9em;
+            overflow-x: auto;
+            margin-bottom: 15px;
+        }
+
+        .code-block code {
+            color: #e2e8f0;
+        }
+
+        .code-comment { color: #6b7280; }
+        .code-command { color: #10b981; }
+        .code-flag { color: #f59e0b; }
+
+        /* Back Link */
+        .back-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            color: var(--text-muted);
+            text-decoration: none;
+            margin-bottom: 30px;
+            transition: color 0.3s;
+        }
+
+        .back-link:hover {
+            color: var(--text-primary);
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .header h1 { font-size: 2em; }
+            .container { padding: 40px 20px; }
+            .frameworks-grid { grid-template-columns: 1fr; }
+            .matrix-table { display: block; overflow-x: auto; }
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <h1>Animation Framework Lab</h1>
+        <p>Test and compare Remotion, Manim, and Three.js for creating professional animations across different use cases</p>
+    </header>
+
+    <main class="container">
+        <a href="../dashboard/index.html" class="back-link">← Back to Dashboard</a>
+
+        <!-- Setup Server Banner -->
+        <div style="background: linear-gradient(135deg, #10b981, #059669); border-radius: 16px; padding: 24px 30px; margin-bottom: 30px; display: flex; align-items: center; gap: 20px; flex-wrap: wrap;">
+            <div style="background: #fff; color: #059669; padding: 6px 14px; border-radius: 100px; font-size: 0.8em; font-weight: 700;">SETUP</div>
+            <div style="flex: 1; min-width: 200px;">
+                <h3 style="margin-bottom: 4px;">Web Setup Dashboard</h3>
+                <p style="opacity: 0.9; font-size: 0.95em;">Install all frameworks from your browser with one click</p>
+            </div>
+            <code style="background: rgba(0,0,0,0.2); padding: 12px 20px; border-radius: 8px; font-family: monospace;">cd animation-lab && ./setup.sh</code>
+            <span style="font-size: 0.9em; opacity: 0.8;">→ Opens at localhost:3456</span>
+        </div>
+
+        <!-- Use Case Matrix -->
+        <h2 class="section-title">Use Case Matrix</h2>
+        <table class="matrix-table">
+            <thead>
+                <tr>
+                    <th>Use Case</th>
+                    <th>Recommended</th>
+                    <th>Why</th>
+                    <th>Status</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td class="use-case">Data Flow / Architecture</td>
+                    <td><span class="framework-badge badge-remotion">Remotion</span></td>
+                    <td>React components, reusable, agent-friendly</td>
+                    <td><span class="status-badge status-setup">Setup Required</span></td>
+                </tr>
+                <tr>
+                    <td class="use-case">Math / Equations</td>
+                    <td><span class="framework-badge badge-manim">Manim</span></td>
+                    <td>LaTeX, precise math rendering, 3b1b style</td>
+                    <td><span class="status-badge status-setup">Setup Required</span></td>
+                </tr>
+                <tr>
+                    <td class="use-case">Code Walkthroughs</td>
+                    <td><span class="framework-badge badge-remotion">Remotion</span></td>
+                    <td>Syntax highlighting, web-native</td>
+                    <td><span class="status-badge status-setup">Setup Required</span></td>
+                </tr>
+                <tr>
+                    <td class="use-case">Charts / Data Viz</td>
+                    <td>
+                        <span class="framework-badge badge-remotion">Remotion</span>
+                        <span class="framework-badge badge-d3">+ D3/Recharts</span>
+                    </td>
+                    <td>Dynamic data binding</td>
+                    <td><span class="status-badge status-setup">Setup Required</span></td>
+                </tr>
+                <tr>
+                    <td class="use-case">Process Diagrams</td>
+                    <td><span class="framework-badge badge-remotion">Remotion</span></td>
+                    <td>SVG animations</td>
+                    <td><span class="status-badge status-setup">Setup Required</span></td>
+                </tr>
+                <tr>
+                    <td class="use-case">Physics Simulations</td>
+                    <td>
+                        <span class="framework-badge badge-manim">Manim</span> or
+                        <span class="framework-badge badge-threejs">Three.js</span>
+                    </td>
+                    <td>Mathematical precision</td>
+                    <td><span class="status-badge status-ready">Three.js Ready</span></td>
+                </tr>
+            </tbody>
+        </table>
+
+        <!-- Framework Cards -->
+        <h2 class="section-title">Frameworks</h2>
+        <div class="frameworks-grid">
+            <!-- Remotion -->
+            <div class="framework-card remotion">
+                <div class="card-header">
+                    <h3>
+                        <svg width="28" height="28" viewBox="0 0 400 400" fill="none">
+                            <circle cx="200" cy="200" r="180" fill="#0b84f3"/>
+                            <path d="M140 130h120l-40 140h-80l40-100h-60z" fill="white"/>
+                        </svg>
+                        Remotion
+                    </h3>
+                    <p>Create videos programmatically with React. Perfect for code walkthroughs, data viz, and technical explainers.</p>
+                </div>
+                <div class="card-body">
+                    <div class="tech-stack">
+                        <span class="tech-tag">React</span>
+                        <span class="tech-tag">TypeScript</span>
+                        <span class="tech-tag">Node.js</span>
+                        <span class="tech-tag">FFmpeg</span>
+                    </div>
+                    <p style="color: var(--text-muted); font-size: 0.9em; margin-bottom: 15px;">
+                        Renders at 60fps, exports to MP4/WebM/GIF. Full React ecosystem available.
+                    </p>
+                </div>
+                <div class="card-actions">
+                    <a href="remotion/" class="btn btn-primary">Open Project</a>
+                    <a href="https://www.remotion.dev/docs" target="_blank" class="btn btn-secondary">Docs</a>
+                </div>
+            </div>
+
+            <!-- Manim -->
+            <div class="framework-card manim">
+                <div class="card-header">
+                    <h3>
+                        <svg width="28" height="28" viewBox="0 0 100 100">
+                            <circle cx="50" cy="50" r="45" fill="#e91e63"/>
+                            <text x="50" y="65" text-anchor="middle" fill="white" font-size="40" font-weight="bold">π</text>
+                        </svg>
+                        Manim
+                    </h3>
+                    <p>Mathematical animation engine by 3Blue1Brown. Ideal for equations, proofs, and physics visualizations.</p>
+                </div>
+                <div class="card-body">
+                    <div class="tech-stack">
+                        <span class="tech-tag">Python</span>
+                        <span class="tech-tag">LaTeX</span>
+                        <span class="tech-tag">Cairo</span>
+                        <span class="tech-tag">FFmpeg</span>
+                    </div>
+                    <p style="color: var(--text-muted); font-size: 0.9em; margin-bottom: 15px;">
+                        Precise mathematical rendering with beautiful animations. Outputs MP4/GIF/SVG.
+                    </p>
+                </div>
+                <div class="card-actions">
+                    <a href="manim/" class="btn btn-primary">Open Project</a>
+                    <a href="https://docs.manim.community/" target="_blank" class="btn btn-secondary">Docs</a>
+                </div>
+            </div>
+
+            <!-- Three.js -->
+            <div class="framework-card threejs">
+                <div class="card-header">
+                    <h3>
+                        <svg width="28" height="28" viewBox="0 0 100 100">
+                            <polygon points="50,10 90,80 10,80" fill="none" stroke="#049ef4" stroke-width="6"/>
+                            <polygon points="50,30 70,70 30,70" fill="#049ef4"/>
+                        </svg>
+                        Three.js
+                    </h3>
+                    <p>3D graphics library for the web. Perfect for interactive physics simulations and 3D visualizations.</p>
+                </div>
+                <div class="card-body">
+                    <div class="tech-stack">
+                        <span class="tech-tag">JavaScript</span>
+                        <span class="tech-tag">WebGL</span>
+                        <span class="tech-tag">Browser-Native</span>
+                    </div>
+                    <p style="color: var(--text-muted); font-size: 0.9em; margin-bottom: 15px;">
+                        Runs directly in browser. Interactive, real-time 3D graphics.
+                    </p>
+                </div>
+                <div class="card-actions">
+                    <a href="threejs/physics-demo.html" class="btn btn-primary">Physics Demo</a>
+                    <a href="threejs/model-showcase.html" class="btn btn-primary">Model Viewer</a>
+                    <a href="https://threejs.org/docs/" target="_blank" class="btn btn-secondary">Docs</a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Quick Setup -->
+        <h2 class="section-title">Quick Setup</h2>
+
+        <div class="setup-section">
+            <h4>Remotion Setup</h4>
+            <div class="code-block">
+                <code>
+<span class="code-comment"># Navigate to remotion folder</span>
+<span class="code-command">cd</span> animation-lab/remotion
+
+<span class="code-comment"># Install dependencies</span>
+<span class="code-command">npm</span> install
+
+<span class="code-comment"># Start development server</span>
+<span class="code-command">npm</span> start
+
+<span class="code-comment"># Render to MP4</span>
+<span class="code-command">npm</span> run build
+                </code>
+            </div>
+        </div>
+
+        <div class="setup-section">
+            <h4>Manim Setup</h4>
+            <div class="code-block">
+                <code>
+<span class="code-comment"># Create virtual environment</span>
+<span class="code-command">cd</span> animation-lab/manim
+<span class="code-command">python</span> <span class="code-flag">-m</span> venv venv
+<span class="code-command">source</span> venv/bin/activate  <span class="code-comment"># Linux/Mac</span>
+
+<span class="code-comment"># Install manim</span>
+<span class="code-command">pip</span> install <span class="code-flag">-r</span> requirements.txt
+
+<span class="code-comment"># Render a scene</span>
+<span class="code-command">manim</span> <span class="code-flag">-pql</span> scenes/math_equations.py EquationScene
+                </code>
+            </div>
+        </div>
+
+        <div class="setup-section">
+            <h4>Three.js</h4>
+            <div class="code-block">
+                <code>
+<span class="code-comment"># No setup required! Just open in browser:</span>
+<span class="code-command">open</span> animation-lab/threejs/physics-demo.html
+
+<span class="code-comment"># Or serve locally for best experience:</span>
+<span class="code-command">npx</span> serve animation-lab/threejs
+                </code>
+            </div>
+        </div>
+    </main>
+
+    <footer style="text-align: center; padding: 40px; color: var(--text-muted); border-top: 1px solid rgba(255,255,255,0.1);">
+        <p>Animation Framework Lab - Part of LunoLabs Documentation Showcase</p>
+    </footer>
+
+    <script src="../shared/nav-component.js"></script>
+</body>
+</html>

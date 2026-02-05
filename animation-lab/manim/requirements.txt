@@ -1,0 +1,14 @@
+# Manim Animation Framework
+# Install with: pip install -r requirements.txt
+
+# Core Manim - Community Edition
+manim>=0.18.0
+
+# Optional dependencies for enhanced features
+numpy>=1.24.0
+scipy>=1.11.0
+Pillow>=10.0.0
+
+# For LaTeX support (ensure texlive is installed on system)
+# sudo apt install texlive-full  # Linux
+# brew install --cask mactex     # macOS

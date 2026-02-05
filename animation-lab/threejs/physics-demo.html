@@ -1,0 +1,627 @@
+<!--
+==============================================================================
+FILE METADATA
+==============================================================================
+filename:       physics-demo.html
+created:        2026-01-27
+updated:        2026-01-27
+version:        1.1.0
+status:         active
+rating:         ★★★★★
+author:         Joel + Claude
+related_docs:   [../index.html]
+description:    Interactive Three.js physics simulation demo
+==============================================================================
+-->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Interactive Three.js Physics Demo - Particle simulation and 3D visualization">
+    <title>Three.js Physics Demo - Animation Lab</title>
+    <style>
+        :root {
+            --color-primary: #6366f1;
+            --color-secondary: #ec4899;
+            --color-accent: #10b981;
+            --bg-darker: #0a0a1a;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Segoe UI', system-ui, sans-serif;
+            background: var(--bg-darker);
+            color: white;
+            overflow: hidden;
+        }
+
+        #canvas-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+        }
+
+        .ui-overlay {
+            position: fixed;
+            z-index: 10;
+            pointer-events: none;
+        }
+
+        .ui-overlay > * {
+            pointer-events: auto;
+        }
+
+        .header {
+            top: 0;
+            left: 0;
+            right: 0;
+            padding: 20px 30px;
+            background: linear-gradient(180deg, rgba(10,10,26,0.9), transparent);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .header h1 {
+            font-size: 1.5em;
+            font-weight: 600;
+        }
+
+        .back-link {
+            color: rgba(255,255,255,0.7);
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: color 0.3s;
+        }
+
+        .back-link:hover { color: white; }
+
+        .controls {
+            bottom: 30px;
+            left: 30px;
+            background: rgba(255,255,255,0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 16px;
+            padding: 20px;
+            min-width: 280px;
+        }
+
+        .controls h3 {
+            font-size: 1em;
+            margin-bottom: 15px;
+            color: var(--color-accent);
+        }
+
+        .control-group {
+            margin-bottom: 15px;
+        }
+
+        .control-group label {
+            display: block;
+            font-size: 0.85em;
+            color: rgba(255,255,255,0.7);
+            margin-bottom: 5px;
+        }
+
+        .control-group input[type="range"] {
+            width: 100%;
+            accent-color: var(--color-primary);
+        }
+
+        .control-group .value {
+            font-size: 0.8em;
+            color: var(--color-primary);
+            float: right;
+        }
+
+        .btn {
+            width: 100%;
+            padding: 12px;
+            border: none;
+            border-radius: 10px;
+            font-size: 0.95em;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin-top: 10px;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--color-primary), var(--color-secondary));
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: scale(1.02);
+            box-shadow: 0 10px 30px rgba(99, 102, 241, 0.3);
+        }
+
+        .btn-secondary {
+            background: rgba(255,255,255,0.1);
+            color: white;
+            border: 1px solid rgba(255,255,255,0.2);
+        }
+
+        .btn-secondary:hover {
+            background: rgba(255,255,255,0.15);
+        }
+
+        .stats {
+            bottom: 30px;
+            right: 30px;
+            background: rgba(255,255,255,0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 16px;
+            padding: 20px;
+            font-family: monospace;
+            font-size: 0.85em;
+        }
+
+        .stats-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 5px 0;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .stats-row:last-child { border: none; }
+
+        .stats-label { color: rgba(255,255,255,0.6); }
+        .stats-value { color: var(--color-accent); }
+
+        .demo-selector {
+            top: 80px;
+            right: 30px;
+            display: flex;
+            gap: 10px;
+        }
+
+        .demo-btn {
+            padding: 10px 20px;
+            background: rgba(255,255,255,0.1);
+            border: 1px solid rgba(255,255,255,0.2);
+            border-radius: 10px;
+            color: white;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .demo-btn:hover, .demo-btn.active {
+            background: var(--color-primary);
+            border-color: var(--color-primary);
+        }
+
+        .instructions {
+            top: 80px;
+            left: 30px;
+            background: rgba(255,255,255,0.05);
+            padding: 15px 20px;
+            border-radius: 12px;
+            font-size: 0.9em;
+            max-width: 300px;
+        }
+
+        .instructions p {
+            color: rgba(255,255,255,0.7);
+            margin-bottom: 8px;
+        }
+
+        .instructions kbd {
+            background: rgba(255,255,255,0.1);
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-family: monospace;
+        }
+    </style>
+</head>
+<body>
+    <div id="canvas-container"></div>
+
+    <!-- Header -->
+    <div class="ui-overlay header">
+        <h1>Three.js Physics Demo</h1>
+        <a href="../index.html" class="back-link">← Back to Lab</a>
+    </div>
+
+    <!-- Demo Selector -->
+    <div class="ui-overlay demo-selector">
+        <button class="demo-btn active" data-demo="particles">Particles</button>
+        <button class="demo-btn" data-demo="orbits">Orbits</button>
+        <button class="demo-btn" data-demo="waves">Waves</button>
+    </div>
+
+    <!-- Instructions -->
+    <div class="ui-overlay instructions">
+        <p><kbd>Click + Drag</kbd> to rotate camera</p>
+        <p><kbd>Scroll</kbd> to zoom in/out</p>
+        <p><kbd>Space</kbd> to pause/resume</p>
+    </div>
+
+    <!-- Controls Panel -->
+    <div class="ui-overlay controls">
+        <h3>Simulation Controls</h3>
+
+        <div class="control-group">
+            <label>Particle Count <span class="value" id="particle-count-val">500</span></label>
+            <input type="range" id="particle-count" min="100" max="2000" value="500" step="100">
+        </div>
+
+        <div class="control-group">
+            <label>Speed <span class="value" id="speed-val">1.0x</span></label>
+            <input type="range" id="speed" min="0.1" max="3" value="1" step="0.1">
+        </div>
+
+        <div class="control-group">
+            <label>Gravity <span class="value" id="gravity-val">0.5</span></label>
+            <input type="range" id="gravity" min="0" max="2" value="0.5" step="0.1">
+        </div>
+
+        <button class="btn btn-primary" id="reset-btn">Reset Simulation</button>
+        <button class="btn btn-secondary" id="screenshot-btn">Take Screenshot</button>
+    </div>
+
+    <!-- Stats Panel -->
+    <div class="ui-overlay stats">
+        <div class="stats-row">
+            <span class="stats-label">FPS</span>
+            <span class="stats-value" id="fps">60</span>
+        </div>
+        <div class="stats-row">
+            <span class="stats-label">Particles</span>
+            <span class="stats-value" id="particle-stat">500</span>
+        </div>
+        <div class="stats-row">
+            <span class="stats-label">Draw Calls</span>
+            <span class="stats-value" id="draw-calls">1</span>
+        </div>
+    </div>
+
+    <!-- Three.js from CDN -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+
+    <script>
+        // =====================================================================
+        // Three.js Physics Demo
+        // =====================================================================
+
+        // =====================================================================
+        // Configuration Constants (replaces magic numbers)
+        // =====================================================================
+        const CONFIG = {
+            // Scene
+            BACKGROUND_COLOR: 0x0a0a1a,
+            FOG_DENSITY: 0.02,
+
+            // Camera
+            CAMERA_FOV: 75,
+            CAMERA_NEAR: 0.1,
+            CAMERA_FAR: 1000,
+            CAMERA_POSITION: { x: 0, y: 10, z: 30 },
+
+            // Controls
+            ORBIT_DAMPING: 0.05,
+            ORBIT_MAX_DISTANCE: 100,
+            ORBIT_MIN_DISTANCE: 5,
+
+            // Grid
+            GRID_SIZE: 50,
+            GRID_DIVISIONS: 50,
+
+            // Particles
+            SPAWN_RADIUS: 15,
+            SPAWN_HEIGHT_OFFSET: 10,
+            INITIAL_VELOCITY_RANGE: 2,
+            PARTICLE_SIZE: 0.3,
+            PARTICLE_OPACITY: 0.8,
+
+            // Physics
+            GRAVITY_MULTIPLIER: 10,
+            VELOCITY_SCALE: 5,
+            BOUNCE_ENERGY_RETENTION: 0.8,
+            WORLD_BOUNDS: 25,
+
+            // Colors (particle gradient: purple to pink)
+            COLOR_R_BASE: 0.4,
+            COLOR_R_RANGE: 0.6,
+            COLOR_G_BASE: 0.2,
+            COLOR_G_RANGE: 0.3,
+            COLOR_B_BASE: 0.9,
+            COLOR_B_RANGE: 0.4,
+
+            // Performance
+            MAX_PIXEL_RATIO: 2,
+            MAX_FPS_DISPLAY: 60
+        };
+
+        // =====================================================================
+        // State Variables
+        // =====================================================================
+        let scene, camera, renderer, controls;
+        let particles, particleSystem;
+        let clock, deltaTime;
+        let isPaused = false;
+        let currentDemo = 'particles';
+
+        // Simulation parameters (user-adjustable)
+        const params = {
+            particleCount: 500,
+            speed: 1.0,
+            gravity: 0.5
+        };
+
+        // Particle data arrays
+        let positions, velocities, colors;
+
+        // =====================================================================
+        // Initialize
+        // =====================================================================
+
+        function init() {
+            // Scene
+            scene = new THREE.Scene();
+            scene.background = new THREE.Color(CONFIG.BACKGROUND_COLOR);
+            scene.fog = new THREE.FogExp2(CONFIG.BACKGROUND_COLOR, CONFIG.FOG_DENSITY);
+
+            // Camera
+            camera = new THREE.PerspectiveCamera(
+                CONFIG.CAMERA_FOV,
+                window.innerWidth / window.innerHeight,
+                CONFIG.CAMERA_NEAR,
+                CONFIG.CAMERA_FAR
+            );
+            camera.position.set(
+                CONFIG.CAMERA_POSITION.x,
+                CONFIG.CAMERA_POSITION.y,
+                CONFIG.CAMERA_POSITION.z
+            );
+
+            // Renderer
+            renderer = new THREE.WebGLRenderer({ antialias: true });
+            renderer.setSize(window.innerWidth, window.innerHeight);
+            renderer.setPixelRatio(Math.min(window.devicePixelRatio, CONFIG.MAX_PIXEL_RATIO));
+            document.getElementById('canvas-container').appendChild(renderer.domElement);
+
+            // Controls
+            controls = new THREE.OrbitControls(camera, renderer.domElement);
+            controls.enableDamping = true;
+            controls.dampingFactor = CONFIG.ORBIT_DAMPING;
+            controls.maxDistance = CONFIG.ORBIT_MAX_DISTANCE;
+            controls.minDistance = CONFIG.ORBIT_MIN_DISTANCE;
+
+            // Clock
+            clock = new THREE.Clock();
+
+            // Create particle system
+            createParticleSystem();
+
+            // Add grid helper
+            const grid = new THREE.GridHelper(CONFIG.GRID_SIZE, CONFIG.GRID_DIVISIONS, 0x444444, 0x222222);
+            scene.add(grid);
+
+            // Add ambient light
+            const ambientLight = new THREE.AmbientLight(0xffffff, 0.5);
+            scene.add(ambientLight);
+
+            // Setup event listeners
+            setupEventListeners();
+
+            // Start animation loop
+            animate();
+        }
+
+        // =====================================================================
+        // Particle System
+        // =====================================================================
+
+        function createParticleSystem() {
+            // Remove existing system
+            if (particleSystem) {
+                scene.remove(particleSystem);
+                particleSystem.geometry.dispose();
+                particleSystem.material.dispose();
+            }
+
+            const count = params.particleCount;
+
+            // Geometry
+            const geometry = new THREE.BufferGeometry();
+
+            // Attributes
+            positions = new Float32Array(count * 3);
+            velocities = new Float32Array(count * 3);
+            colors = new Float32Array(count * 3);
+
+            // Initialize particles
+            for (let i = 0; i < count; i++) {
+                const i3 = i * 3;
+
+                // Random positions in a sphere
+                const theta = Math.random() * Math.PI * 2;
+                const phi = Math.acos(2 * Math.random() - 1);
+                const radius = Math.random() * CONFIG.SPAWN_RADIUS;
+
+                positions[i3] = radius * Math.sin(phi) * Math.cos(theta);
+                positions[i3 + 1] = radius * Math.sin(phi) * Math.sin(theta) + CONFIG.SPAWN_HEIGHT_OFFSET;
+                positions[i3 + 2] = radius * Math.cos(phi);
+
+                // Random velocities
+                velocities[i3] = (Math.random() - 0.5) * CONFIG.INITIAL_VELOCITY_RANGE;
+                velocities[i3 + 1] = (Math.random() - 0.5) * CONFIG.INITIAL_VELOCITY_RANGE;
+                velocities[i3 + 2] = (Math.random() - 0.5) * CONFIG.INITIAL_VELOCITY_RANGE;
+
+                // Gradient colors (purple to pink)
+                const t = i / count;
+                colors[i3] = CONFIG.COLOR_R_BASE + t * CONFIG.COLOR_R_RANGE;
+                colors[i3 + 1] = CONFIG.COLOR_G_BASE + t * CONFIG.COLOR_G_RANGE;
+                colors[i3 + 2] = CONFIG.COLOR_B_BASE - t * CONFIG.COLOR_B_RANGE;
+            }
+
+            geometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+            geometry.setAttribute('color', new THREE.BufferAttribute(colors, 3));
+
+            // Material
+            const material = new THREE.PointsMaterial({
+                size: CONFIG.PARTICLE_SIZE,
+                vertexColors: true,
+                transparent: true,
+                opacity: CONFIG.PARTICLE_OPACITY,
+                blending: THREE.AdditiveBlending,
+                sizeAttenuation: true
+            });
+
+            // Create points
+            particleSystem = new THREE.Points(geometry, material);
+            scene.add(particleSystem);
+
+            // Update stats
+            document.getElementById('particle-stat').textContent = count;
+        }
+
+        // =====================================================================
+        // Animation Loop
+        // =====================================================================
+
+        function animate() {
+            requestAnimationFrame(animate);
+
+            deltaTime = clock.getDelta();
+
+            if (!isPaused) {
+                updateParticles();
+            }
+
+            controls.update();
+            renderer.render(scene, camera);
+
+            // Update FPS
+            const fps = Math.round(1 / deltaTime);
+            document.getElementById('fps').textContent = Math.min(fps, CONFIG.MAX_FPS_DISPLAY);
+            document.getElementById('draw-calls').textContent = renderer.info.render.calls;
+        }
+
+        function updateParticles() {
+            if (!particleSystem) return;
+
+            const positions = particleSystem.geometry.attributes.position.array;
+            const speed = params.speed;
+            const gravity = params.gravity;
+            const dt = deltaTime * speed;
+
+            for (let i = 0; i < params.particleCount; i++) {
+                const i3 = i * 3;
+
+                // Apply gravity
+                velocities[i3 + 1] -= gravity * dt * CONFIG.GRAVITY_MULTIPLIER;
+
+                // Update positions
+                positions[i3] += velocities[i3] * dt * CONFIG.VELOCITY_SCALE;
+                positions[i3 + 1] += velocities[i3 + 1] * dt * CONFIG.VELOCITY_SCALE;
+                positions[i3 + 2] += velocities[i3 + 2] * dt * CONFIG.VELOCITY_SCALE;
+
+                // Bounce off floor
+                if (positions[i3 + 1] < 0) {
+                    positions[i3 + 1] = 0;
+                    velocities[i3 + 1] *= -CONFIG.BOUNCE_ENERGY_RETENTION;
+                }
+
+                // Contain in bounds
+                if (Math.abs(positions[i3]) > CONFIG.WORLD_BOUNDS) {
+                    positions[i3] = Math.sign(positions[i3]) * CONFIG.WORLD_BOUNDS;
+                    velocities[i3] *= -CONFIG.BOUNCE_ENERGY_RETENTION;
+                }
+                if (Math.abs(positions[i3 + 2]) > CONFIG.WORLD_BOUNDS) {
+                    positions[i3 + 2] = Math.sign(positions[i3 + 2]) * CONFIG.WORLD_BOUNDS;
+                    velocities[i3 + 2] *= -CONFIG.BOUNCE_ENERGY_RETENTION;
+                }
+            }
+
+            particleSystem.geometry.attributes.position.needsUpdate = true;
+        }
+
+        // =====================================================================
+        // Event Listeners
+        // =====================================================================
+
+        function setupEventListeners() {
+            // Window resize
+            window.addEventListener('resize', () => {
+                camera.aspect = window.innerWidth / window.innerHeight;
+                camera.updateProjectionMatrix();
+                renderer.setSize(window.innerWidth, window.innerHeight);
+            });
+
+            // Keyboard
+            window.addEventListener('keydown', (e) => {
+                if (e.code === 'Space') {
+                    isPaused = !isPaused;
+                    e.preventDefault();
+                }
+            });
+
+            // Controls
+            document.getElementById('particle-count').addEventListener('input', (e) => {
+                params.particleCount = parseInt(e.target.value);
+                document.getElementById('particle-count-val').textContent = params.particleCount;
+            });
+
+            document.getElementById('particle-count').addEventListener('change', () => {
+                createParticleSystem();
+            });
+
+            document.getElementById('speed').addEventListener('input', (e) => {
+                params.speed = parseFloat(e.target.value);
+                document.getElementById('speed-val').textContent = params.speed.toFixed(1) + 'x';
+            });
+
+            document.getElementById('gravity').addEventListener('input', (e) => {
+                params.gravity = parseFloat(e.target.value);
+                document.getElementById('gravity-val').textContent = params.gravity.toFixed(1);
+            });
+
+            // Buttons
+            document.getElementById('reset-btn').addEventListener('click', () => {
+                createParticleSystem();
+            });
+
+            document.getElementById('screenshot-btn').addEventListener('click', () => {
+                renderer.render(scene, camera);
+                const dataURL = renderer.domElement.toDataURL('image/png');
+                const link = document.createElement('a');
+                link.download = 'threejs-physics-demo.png';
+                link.href = dataURL;
+                link.click();
+            });
+
+            // Demo selector
+            document.querySelectorAll('.demo-btn').forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    document.querySelectorAll('.demo-btn').forEach(b => b.classList.remove('active'));
+                    e.target.classList.add('active');
+                    switchDemo(e.target.dataset.demo);
+                });
+            });
+        }
+
+        function switchDemo(demo) {
+            currentDemo = demo;
+            // For now, all demos use the same particle system
+            // Could extend with different simulation modes
+            createParticleSystem();
+        }
+
+        // =====================================================================
+        // Start
+        // =====================================================================
+
+        init();
+    </script>
+</body>
+</html>
