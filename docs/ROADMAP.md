@@ -4,8 +4,8 @@ FILE METADATA
 ==============================================================================
 filename:       ROADMAP.md
 created:        2026-01-16
-updated:        2026-01-16
-version:        1.0.0
+updated:        2026-02-09
+version:        1.1.0
 status:         active
 rating:         ★★★★☆
 author:         Joel + Claude
@@ -36,36 +36,37 @@ Create a best-in-class collection of interactive documentation formats that show
 
 | Task | Priority | Status | Due |
 |------|----------|--------|-----|
-| Alt text for images | High | ⏳ Pending | Jan 17 |
-| Color contrast fixes | High | ⏳ Pending | Jan 17 |
-| JS error handling | High | ⏳ Pending | Jan 18 |
-| Keyboard accessibility | High | ⏳ Pending | Jan 18 |
-| CSS variable consolidation | Medium | ⏳ Pending | Jan 19 |
-| Meta descriptions | Medium | ⏳ Pending | Jan 19 |
-| ARIA landmarks | Medium | ⏳ Pending | Jan 20 |
-| Focus indicators | Medium | ⏳ Pending | Jan 20 |
-| Extract common CSS | Low | ⏳ Pending | Jan 21 |
-| Favicon | Low | ⏳ Pending | Jan 21 |
-| Open Graph tags | Low | ⏳ Pending | Jan 22 |
-| Performance hints | Low | ⏳ Pending | Jan 22 |
+| Alt text for images | High | ✅ Done | Jan 16 |
+| Color contrast fixes | High | ✅ Done | Jan 16 |
+| JS error handling | High | ✅ Done | Jan 16 |
+| Keyboard accessibility | High | ✅ Done | Jan 16 |
+| CSS variable consolidation | Medium | ✅ Done | Jan 19 |
+| Meta descriptions | Medium | ✅ Done | Jan 16 |
+| ARIA landmarks | Medium | ✅ Done | Jan 19 |
+| Focus indicators | Medium | ✅ Done | Jan 16 |
+| Extract common CSS | Low | ✅ Done | Feb 9 |
+| Favicon | Low | ✅ Done | Jan 19 |
+| Open Graph tags | Low | ✅ Done | Jan 19 |
+| Performance hints | Low | ✅ Done | Jan 19 |
 
-**Progress:** 0/12 tasks (0%)
+**Progress:** ✅ 12/12 tasks (100%) — SPRINT COMPLETE
 
 ---
 
 ## Upcoming Milestones
 
-### v1.1.0 - Quality Release (Jan 23, 2026)
-- [ ] All accessibility fixes complete
-- [ ] Consistent CSS across all files
-- [ ] JavaScript error handling improved
-- [ ] Meta tags for SEO
+### v1.1.0 - Quality Release (Feb 9, 2026) ✅
+- [x] All accessibility fixes complete
+- [x] Consistent CSS across all files
+- [x] JavaScript error handling improved
+- [x] Meta tags for SEO
+- [x] Shared CSS stylesheet extracted (`shared/styles/base.css`)
 
 ### v1.2.0 - Performance Release (Feb 2026)
-- [ ] Shared CSS stylesheet extracted
 - [ ] Image optimization with srcset
 - [ ] Lazy loading implemented
 - [ ] Bundle size reduced
+- [ ] Gradually remove duplicated inline CSS from individual pages
 
 ### v1.3.0 - Enhancement Release (Mar 2026)
 - [ ] New interactive components
@@ -114,16 +115,16 @@ Phase 1: Foundation     [██████████████████�
 ├── 7 presentation formats
 └── LunoLabs offerte documents
 
-Phase 2: Quality        [░░░░░░░░░░░░░░░░░░░░]   0% ← Current
+Phase 2: Quality        [████████████████████] 100% ✓
 ├── Accessibility (WCAG 2.1)
-├── CSS consolidation
+├── CSS consolidation + shared base.css
 ├── JavaScript improvements
 └── SEO & meta tags
 
-Phase 3: Performance    [░░░░░░░░░░░░░░░░░░░░]   0%
-├── Shared stylesheets
+Phase 3: Performance    [░░░░░░░░░░░░░░░░░░░░]   0% ← Current
 ├── Image optimization
 ├── Lazy loading
+├── Inline CSS deduplication
 └── Cache strategies
 
 Phase 4: Enhancement    [░░░░░░░░░░░░░░░░░░░░]   0%
@@ -142,7 +143,7 @@ Phase 4: Enhancement    [░░░░░░░░░░░░░░░░░░�
 | 1.0.0 | Jan 2026 | Initial release with 7 formats |
 | 1.0.1 | Jan 2026 | Added LunoLabs Offerte v2 |
 | 1.0.2 | Jan 2026 | Added enhanced versions |
-| 1.1.0 | Jan 2026 | Quality improvements (planned) |
+| 1.1.0 | Feb 2026 | Quality improvements (accessibility, CSS, JS, SEO) ✅ |
 
 ---
 
@@ -150,11 +151,11 @@ Phase 4: Enhancement    [░░░░░░░░░░░░░░░░░░�
 
 | Metric | Current | Target |
 |--------|---------|--------|
-| Lighthouse Accessibility | ~70 | 95+ |
+| Lighthouse Accessibility | ~90 | 95+ |
 | Lighthouse Performance | ~80 | 90+ |
-| WCAG Compliance | Partial | AA |
-| Files with metadata | 0% | 100% |
-| Code duplication | High | Low |
+| WCAG Compliance | AA (core) | AA |
+| Files with metadata | ~60% | 100% |
+| Code duplication | Medium | Low |
 
 ---
 
@@ -179,4 +180,4 @@ Phase 4: Enhancement    [░░░░░░░░░░░░░░░░░░�
 
 ---
 
-*Last updated: 2026-01-16*
+*Last updated: 2026-02-09*
