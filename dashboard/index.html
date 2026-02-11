@@ -27,18 +27,18 @@
             box-sizing: border-box;
         }
         :root {
-            /* Warm Professional Color System */
+            /* Cool Blue & White Color System */
             --color-primary: #3b82f6;
             --color-primary-dark: #2563eb;
-            --color-secondary: #f59e0b;
-            --color-accent: #10b981;
+            --color-secondary: #93c5fd;
+            --color-accent: #bfdbfe;
             --color-warning: #f59e0b;
             --color-danger: #ef4444;
 
-            /* Background Colors - Warmer tones */
-            --bg-darker: #111827;
-            --bg-dark: #1f2937;
-            --bg-card: rgba(255,255,255,0.04);
+            /* Background Colors - Deep blue tones */
+            --bg-darker: #0b1121;
+            --bg-dark: #111c32;
+            --bg-card: rgba(147,197,253,0.04);
 
             /* Text Colors */
             --text-primary: #ffffff;
@@ -2025,13 +2025,14 @@
     <!-- Three.js Animated Background -->
     <script>
         (function() {
-            // Three.js Setup
             const canvas = document.getElementById('webgl-bg');
             if (!canvas || typeof THREE === 'undefined') return;
 
             const scene = new THREE.Scene();
-            const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
-            camera.position.z = 30;
+            scene.fog = new THREE.FogExp2(0x0b1121, 0.018);
+
+            const camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 0.1, 1000);
+            camera.position.z = 35;
 
             const renderer = new THREE.WebGLRenderer({
                 canvas: canvas,
@@ -2040,95 +2041,80 @@
             });
             renderer.setSize(window.innerWidth, window.innerHeight);
             renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+            renderer.setClearColor(0x0b1121, 0);
 
-            // Get theme colors
-            function getThemeColors() {
-                const style = getComputedStyle(document.documentElement);
-                return {
-                    primary: style.getPropertyValue('--color-primary').trim() || '#3b82f6',
-                    secondary: style.getPropertyValue('--color-secondary').trim() || '#f59e0b',
-                    accent: style.getPropertyValue('--color-accent').trim() || '#10b981'
-                };
-            }
-
-            // Create floating geometric shapes
-            const shapes = [];
-            const geometries = [
-                new THREE.IcosahedronGeometry(1, 0),
-                new THREE.OctahedronGeometry(1, 0),
-                new THREE.TetrahedronGeometry(1, 0),
-                new THREE.BoxGeometry(1.2, 1.2, 1.2),
-                new THREE.TorusGeometry(0.7, 0.3, 8, 16)
+            // Blue & white palette
+            const palette = [
+                '#3b82f6', '#60a5fa', '#93c5fd', '#bfdbfe',
+                '#dbeafe', '#ffffff', '#2563eb', '#1d4ed8'
             ];
 
-            function createShapes() {
-                const colors = getThemeColors();
-                const colorArray = [colors.primary, colors.secondary, colors.accent];
+            // Smooth geometries — spheres, rounded torus, soft icosahedrons
+            const geometries = [
+                new THREE.SphereGeometry(1, 24, 24),
+                new THREE.SphereGeometry(0.6, 16, 16),
+                new THREE.IcosahedronGeometry(1, 2),
+                new THREE.TorusGeometry(0.8, 0.35, 16, 32),
+                new THREE.OctahedronGeometry(0.8, 2)
+            ];
 
-                for (let i = 0; i < 40; i++) {
-                    const geometry = geometries[Math.floor(Math.random() * geometries.length)];
-                    const color = colorArray[Math.floor(Math.random() * colorArray.length)];
+            const shapes = [];
 
-                    const material = new THREE.MeshBasicMaterial({
-                        color: color,
-                        wireframe: true,
-                        transparent: true,
-                        opacity: 0.15 + Math.random() * 0.2
-                    });
+            for (let i = 0; i < 55; i++) {
+                const geo = geometries[Math.floor(Math.random() * geometries.length)];
+                const color = palette[Math.floor(Math.random() * palette.length)];
+                const useWireframe = Math.random() > 0.5;
 
-                    const mesh = new THREE.Mesh(geometry, material);
+                const material = new THREE.MeshBasicMaterial({
+                    color: color,
+                    wireframe: useWireframe,
+                    transparent: true,
+                    opacity: useWireframe ? 0.08 + Math.random() * 0.12 : 0.03 + Math.random() * 0.06
+                });
 
-                    // Random position in 3D space
-                    mesh.position.x = (Math.random() - 0.5) * 60;
-                    mesh.position.y = (Math.random() - 0.5) * 40;
-                    mesh.position.z = (Math.random() - 0.5) * 30 - 10;
+                const mesh = new THREE.Mesh(geo, material);
 
-                    // Random scale
-                    const scale = 0.5 + Math.random() * 2;
-                    mesh.scale.set(scale, scale, scale);
+                mesh.position.x = (Math.random() - 0.5) * 70;
+                mesh.position.y = (Math.random() - 0.5) * 50;
+                mesh.position.z = (Math.random() - 0.5) * 40 - 10;
 
-                    // Store animation properties
-                    mesh.userData = {
-                        rotationSpeed: {
-                            x: (Math.random() - 0.5) * 0.01,
-                            y: (Math.random() - 0.5) * 0.01,
-                            z: (Math.random() - 0.5) * 0.005
-                        },
-                        floatSpeed: 0.0005 + Math.random() * 0.001,
-                        floatOffset: Math.random() * Math.PI * 2,
-                        originalY: mesh.position.y
-                    };
+                const scale = 0.4 + Math.random() * 2.5;
+                mesh.scale.set(scale, scale, scale);
 
-                    shapes.push(mesh);
-                    scene.add(mesh);
-                }
+                mesh.userData = {
+                    rx: (Math.random() - 0.5) * 0.003,
+                    ry: (Math.random() - 0.5) * 0.004,
+                    floatSpeed: 0.2 + Math.random() * 0.4,
+                    floatAmp: 1 + Math.random() * 2,
+                    phase: Math.random() * Math.PI * 2,
+                    baseY: mesh.position.y,
+                    driftX: (Math.random() - 0.5) * 0.003
+                };
+
+                shapes.push(mesh);
+                scene.add(mesh);
             }
 
-            createShapes();
-
-            // Create connecting lines between nearby shapes
-            const lineMaterial = new THREE.LineBasicMaterial({
-                color: getThemeColors().primary,
+            // Soft connecting lines
+            const lineMat = new THREE.LineBasicMaterial({
+                color: 0x60a5fa,
                 transparent: true,
-                opacity: 0.08
+                opacity: 0.04
             });
             const lines = [];
 
-            function updateConnections() {
-                // Remove old lines
-                lines.forEach(line => scene.remove(line));
+            function updateLines() {
+                lines.forEach(l => scene.remove(l));
                 lines.length = 0;
 
-                // Create new connections for nearby shapes
                 for (let i = 0; i < shapes.length; i++) {
                     for (let j = i + 1; j < shapes.length; j++) {
-                        const dist = shapes[i].position.distanceTo(shapes[j].position);
-                        if (dist < 15) {
-                            const geometry = new THREE.BufferGeometry().setFromPoints([
-                                shapes[i].position,
-                                shapes[j].position
+                        const d = shapes[i].position.distanceTo(shapes[j].position);
+                        if (d < 12) {
+                            const g = new THREE.BufferGeometry().setFromPoints([
+                                shapes[i].position, shapes[j].position
                             ]);
-                            const line = new THREE.Line(geometry, lineMaterial);
+                            const line = new THREE.Line(g, lineMat);
                             lines.push(line);
                             scene.add(line);
                         }
@@ -2136,43 +2122,41 @@
                 }
             }
 
-            // Mouse interaction
-            let mouseX = 0, mouseY = 0;
+            // Mouse parallax
+            let mx = 0, my = 0;
             document.addEventListener('mousemove', (e) => {
-                mouseX = (e.clientX / window.innerWidth) * 2 - 1;
-                mouseY = -(e.clientY / window.innerHeight) * 2 + 1;
+                mx = (e.clientX / window.innerWidth) * 2 - 1;
+                my = -(e.clientY / window.innerHeight) * 2 + 1;
             });
 
-            // Animation loop
-            let time = 0;
-            let connectionTimer = 0;
+            let t = 0;
+            let lineTimer = 0;
 
             function animate() {
                 requestAnimationFrame(animate);
-                time += 0.016;
-                connectionTimer += 0.016;
+                t += 0.008;
+                lineTimer += 0.016;
 
-                // Animate shapes
-                shapes.forEach((shape, i) => {
-                    // Rotation
-                    shape.rotation.x += shape.userData.rotationSpeed.x;
-                    shape.rotation.y += shape.userData.rotationSpeed.y;
-                    shape.rotation.z += shape.userData.rotationSpeed.z;
+                shapes.forEach(s => {
+                    s.rotation.x += s.userData.rx;
+                    s.rotation.y += s.userData.ry;
+                    s.position.y = s.userData.baseY +
+                        Math.sin(t * s.userData.floatSpeed + s.userData.phase) * s.userData.floatAmp;
+                    s.position.x += s.userData.driftX;
 
-                    // Floating motion
-                    shape.position.y = shape.userData.originalY +
-                        Math.sin(time * shape.userData.floatSpeed * 100 + shape.userData.floatOffset) * 2;
+                    // Wrap around horizontally
+                    if (s.position.x > 40) s.position.x = -40;
+                    if (s.position.x < -40) s.position.x = 40;
                 });
 
-                // Subtle camera movement based on mouse
-                camera.position.x += (mouseX * 3 - camera.position.x) * 0.02;
-                camera.position.y += (mouseY * 2 - camera.position.y) * 0.02;
+                // Smooth camera follow
+                camera.position.x += (mx * 2.5 - camera.position.x) * 0.01;
+                camera.position.y += (my * 1.5 - camera.position.y) * 0.01;
                 camera.lookAt(scene.position);
 
-                // Update connections periodically
-                if (connectionTimer > 0.5) {
-                    updateConnections();
-                    connectionTimer = 0;
+                if (lineTimer > 0.8) {
+                    updateLines();
+                    lineTimer = 0;
                 }
 
                 renderer.render(scene, camera);
@@ -2180,23 +2164,20 @@
 
             animate();
 
-            // Handle resize
             window.addEventListener('resize', () => {
                 camera.aspect = window.innerWidth / window.innerHeight;
                 camera.updateProjectionMatrix();
                 renderer.setSize(window.innerWidth, window.innerHeight);
             });
 
-            // Update colors when theme changes
+            // React to theme changes
             const observer = new MutationObserver(() => {
-                const colors = getThemeColors();
-                const colorArray = [colors.primary, colors.secondary, colors.accent];
-
-                shapes.forEach((shape, i) => {
-                    shape.material.color.set(colorArray[i % colorArray.length]);
+                const style = getComputedStyle(document.documentElement);
+                const primary = style.getPropertyValue('--color-primary').trim() || '#3b82f6';
+                shapes.forEach((s, i) => {
+                    if (i % 4 === 0) s.material.color.set(primary);
                 });
-
-                lineMaterial.color.set(colors.primary);
+                lineMat.color.set(primary);
             });
 
             observer.observe(document.documentElement, {
