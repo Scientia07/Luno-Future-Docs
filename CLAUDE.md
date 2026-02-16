@@ -4,8 +4,8 @@ FILE METADATA
 ==============================================================================
 filename:       CLAUDE.md
 created:        2026-01-16
-updated:        2026-01-27
-version:        1.1.0
+updated:        2026-02-16
+version:        1.2.0
 status:         active
 rating:         ★★★★★ (critical project file)
 author:         Joel + Claude
@@ -241,6 +241,8 @@ Maintain `/docs/ROADMAP.md` with:
 | `/sc:build` | Implementation mode |
 | `/sc:test` | Run tests |
 | `/remotion` | Remotion video creation skill |
+| `/svelte` | Svelte 5 runes, components, SvelteKit |
+| `/chroma` | Chroma.js color manipulation skill |
 
 ---
 
@@ -253,6 +255,8 @@ Skills provide domain-specific knowledge. Agents should automatically use these 
 | Skill | Trigger Context | Use For |
 |-------|-----------------|---------|
 | `remotion` | Working in `/animation-lab/remotion/`, `.tsx` files with Remotion imports, video composition tasks | React-based video creation, animations, compositions, captions |
+| `svelte` | Working in `/design-studio/v2-svelte/`, `.svelte` files, runes imports ($state, $derived, $effect) | Svelte 5 components, runes API, stores, SvelteKit routing |
+| `chroma` | Working in `/design-studio/`, color palette/harmony tasks, Chroma.js imports | OKLCH color spaces, palette generation, WCAG contrast, colorblind simulation |
 | `confidence-check` | Before implementing features | Pre-implementation validation |
 | `security` | Auth flows, API endpoints, user input | Security reviews, OWASP checks |
 
@@ -277,6 +281,43 @@ Agent: [Reads ~/.claude/skills/remotion/rules/charts.md]
 Agent: [Reads ~/.claude/skills/remotion/rules/animations.md]
 Agent: [Implements using skill patterns]
 ```
+
+### Svelte 5 Skill (Design Studio v2)
+
+**Auto-activate when:**
+- Working in `design-studio/v2-svelte/` directory
+- Creating or editing `.svelte` files
+- User mentions: Svelte, runes, $state, $derived, $effect, $props, SvelteKit
+
+**Key rules to read:**
+- `~/.claude/skills/svelte/rules/runes.md` - $state, $derived, $effect, $props (CRITICAL)
+- `~/.claude/skills/svelte/rules/components.md` - Props, snippets, events
+- `~/.claude/skills/svelte/rules/stores.md` - Shared state, .svelte.js files
+- `~/.claude/skills/svelte/rules/lifecycle.md` - onMount, $effect lifecycle
+- `~/.claude/skills/svelte/rules/transitions.md` - Animations, FLIP, spring/tweened
+- `~/.claude/skills/svelte/rules/styling.md` - Scoped CSS, --style-props, class directive
+- `~/.claude/skills/svelte/rules/sveltekit.md` - Routing, load functions, layouts
+
+**CRITICAL Svelte 5 rules (always check first):**
+- Use `$state()` not `let`, `$derived()` not `$:`, `$effect()` not `afterUpdate`
+- Use `onclick` not `on:click`, `{#snippet}` not `<slot>`
+- File must be `.svelte.js` to use runes outside components
+
+### Chroma.js Skill (Color Engine)
+
+**Auto-activate when:**
+- Working in `design-studio/` directory on color features
+- Files import `chroma-js` or `chroma`
+- User mentions: color palette, OKLCH, color harmony, contrast check, colorblind
+
+**Key rules to read:**
+- `~/.claude/skills/chroma/rules/color-spaces.md` - HSL vs OKLCH vs LAB, conversions
+- `~/.claude/skills/chroma/rules/palette-generation.md` - Scales, Bezier, Brewer palettes
+- `~/.claude/skills/chroma/rules/contrast.md` - WCAG AA/AAA, luminance, auto text color
+- `~/.claude/skills/chroma/rules/harmony.md` - Complementary, analogous, triadic, tetradic
+- `~/.claude/skills/chroma/rules/colorblind.md` - CVD simulation, safe palettes
+
+**Key pattern:** Always use `.mode('oklch')` for color interpolation (not HSL or RGB).
 
 ### Key Files to Check
 
@@ -311,4 +352,4 @@ Agent: [Implements using skill patterns]
 
 ---
 
-*Last updated: 2026-01-27 | Version 1.1.0*
+*Last updated: 2026-02-16 | Version 1.2.0*
