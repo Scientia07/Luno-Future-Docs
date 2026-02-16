@@ -20,10 +20,13 @@ import {
   useVideoConfig,
   Easing,
 } from "remotion";
+import { z } from "zod";
 
-interface Props {
-  steps: string[];
-}
+export const processDiagramSchema = z.object({
+  steps: z.array(z.string()),
+});
+
+type Props = z.infer<typeof processDiagramSchema>;
 
 const COLORS = ["#6366f1", "#ec4899", "#10b981", "#f59e0b", "#ef4444"];
 

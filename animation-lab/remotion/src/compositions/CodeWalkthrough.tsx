@@ -19,11 +19,14 @@ import {
   spring,
   useVideoConfig,
 } from "remotion";
+import { z } from "zod";
 
-interface Props {
-  code: string;
-  language: string;
-}
+export const codeWalkthroughSchema = z.object({
+  code: z.string(),
+  language: z.string(),
+});
+
+type Props = z.infer<typeof codeWalkthroughSchema>;
 
 // Simple syntax highlighting (in production, use prism-react-renderer)
 const highlightCode = (code: string): React.ReactNode[] => {

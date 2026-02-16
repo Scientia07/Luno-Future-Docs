@@ -20,10 +20,13 @@ import {
   spring,
   Easing,
 } from "remotion";
+import { z } from "zod";
 
-interface Props {
-  title: string;
-}
+export const dataFlowSchema = z.object({
+  title: z.string(),
+});
+
+type Props = z.infer<typeof dataFlowSchema>;
 
 interface NodeProps {
   x: number;

@@ -19,15 +19,19 @@ import {
   spring,
   useVideoConfig,
 } from "remotion";
+import { z } from "zod";
 
-interface DataPoint {
-  name: string;
-  value: number;
-}
+const dataPointSchema = z.object({
+  name: z.string(),
+  value: z.number(),
+});
 
-interface Props {
-  data: DataPoint[];
-}
+export const animatedChartSchema = z.object({
+  data: z.array(dataPointSchema),
+});
+
+type DataPoint = z.infer<typeof dataPointSchema>;
+type Props = z.infer<typeof animatedChartSchema>;
 
 export const AnimatedChart: React.FC<Props> = ({ data }) => {
   const frame = useCurrentFrame();

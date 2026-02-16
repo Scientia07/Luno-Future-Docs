@@ -12,10 +12,10 @@ description:    Remotion root component - defines all compositions
 */
 
 import { Composition } from "remotion";
-import { DataFlowDiagram } from "./compositions/DataFlowDiagram";
-import { CodeWalkthrough } from "./compositions/CodeWalkthrough";
-import { AnimatedChart } from "./compositions/AnimatedChart";
-import { ProcessDiagram } from "./compositions/ProcessDiagram";
+import { DataFlowDiagram, dataFlowSchema } from "./compositions/DataFlowDiagram";
+import { CodeWalkthrough, codeWalkthroughSchema } from "./compositions/CodeWalkthrough";
+import { AnimatedChart, animatedChartSchema } from "./compositions/AnimatedChart";
+import { ProcessDiagram, processDiagramSchema } from "./compositions/ProcessDiagram";
 
 export const RemotionRoot: React.FC = () => {
   return (
@@ -24,6 +24,7 @@ export const RemotionRoot: React.FC = () => {
       <Composition
         id="DataFlow"
         component={DataFlowDiagram}
+        schema={dataFlowSchema}
         durationInFrames={300}
         fps={60}
         width={1920}
@@ -37,6 +38,7 @@ export const RemotionRoot: React.FC = () => {
       <Composition
         id="CodeWalkthrough"
         component={CodeWalkthrough}
+        schema={codeWalkthroughSchema}
         durationInFrames={450}
         fps={60}
         width={1920}
@@ -54,6 +56,7 @@ export const RemotionRoot: React.FC = () => {
       <Composition
         id="AnimatedChart"
         component={AnimatedChart}
+        schema={animatedChartSchema}
         durationInFrames={240}
         fps={60}
         width={1920}
@@ -73,6 +76,7 @@ export const RemotionRoot: React.FC = () => {
       <Composition
         id="ProcessDiagram"
         component={ProcessDiagram}
+        schema={processDiagramSchema}
         durationInFrames={360}
         fps={60}
         width={1920}
